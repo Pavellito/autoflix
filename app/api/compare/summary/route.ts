@@ -3,10 +3,10 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
 import { supabase } from "@/app/lib/supabase";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-
 export async function POST(request: Request) {
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "dummy" });
+
   try {
     const { car1, car2, language = "en" } = await request.json();
 
