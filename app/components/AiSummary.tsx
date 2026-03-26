@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface SummaryData {
   summary: string;
@@ -33,6 +33,7 @@ export default function AiSummary({
   const currentLang = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
 
   async function generateSummary() {
+    if (loading) return;
     setLoading(true);
     setError(null);
     setData(null);
@@ -58,6 +59,11 @@ export default function AiSummary({
       setLoading(false);
     }
   }
+
+  // Auto-fetch on mount OR when language changes
+  useEffect(() => {
+    generateSummary();
+  }, [videoId, language]);
 
   return (
     <div 
@@ -90,7 +96,7 @@ export default function AiSummary({
             disabled={loading}
             className="text-xs font-medium bg-accent hover:bg-accent/80 disabled:opacity-50 text-white px-4 py-1.5 rounded transition-colors"
           >
-            {loading ? "Generating..." : data ? "Translate" : "Generate"}
+            {loading ? "Analyzing..." : "Refresh"}
           </button>
         </div>
       </div>
