@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SearchBar from "./SearchBar";
 
 export default function Header() {
   return (
@@ -11,8 +12,11 @@ export default function Header() {
           <Link href="/" className="text-white hover:text-accent transition">
             Home
           </Link>
-          <span className="text-gray-500 cursor-not-allowed">Search</span>
+          <Link href="/search" className="text-white hover:text-accent transition">
+            Search
+          </Link>
           <span className="text-gray-500 cursor-not-allowed">My List</span>
+          <SearchBar />
         </nav>
       </div>
     </header>
