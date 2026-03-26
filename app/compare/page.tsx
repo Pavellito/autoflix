@@ -13,9 +13,9 @@ export default function CompareHubPage() {
 
   // Best of Lists (SEO Drivers)
   const bestOfLists = [
-    { title: "Best EV Under ₪200,000", tag: "IL", cars: ["car-2", "car-4"] },
-    { title: "Longest Range Family SUVs", tag: "GLOBAL", cars: ["car-5", "car-3"] },
-    { title: "Top Performance Electric Sedans", tag: "GLOBAL", cars: ["car-1", "car-4"] },
+    { title: "Best EV Under ₪200,000", tag: "IL", slug: "best-ev-israel", cars: ["car-2", "car-4"] },
+    { title: "Longest Range Family SUVs", tag: "GLOBAL", slug: "best-family-suv", cars: ["car-5", "car-3"] },
+    { title: "Top Performance Electric Sedans", tag: "GLOBAL", slug: "best-luxury-ev", cars: ["car-1", "car-4"] },
   ];
 
   return (
@@ -85,7 +85,7 @@ export default function CompareHubPage() {
                      )
                    })}
                    <Link 
-                    href="/compare"
+                    href={`/best-of/${list.slug}`}
                     className="ml-6 px-6 py-3 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-accent hover:text-white transition-all shadow-xl"
                    >
                      View List →
