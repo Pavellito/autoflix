@@ -28,17 +28,46 @@ Given this car video:
 Title: ${title}
 Description: ${description}
 
-Write a concise, engaging summary (3-4 sentences) that:
-1. Highlights the key points a car enthusiast would care about
-2. Mentions specific specs or features if relevant
-3. Gives a quick verdict or takeaway
+Write a concise, engaging summary that includes:
+1. "summary": A 2-3 sentence overview highlighting the key points.
+2. "pros": An array of 3 brief positive points or strengths.
+3. "cons": An array of 3 brief negative points or weaknesses.
+4. "verdict": A 1 sentence final takeaway.
 
-Keep it conversational and informative. No markdown formatting.`;
+Return ONLY a valid JSON object matching this structure:
+{
+  "summary": "...",
+  "pros": ["...", "...", "..."],
+  "cons": ["...", "...", "..."],
+  "verdict": "..."
+}
+No markdown blocks, no other text, just the raw JSON.`;
 
     const result = await model.generateContent(prompt);
-    const summary = result.response.text();
+    let textResult = result.response.text().trim();
+    
+    // Clean up potential markdown code blocks returned by the model
+    if (textResult.startsWith("\`\`\`json")) {
+      textResult = textResult.substring(7);
+      if (textResult.endsWith("\`\`\`")) {
+        textResult = textResult.substring(0, textResult.length - 3);
+      }
+    } else if (textResult.startsWith("\`\`\`")) {
+      textResult = textResult.substring(3);
+      if (textResult.endsWith("\`\`\`")) {
+        textResult = textResult.substring(0, textResult.length - 3);
+      }
+    }
+    
+    let structuredData;
+    try {
+      structuredData = JSON.parse(textResult);
+    } catch (e) {
+      console.error("Failed to parse Gemini JSON:", textResult);
+      throw new Error("Invalid AI response format");
+    }
 
-    return Response.json({ summary });
+    return Response.json(structuredData);
   } catch (error) {
     console.error("AI Summary error:", error);
     return Response.json(

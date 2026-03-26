@@ -1,14 +1,19 @@
 import HeroBanner from "@/app/components/HeroBanner";
 import VideoRow from "@/app/components/VideoRow";
-import { categories, getVideosByCategory, videos } from "@/app/lib/data";
+import { categories, getVideosByCategory } from "@/app/lib/data";
 
 export default function Home() {
-  const featured = videos[0];
+  // Get all trending videos for the hero banner
+  const trendingVideos = getVideosByCategory("Trending");
+  // Select a random video, or fallback to the first one if none exist
+  const featured =
+    trendingVideos[Math.floor(Math.random() * trendingVideos.length)] ||
+    trendingVideos[0];
 
   return (
     <div>
-      <HeroBanner video={featured} />
-      <div className="space-y-2">
+      {featured && <HeroBanner video={featured} />}
+      <div className="space-y-4 pb-8">
         {categories.map((category) => (
           <VideoRow
             key={category}

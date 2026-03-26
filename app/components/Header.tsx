@@ -12,10 +12,15 @@ export default function Header() {
           <Link href="/" className="text-white hover:text-accent transition">
             Home
           </Link>
+          <Link href="/cars" className="text-white hover:text-accent transition">
+            Cars
+          </Link>
           <Link href="/search" className="text-white hover:text-accent transition">
             Search
           </Link>
-          <span className="text-gray-500 cursor-not-allowed">My List</span>
+          <Link href="/my-list" className="text-white hover:text-accent transition">
+            My List
+          </Link>
           <SearchBar />
         </nav>
       </div>
