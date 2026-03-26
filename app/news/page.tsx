@@ -17,27 +17,23 @@ interface NewsItem {
 
 // A massively expanded pool of premium automotive/tech abstract photos to prevent any perceived duplication
 const NEWS_IMAGE_POOL = [
-  ...cars.map(c => c.image),
   "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=2070&auto=format&fit=crop", // sports car blur
-  "https://images.unsplash.com/photo-1503378462226-9646b4ea39bc?q=80&w=2070&auto=format&fit=crop", // abstract highway
   "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop", // neon car
   "https://images.unsplash.com/photo-1469285994282-454ceb49e63c?q=80&w=2070&auto=format&fit=crop", // driving sunset
   "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop", // luxury interior
   "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2070&auto=format&fit=crop", // wheel rim
   "https://images.unsplash.com/photo-1485291571150-772bcfc10da5?q=80&w=2128&auto=format&fit=crop", // dark highway
   "https://images.unsplash.com/photo-1536700503339-1e4b06520771?q=80&w=2070&auto=format&fit=crop", // tesla steering
-  "https://images.unsplash.com/photo-1563720225384-9ca288210137?q=80&w=2148&auto=format&fit=crop", // futuristic lines
   "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=2070&auto=format&fit=crop", // electric charger
   "https://images.unsplash.com/photo-1590362891991-f776e747a588?q=80&w=2069&auto=format&fit=crop", // abstract speed
-  "https://images.unsplash.com/photo-1550524458-769a7122cf28?q=80&w=2070&auto=format&fit=crop", // dark night driving
   "https://images.unsplash.com/photo-1556817411-31ae72fa3ea0?q=80&w=2070&auto=format&fit=crop", // sleek front grille
-  "https://images.unsplash.com/photo-1553440569-bfc1015e5c56?q=80&w=2070&auto=format&fit=crop", // dashboard lights
   "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=2070&auto=format&fit=crop", // futuristic tunnel
   "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop", // classic steering
   "https://images.unsplash.com/photo-1471440671318-55bdbb772f93?q=80&w=2070&auto=format&fit=crop", // aerial road
   "https://images.unsplash.com/photo-1502161254066-6c74afbf07aa?q=80&w=2071&auto=format&fit=crop", // city driving
-  "https://images.unsplash.com/photo-1583121280346-59dd228ff46e?q=80&w=2070&auto=format&fit=crop", // Porsche taycan
-  "https://images.unsplash.com/photo-1620891549420-5c6e8dc9fbd0?q=80&w=2070&auto=format&fit=crop"  // EV concept
+  "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2070&auto=format&fit=crop", // MG4 wait list
+  "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=2128&auto=format&fit=crop"
 ];
 
 // Deterministically pick an image from our premium pool based on the news ID
@@ -174,48 +170,9 @@ export default function NewsPage() {
   const russiaNews = news.filter(n => n.region === "ru");
   const arabicNews = news.filter(n => n.region === "ar");
 
-  const [heroImgSrc, setHeroImgSrc] = useState(getDeterministicImage(featured?.id || ""));
-
   return (
     <div className="min-h-screen bg-black pb-24">
-      {/* Netflix-style Hero Banner for News */}
-      <div className="relative h-[70vh] mb-12 bg-black overflow-hidden group">
-        <div className="absolute inset-0 w-full h-[120%] -top-[10%] z-0">
-          <img
-            src={heroImgSrc}
-            alt={featured.title}
-            onError={() => setHeroImgSrc("https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1600&auto=format&fit=crop")}
-            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[20s] ease-out"
-          />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
-
-        <div className="relative z-20 h-full flex flex-col justify-end pb-16 px-4 md:px-12 max-w-4xl">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="bg-accent text-white px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg">
-              Breaking
-            </span>
-            <span className="text-gray-300 text-xs font-bold uppercase tracking-wider">
-              {featured.source_id.replace('-', ' ')}
-            </span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-2xl leading-tight tracking-tighter italic">
-            {featured.title}
-          </h1>
-          <div className="flex flex-wrap gap-4">
-            <a
-              href={featured.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-white text-black px-8 py-3 rounded font-black uppercase text-xs tracking-widest hover:bg-accent hover:text-white transition-all shadow-xl"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-              Read Article
-            </a>
-          </div>
-        </div>
-      </div>
+      <HeroNews featured={featured} />
 
       {/* Horizontal Scrolling Rows */}
       <div className="space-y-12">
@@ -223,6 +180,50 @@ export default function NewsPage() {
         <NewsRow title="Israel Market 🇮🇱" items={israelNews} />
         <NewsRow title="Russian Intel 🇷🇺" items={russiaNews} />
         <NewsRow title="Arabic Region 🇸🇦" items={arabicNews} />
+      </div>
+    </div>
+  );
+}
+
+function HeroNews({ featured }: { featured: NewsItem }) {
+  const [heroImgSrc, setHeroImgSrc] = useState(getDeterministicImage(featured.id));
+
+  return (
+    <div className="relative h-[70vh] mb-12 bg-black overflow-hidden group">
+      <div className="absolute inset-0 w-full h-[120%] -top-[10%] z-0">
+        <img
+          src={heroImgSrc}
+          alt={featured.title}
+          onError={() => setHeroImgSrc("https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1600&auto=format&fit=crop")}
+          className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[20s] ease-out"
+        />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
+
+      <div className="relative z-20 h-full flex flex-col justify-end pb-16 px-4 md:px-12 max-w-4xl">
+        <div className="flex items-center gap-3 mb-4">
+          <span className="bg-accent text-white px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg">
+            Breaking
+          </span>
+          <span className="text-gray-300 text-xs font-bold uppercase tracking-wider">
+            {featured.source_id.replace('-', ' ')}
+          </span>
+        </div>
+        <h1 className="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-2xl leading-tight tracking-tighter italic">
+          {featured.title}
+        </h1>
+        <div className="flex flex-wrap gap-4">
+          <a
+            href={featured.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 bg-white text-black px-8 py-3 rounded font-black uppercase text-xs tracking-widest hover:bg-accent hover:text-white transition-all shadow-xl"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+            Read Article
+          </a>
+        </div>
       </div>
     </div>
   );
