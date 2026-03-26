@@ -84,9 +84,9 @@ export default function QuizPage() {
                <h2 className="text-2xl font-bold text-white mb-6">What is your budget?</h2>
                <div className="grid grid-cols-1 gap-4">
                  {[
-                   { id: "Low", label: "Budget-Friendly (Under 150k / $35k)" },
-                   { id: "Medium", label: "Standard (150k-250k / $35k-$55k)" },
-                   { id: "High", label: "Premium / Luxury (Above 250k / $55k)" },
+                   { id: "Low", label: formData.region === 'il' ? "Budget-Friendly (Under ₪150k)" : formData.region === 'ru' ? "Budget-Friendly (Under 3M ₽)" : "Budget-Friendly (Under $35k)" },
+                   { id: "Medium", label: formData.region === 'il' ? "Standard (₪150k-₪250k)" : formData.region === 'ru' ? "Standard (3M-5M ₽)" : "Standard ($35k-$55k)" },
+                   { id: "High", label: formData.region === 'il' ? "Premium / Luxury (Above ₪250k)" : formData.region === 'ru' ? "Premium / Luxury (Above 5M ₽)" : "Premium / Luxury (Above $55k)" },
                  ].map((b) => (
                    <button
                      key={b.id}

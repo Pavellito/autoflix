@@ -71,14 +71,36 @@ export default function NewsPage() {
             <p className="text-gray-500 font-medium">Syncing with global news wires...</p>
           </div>
         ) : news.length === 0 ? (
-          <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10 shadow-xl">
-            <p className="text-gray-400">No news found for this region yet. Run ingestion to sync!</p>
-            <button 
-              onClick={() => fetch("/api/news/ingest")}
-              className="mt-4 px-6 py-2 bg-accent/20 text-accent rounded-full text-sm font-bold border border-accent/20 hover:bg-accent/30 transition-all"
-            >
-              Ingest Latest News
-            </button>
+          <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10 shadow-xl max-w-2xl mx-auto px-6">
+            <div className="w-16 h-16 bg-accent/20 text-accent rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-black text-white uppercase italic mb-4">Content Feed Offline</h3>
+            <p className="text-gray-400 mb-8 leading-relaxed">
+              To activate the news engine, ensure the <span className="text-white font-bold">"news"</span> table exists in your Supabase dashboard. 
+              Run the SQL script from our <span className="text-accent underline">Handover Guide</span> first.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
+                onClick={async () => {
+                  const res = await fetch("/api/news/ingest");
+                  const data = await res.json();
+                  if (data.success) window.location.reload();
+                  else alert("Ingestion failed: " + (data.error || "Check database table."));
+                }}
+                className="px-8 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all"
+              >
+                Sync News Now
+              </button>
+              <a 
+                href="/walkthrough_2.0.md" 
+                className="px-8 py-3 bg-white/5 text-gray-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10 hover:bg-white/10 hover:text-white transition-all"
+              >
+                View Setup Guide
+              </a>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
