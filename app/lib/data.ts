@@ -15,7 +15,19 @@ export interface Car {
   type: "EV" | "Hybrid" | "ICE";
   range?: string;
   battery?: string;
-  price?: string;
+  price?: string; // Base/Global price
+  prices?: {
+    il: string;
+    ru: string;
+    us: string;
+    ar: string;
+  };
+  regionalAdvice?: {
+    il: string;
+    ru: string;
+    us: string;
+    ar: string;
+  };
   image: string;
   relatedVideoIds: string[];
 }
@@ -558,6 +570,18 @@ export const cars: Car[] = [
     range: "513 km",
     battery: "60 kWh",
     price: "From $38,990",
+    prices: {
+      il: "₪210,000",
+      ru: "4,200,000 ₽",
+      us: "$38,990",
+      ar: "146,000 SAR",
+    },
+    regionalAdvice: {
+      il: "Perfect for Israel's distances; extensive Supercharger network in the center and south.",
+      ru: "Requires heated garage in winter; check CCS2 adapter availability for local stations.",
+      us: "Eligible for federal tax credits; best value EV on the US market today.",
+      ar: "Heat-resistant battery tech performs well; Service centers available in Riyadh and Dubai.",
+    },
     image: "https://i.ytimg.com/vi/z_3F98XIIKA/mqdefault.jpg",
     relatedVideoIds: ["11", "36", "50"],
   },
@@ -569,6 +593,18 @@ export const cars: Car[] = [
     range: "420 km",
     battery: "60.5 kWh",
     price: "From $38,000",
+    prices: {
+      il: "₪168,500",
+      ru: "3,500,000 ₽",
+      us: "N/A (Import only)",
+      ar: "135,000 SAR",
+    },
+    regionalAdvice: {
+      il: "Most popular EV in Israel; incredible resale value and local support.",
+      ru: "Gaining popularity via parallel import; software localized to Russian is widely available.",
+      us: "Not officially sold in the US; high import tariffs apply.",
+      ar: "Blade Battery tech handles extreme heat exceptionally well; growing service network.",
+    },
     image: "https://i.ytimg.com/vi/FemVjBnGP3g/mqdefault.jpg",
     relatedVideoIds: ["16", "12"],
   },
@@ -580,6 +616,18 @@ export const cars: Car[] = [
     range: "507 km",
     battery: "84 kWh",
     price: "From $41,800",
+    prices: {
+      il: "₪215,000",
+      ru: "4,800,000 ₽",
+      us: "$41,800",
+      ar: "165,000 SAR",
+    },
+    regionalAdvice: {
+      il: "Fastest charging in Israel (800V); uses 350kW chargers at Afek and roadside stations.",
+      ru: "E-GMP platform performs well in cold; heat pump is standard on most trims.",
+      us: "Solid range and retro-future design; widely available at Hyundai dealers.",
+      ar: "Standard V2L feature is great for desert camping; fast AC charging for home use.",
+    },
     image: "https://i.ytimg.com/vi/GItH7vwTR6k/mqdefault.jpg",
     relatedVideoIds: ["23", "6", "37"],
   },
@@ -591,6 +639,18 @@ export const cars: Car[] = [
     range: "570 km",
     battery: "82.5 kWh",
     price: "From $44,900",
+    prices: {
+      il: "₪210,000",
+      ru: "4,600,000 ₽",
+      us: "N/A",
+      ar: "175,000 SAR",
+    },
+    regionalAdvice: {
+      il: "The 'Tesla Killer' of the Israeli market; premium interior at a competitive price.",
+      ru: "All-wheel drive versions are popular for year-round stability in snowy regions.",
+      us: "Competitive specs but currently limited by trade restrictions.",
+      ar: "Intelligent thermal management keeps the cabin cool in GCC summer peaks.",
+    },
     image: "https://i.ytimg.com/vi/DHRxnTPrzOQ/mqdefault.jpg",
     relatedVideoIds: ["22", "36", "42"],
   },
@@ -602,6 +662,18 @@ export const cars: Car[] = [
     range: "533 km",
     battery: "75 kWh",
     price: "From $44,990",
+    prices: {
+      il: "₪235,000",
+      ru: "5,500,000 ₽",
+      us: "$44,990",
+      ar: "190,000 SAR",
+    },
+    regionalAdvice: {
+      il: "The gold standard for family EVs in Israel; massive trunk space for local trips.",
+      ru: "Check for European spec (CCS2) vs US spec (NACS) before buying locally.",
+      us: "Best selling car in the world for a reason; unmatched software and charging.",
+      ar: "White interior recommended for GCC sunshine; Glass roof handles heat well.",
+    },
     image: "https://i.ytimg.com/vi/a3zBdK4LrX4/mqdefault.jpg",
     relatedVideoIds: ["1", "2", "39"],
   },

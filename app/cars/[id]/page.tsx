@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCarById, getRelatedVideosForCar } from "@/app/lib/data";
 import VideoRow from "@/app/components/VideoRow";
+import RegionalCarInfo from "@/app/components/RegionalCarInfo";
 
 export default async function CarDetailPage({
   params,
@@ -26,7 +27,7 @@ export default async function CarDetailPage({
         ← Back to Cars
       </Link>
 
-      <div className="bg-card-bg rounded-xl overflow-hidden border border-white/5 mb-12 shadow-2xl">
+      <div className="bg-card-bg rounded-2xl overflow-hidden border border-white/5 mb-12 shadow-2xl">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
           <div className="relative aspect-video md:aspect-auto bg-gray-900 border-b md:border-b-0 md:border-r border-white/10">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -57,13 +58,6 @@ export default async function CarDetailPage({
             
             <div className="space-y-6">
               <div className="flex flex-col border-b border-white/5 pb-4">
-                <span className="text-sm text-gray-400 mb-1">Starting Price</span>
-                <span className="text-2xl font-bold text-green-400">
-                  {car.price || "TBA"}
-                </span>
-              </div>
-              
-              <div className="flex flex-col border-b border-white/5 pb-4">
                 <span className="text-sm text-gray-400 mb-1">Estimated Range (WLTP)</span>
                 <span className="text-xl font-semibold text-white">
                   {car.range || "N/A"}
@@ -76,6 +70,9 @@ export default async function CarDetailPage({
                   {car.battery || "N/A"}
                 </span>
               </div>
+
+              {/* Advanced Localized Info (Stage 12) */}
+              <RegionalCarInfo car={car} />
             </div>
           </div>
         </div>
