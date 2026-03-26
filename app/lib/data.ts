@@ -25,7 +25,7 @@ export const videos: Video[] = [
   {
     id: "1",
     title: "2025 Tesla Model Y Juniper – Full Review",
-    thumbnail: "https://img.youtube.com/vi/a3zBdK4LrX4/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/a3zBdK4LrX4/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -35,7 +35,7 @@ export const videos: Video[] = [
   {
     id: "2",
     title: "BYD Seal U – Tesla Model Y Killer?",
-    thumbnail: "https://img.youtube.com/vi/7oUy5H_w4yQ/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/7oUy5H_w4yQ/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -45,7 +45,7 @@ export const videos: Video[] = [
   {
     id: "3",
     title: "Xiaomi SU7 – Driving Xiaomi's Electric Car",
-    thumbnail: "https://img.youtube.com/vi/Mb6H7trzMfI/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/Mb6H7trzMfI/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -55,7 +55,7 @@ export const videos: Video[] = [
   {
     id: "4",
     title: "Porsche Taycan Turbo GT – Should Tesla Be Scared?",
-    thumbnail: "https://img.youtube.com/vi/9bsrHv2QG0o/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/9bsrHv2QG0o/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -65,7 +65,7 @@ export const videos: Video[] = [
   {
     id: "5",
     title: "BMW iX3 Neue Klasse – BMW's Future",
-    thumbnail: "https://img.youtube.com/vi/2C7rD58R0M0/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/2C7rD58R0M0/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -75,7 +75,7 @@ export const videos: Video[] = [
   {
     id: "6",
     title: "Hyundai Ioniq 5 N – Drag Race & Lap Time",
-    thumbnail: "https://img.youtube.com/vi/JVwfEOh0KBI/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/JVwfEOh0KBI/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -85,7 +85,7 @@ export const videos: Video[] = [
   {
     id: "7",
     title: "Mercedes G580 Electric – Is It Still a True G-Class?",
-    thumbnail: "https://img.youtube.com/vi/S6oToAnS404/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/S6oToAnS404/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -95,7 +95,7 @@ export const videos: Video[] = [
   {
     id: "8",
     title: "Kia EV9 – Still The Best Electric SUV?",
-    thumbnail: "https://img.youtube.com/vi/PWigi5V-5mY/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/PWigi5V-5mY/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -105,7 +105,7 @@ export const videos: Video[] = [
   {
     id: "9",
     title: "Solid State Battery Revolution – Battery 4.0",
-    thumbnail: "https://img.youtube.com/vi/Db-VVJCQ5u4/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/Db-VVJCQ5u4/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -115,7 +115,7 @@ export const videos: Video[] = [
   {
     id: "10",
     title: "Say Hello to R2 – Rivian's Affordable EV",
-    thumbnail: "https://img.youtube.com/vi/1YV3fZaOQWA/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/1YV3fZaOQWA/hqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
@@ -127,7 +127,7 @@ export const videos: Video[] = [
   {
     id: "11",
     title: "Tesla Model 3 Highland – The Best Tesla Yet?",
-    thumbnail: "https://img.youtube.com/vi/Z3vN6iH-fEw/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/Z3vN6iH-fEw/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -137,7 +137,7 @@ export const videos: Video[] = [
   {
     id: "12",
     title: "BYD Dolphin – The Best Cheap EV?",
-    thumbnail: "https://img.youtube.com/vi/ZtI-1N7U0_s/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/ZtI-1N7U0_s/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -147,7 +147,7 @@ export const videos: Video[] = [
   {
     id: "13",
     title: "BMW iX – 0-60mph, Autobahn & Range Test",
-    thumbnail: "https://img.youtube.com/vi/VoWqeaNMJOM/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/VoWqeaNMJOM/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -157,7 +157,7 @@ export const videos: Video[] = [
   {
     id: "14",
     title: "Hyundai Ioniq 6 – Better Than Tesla Model 3?",
-    thumbnail: "https://img.youtube.com/vi/fT6i-h94GIA/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/fT6i-h94GIA/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -167,7 +167,7 @@ export const videos: Video[] = [
   {
     id: "15",
     title: "Rivian R1S – The Best SUV Ever?",
-    thumbnail: "https://img.youtube.com/vi/wR-0knMVSGw/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/wR-0knMVSGw/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -177,7 +177,7 @@ export const videos: Video[] = [
   {
     id: "16",
     title: "BYD Atto 3 – In-Depth Review",
-    thumbnail: "https://img.youtube.com/vi/FemVjBnGP3g/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/FemVjBnGP3g/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -187,7 +187,7 @@ export const videos: Video[] = [
   {
     id: "17",
     title: "Mercedes EQS – The Electric S-Class Tested",
-    thumbnail: "https://img.youtube.com/vi/_uI_hWmVCjo/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/_uI_hWmVCjo/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -197,7 +197,7 @@ export const videos: Video[] = [
   {
     id: "18",
     title: "Polestar 2 – It Just Got Way Better",
-    thumbnail: "https://img.youtube.com/vi/-9RtP8OKLYw/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/-9RtP8OKLYw/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -207,7 +207,7 @@ export const videos: Video[] = [
   {
     id: "19",
     title: "VW ID.7 – It's Not What You Think",
-    thumbnail: "https://img.youtube.com/vi/L58V0GT7knE/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/L58V0GT7knE/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -217,7 +217,7 @@ export const videos: Video[] = [
   {
     id: "20",
     title: "Audi Q8 e-tron – Unbeatable Electric SUV?",
-    thumbnail: "https://img.youtube.com/vi/uW0OK8MzyIE/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/uW0OK8MzyIE/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -227,7 +227,7 @@ export const videos: Video[] = [
   {
     id: "21",
     title: "NIO ET7 – Mercedes' Deadliest Rival",
-    thumbnail: "https://img.youtube.com/vi/SLfbtv769cY/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/SLfbtv769cY/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -237,7 +237,7 @@ export const videos: Video[] = [
   {
     id: "22",
     title: "BYD Seal – Better Than a Tesla?",
-    thumbnail: "https://img.youtube.com/vi/DHRxnTPrzOQ/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/DHRxnTPrzOQ/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -247,7 +247,7 @@ export const videos: Video[] = [
   {
     id: "23",
     title: "Hyundai Ioniq 5 2025 – Six Months Later",
-    thumbnail: "https://img.youtube.com/vi/GItH7vwTR6k/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/GItH7vwTR6k/hqdefault.jpg",
     category: "Electric Cars",
     year: 2025,
     description:
@@ -257,7 +257,7 @@ export const videos: Video[] = [
   {
     id: "24",
     title: "Kia EV6 GT – Faster Than a Lamborghini",
-    thumbnail: "https://img.youtube.com/vi/ff2p3o6FFCw/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/ff2p3o6FFCw/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -267,7 +267,7 @@ export const videos: Video[] = [
   {
     id: "25",
     title: "Volvo EX30 – Fab or Flawed?",
-    thumbnail: "https://img.youtube.com/vi/w5IffpLajrE/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/w5IffpLajrE/hqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
@@ -279,7 +279,7 @@ export const videos: Video[] = [
   {
     id: "26",
     title: "2024 Toyota Supra 3.0 Premium Review",
-    thumbnail: "https://img.youtube.com/vi/bAAiCy5V-gg/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/bAAiCy5V-gg/hqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
@@ -289,7 +289,7 @@ export const videos: Video[] = [
   {
     id: "27",
     title: "2024 Mazda MX-5 – More Perfecter",
-    thumbnail: "https://img.youtube.com/vi/RmsBlyb-j-M/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/RmsBlyb-j-M/hqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
@@ -299,7 +299,7 @@ export const videos: Video[] = [
   {
     id: "28",
     title: "Porsche 911 GT3 RS – Basically a Race Car",
-    thumbnail: "https://img.youtube.com/vi/3SiaL-id_H8/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/3SiaL-id_H8/hqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
@@ -309,7 +309,7 @@ export const videos: Video[] = [
   {
     id: "29",
     title: "Ford Mustang Dark Horse – This Is The One To Buy",
-    thumbnail: "https://img.youtube.com/vi/ZuqrGAo5xb8/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/ZuqrGAo5xb8/hqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
@@ -319,7 +319,7 @@ export const videos: Video[] = [
   {
     id: "30",
     title: "Honda Civic Type R – Is It Really Better?",
-    thumbnail: "https://img.youtube.com/vi/K0mE-YKyV84/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/K0mE-YKyV84/hqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
@@ -329,7 +329,7 @@ export const videos: Video[] = [
   {
     id: "31",
     title: "BMW M3 Touring – The World's Best Car?",
-    thumbnail: "https://img.youtube.com/vi/Wa2X5kYjSHs/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/Wa2X5kYjSHs/hqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
@@ -339,7 +339,7 @@ export const videos: Video[] = [
   {
     id: "32",
     title: "AMG GT 63 – Has Mercedes Ruined Its Best Sports Car?",
-    thumbnail: "https://img.youtube.com/vi/2vWh2kaeZkI/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/2vWh2kaeZkI/hqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
@@ -349,7 +349,7 @@ export const videos: Video[] = [
   {
     id: "33",
     title: "2024 Nissan Z NISMO – Quick Review",
-    thumbnail: "https://img.youtube.com/vi/pePMmx1MmBU/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/pePMmx1MmBU/hqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
@@ -359,7 +359,7 @@ export const videos: Video[] = [
   {
     id: "34",
     title: "Lamborghini Revuelto – Real World Test",
-    thumbnail: "https://img.youtube.com/vi/nLi-pBoqzXM/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/nLi-pBoqzXM/hqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
@@ -369,7 +369,7 @@ export const videos: Video[] = [
   {
     id: "35",
     title: "Alpine A290 – New Hot Hatch Champion?",
-    thumbnail: "https://img.youtube.com/vi/6p3G7L_u08A/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/6p3G7L_u08A/hqdefault.jpg",
     category: "Reviews",
     year: 2025,
     description:
@@ -381,7 +381,7 @@ export const videos: Video[] = [
   {
     id: "36",
     title: "Tesla Model 3 vs BYD Seal – Ultimate Review",
-    thumbnail: "https://img.youtube.com/vi/tezLYZHWkK4/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/tezLYZHWkK4/hqdefault.jpg",
     category: "Comparisons",
     year: 2024,
     description:
@@ -391,7 +391,7 @@ export const videos: Video[] = [
   {
     id: "37",
     title: "Hyundai Ioniq 5 vs Kia EV6 – Which Is Best?",
-    thumbnail: "https://img.youtube.com/vi/g5c4bHmgC8s/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/g5c4bHmgC8s/hqdefault.jpg",
     category: "Comparisons",
     year: 2024,
     description:
@@ -401,7 +401,7 @@ export const videos: Video[] = [
   {
     id: "38",
     title: "Best Electric Cars 2025 – And The Ones To Avoid",
-    thumbnail: "https://img.youtube.com/vi/lO4rVikAslM/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/lO4rVikAslM/hqdefault.jpg",
     category: "Comparisons",
     year: 2025,
     description:
@@ -411,7 +411,7 @@ export const videos: Video[] = [
   {
     id: "39",
     title: "BMW iX vs Tesla Model Y – Is The Luxury Worth It?",
-    thumbnail: "https://img.youtube.com/vi/s5ZSPgD7JW4/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/s5ZSPgD7JW4/hqdefault.jpg",
     category: "Comparisons",
     year: 2025,
     description:
@@ -421,7 +421,7 @@ export const videos: Video[] = [
   {
     id: "40",
     title: "Longest Range Electric Cars 2025 – Ranked",
-    thumbnail: "https://img.youtube.com/vi/e802fcRHnAU/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/e802fcRHnAU/hqdefault.jpg",
     category: "Comparisons",
     year: 2025,
     description:
@@ -431,7 +431,7 @@ export const videos: Video[] = [
   {
     id: "41",
     title: "GT-R NISMO vs 911 Turbo S vs R8 – Drag Race",
-    thumbnail: "https://img.youtube.com/vi/If38HXa9jUA/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/If38HXa9jUA/hqdefault.jpg",
     category: "Comparisons",
     year: 2024,
     description:
@@ -441,7 +441,7 @@ export const videos: Video[] = [
   {
     id: "42",
     title: "BYD vs Tesla – Battle To Be #1",
-    thumbnail: "https://img.youtube.com/vi/JLB3l-5ZvvM/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/JLB3l-5ZvvM/hqdefault.jpg",
     category: "Comparisons",
     year: 2025,
     description:
@@ -451,7 +451,7 @@ export const videos: Video[] = [
   {
     id: "43",
     title: "Best EVs On Sale Today – Complete Buyer's Guide",
-    thumbnail: "https://img.youtube.com/vi/qgGRyAjUKKg/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/qgGRyAjUKKg/hqdefault.jpg",
     category: "Comparisons",
     year: 2025,
     description:
@@ -461,7 +461,7 @@ export const videos: Video[] = [
   {
     id: "44",
     title: "Toyota GR Corolla vs Honda Civic Type R – Drag Race",
-    thumbnail: "https://img.youtube.com/vi/koxar2licVQ/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/koxar2licVQ/hqdefault.jpg",
     category: "Comparisons",
     year: 2024,
     description:
@@ -471,7 +471,7 @@ export const videos: Video[] = [
   {
     id: "45",
     title: "EV Charging Costs: Home vs Public – Explained",
-    thumbnail: "https://img.youtube.com/vi/oUo1aI-pC-g/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/oUo1aI-pC-g/hqdefault.jpg",
     category: "Comparisons",
     year: 2025,
     description:
@@ -483,7 +483,7 @@ export const videos: Video[] = [
   {
     id: "46",
     title: "Building a Toyota Supra Turbo (MKIV)",
-    thumbnail: "https://img.youtube.com/vi/IT_kp7oHKfs/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/IT_kp7oHKfs/hqdefault.jpg",
     category: "Tuning",
     year: 2024,
     description:
@@ -493,7 +493,7 @@ export const videos: Video[] = [
   {
     id: "47",
     title: "R34 GT-R Full Restoration – Better Than Factory",
-    thumbnail: "https://img.youtube.com/vi/gDq8Sq2ZW5k/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/gDq8Sq2ZW5k/hqdefault.jpg",
     category: "Tuning",
     year: 2024,
     description:
@@ -503,7 +503,7 @@ export const videos: Video[] = [
   {
     id: "48",
     title: "20 Cheap Mods That Transform Your Car",
-    thumbnail: "https://img.youtube.com/vi/rXj06V6J7iY/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/rXj06V6J7iY/hqdefault.jpg",
     category: "Tuning",
     year: 2024,
     description:
@@ -513,7 +513,7 @@ export const videos: Video[] = [
   {
     id: "49",
     title: "Liberty Walk BMW M4 Widebody – This Is INSANE",
-    thumbnail: "https://img.youtube.com/vi/4zSzCGXKmas/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/4zSzCGXKmas/hqdefault.jpg",
     category: "Tuning",
     year: 2024,
     description:
@@ -523,7 +523,7 @@ export const videos: Video[] = [
   {
     id: "50",
     title: "Tesla Model 3: Top 3 Performance Mods",
-    thumbnail: "https://img.youtube.com/vi/e5sT6HnHZu4/0.jpg",
+    thumbnail: "https://img.youtube.com/vi/e5sT6HnHZu4/hqdefault.jpg",
     category: "Tuning",
     year: 2024,
     description:
@@ -558,7 +558,7 @@ export const cars: Car[] = [
     range: "513 km",
     battery: "60 kWh",
     price: "From $38,990",
-    image: "https://img.youtube.com/vi/Z3vN6iH-fEw/0.jpg",
+    image: "https://img.youtube.com/vi/Z3vN6iH-fEw/hqdefault.jpg",
     relatedVideoIds: ["11", "36", "50"],
   },
   {
@@ -569,7 +569,7 @@ export const cars: Car[] = [
     range: "420 km",
     battery: "60.5 kWh",
     price: "From $38,000",
-    image: "https://img.youtube.com/vi/FemVjBnGP3g/0.jpg",
+    image: "https://img.youtube.com/vi/FemVjBnGP3g/hqdefault.jpg",
     relatedVideoIds: ["16", "12"],
   },
   {
@@ -580,7 +580,7 @@ export const cars: Car[] = [
     range: "507 km",
     battery: "84 kWh",
     price: "From $41,800",
-    image: "https://img.youtube.com/vi/GItH7vwTR6k/0.jpg",
+    image: "https://img.youtube.com/vi/GItH7vwTR6k/hqdefault.jpg",
     relatedVideoIds: ["23", "6", "37"],
   },
   {
@@ -591,7 +591,7 @@ export const cars: Car[] = [
     range: "570 km",
     battery: "82.5 kWh",
     price: "From $44,900",
-    image: "https://img.youtube.com/vi/DHRxnTPrzOQ/0.jpg",
+    image: "https://img.youtube.com/vi/DHRxnTPrzOQ/hqdefault.jpg",
     relatedVideoIds: ["22", "36", "42"],
   },
   {
@@ -602,7 +602,7 @@ export const cars: Car[] = [
     range: "533 km",
     battery: "75 kWh",
     price: "From $44,990",
-    image: "https://img.youtube.com/vi/a3zBdK4LrX4/0.jpg",
+    image: "https://img.youtube.com/vi/a3zBdK4LrX4/hqdefault.jpg",
     relatedVideoIds: ["1", "2", "39"],
   },
 ];
