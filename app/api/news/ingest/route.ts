@@ -16,7 +16,7 @@ export async function GET() {
       }
 
       for (const item of items) {
-        // 1. Check if GUID exists (PGRST116 means not found)
+        // 1. Check if GUID exists just for logging (we will upsert anyway)
         const { data: existing, error: checkError } = await supabase
           .from("news")
           .select("id")
@@ -25,7 +25,6 @@ export async function GET() {
           
         if (checkError && checkError.code !== 'PGRST116') {
           console.error(`[Ingestion] Error checking GUID for ${source.name}: ${checkError.message}`);
-          // If the table is missing, return immediately with a clear error
           if (checkError.message.includes("relation") || checkError.message.includes("does not exist")) {
             return NextResponse.json({
               success: false,
@@ -33,23 +32,21 @@ export async function GET() {
             });
           }
           results.push({ source: source.name, error: checkError.message });
-          break; // Stop for this source
+          break;
         }
 
-        if (!existing) {
-          // 2. Insert new article
-          const { error: insertError } = await supabase.from("news").insert({
-            guid: item.guid,
-            source_id: source.id,
-            region: source.region,
-            title: item.title,
-            link: item.link,
-            published_at: item.pubDate ? new Date(item.pubDate).toISOString() : null,
-          });
-          
-          if (!insertError) newCount++;
-          else console.error(`[Ingestion] Insert Error: ${insertError.message}`);
-        }
+        // 2. Upsert article to overwrite any previously mangled text (e.g. broken windows-1251 encoding)
+        const { error: upsertError } = await supabase.from("news").upsert({
+          guid: item.guid,
+          source_id: source.id,
+          region: source.region,
+          title: item.title,
+          link: item.link,
+          published_at: item.pubDate ? new Date(item.pubDate).toISOString() : null,
+        }, { onConflict: 'guid' });
+        
+        if (!upsertError && !existing) newCount++;
+        if (upsertError) console.error(`[Ingestion] Upsert Error for ${source.name}: ${upsertError.message}`);
       }
       
       results.push({ source: source.name, fetched: items.length, new: newCount });

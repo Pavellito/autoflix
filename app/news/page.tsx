@@ -174,14 +174,17 @@ export default function NewsPage() {
   const russiaNews = news.filter(n => n.region === "ru");
   const arabicNews = news.filter(n => n.region === "ar");
 
+  const [heroImgSrc, setHeroImgSrc] = useState(getDeterministicImage(featured?.id || ""));
+
   return (
     <div className="min-h-screen bg-black pb-24">
       {/* Netflix-style Hero Banner for News */}
       <div className="relative h-[70vh] mb-12 bg-black overflow-hidden group">
         <div className="absolute inset-0 w-full h-[120%] -top-[10%] z-0">
           <img
-            src={getDeterministicImage(featured.id)}
+            src={heroImgSrc}
             alt={featured.title}
+            onError={() => setHeroImgSrc("https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1600&auto=format&fit=crop")}
             className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[20s] ease-out"
           />
         </div>
@@ -243,16 +246,18 @@ function NewsRow({ title, items }: { title: string; items: NewsItem[] }) {
 
 function NewsCard({ item }: { item: NewsItem }) {
   const [showSummary, setShowSummary] = useState(false);
-  const image = getDeterministicImage(item.id);
+  const [imgSrc, setImgSrc] = useState(getDeterministicImage(item.id));
 
   return (
     <div className="snap-start flex-shrink-0 w-[300px] md:w-[400px] group relative flex flex-col">
       <div className="relative aspect-video rounded-xl overflow-hidden bg-card-bg mb-4 shadow-xl border border-white/5 transition-all duration-300 group-hover:border-accent/40 group-hover:shadow-[0_0_20px_rgba(229,9,20,0.2)]">
         <img
-          src={image}
+          src={imgSrc}
           alt={item.title}
+          onError={() => setImgSrc("https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=500&auto=format&fit=crop")}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
         />
+
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
         
         {/* Source Badge */}

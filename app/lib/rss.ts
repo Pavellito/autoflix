@@ -1,4 +1,5 @@
 import Parser from "rss-parser";
+import iconv from "iconv-lite";
 
 export interface RSSSource {
   id: string;
@@ -36,14 +37,19 @@ export async function fetchRSSFeed(url: string) {
     }
 
     const arrayBuffer = await response.arrayBuffer();
-    let text = new TextDecoder("utf-8").decode(arrayBuffer);
+    const buffer = Buffer.from(arrayBuffer);
+    
+    // First try decoding as utf-8
+    let text = iconv.decode(buffer, "utf-8");
     
     // Detect custom encoding from XML declaration
     const match = text.match(/<\?xml[^>]*encoding=['"]([^'"]+)['"]/i);
     if (match && match[1].toLowerCase() !== 'utf-8') {
       const encoding = match[1].toLowerCase();
       try {
-        text = new TextDecoder(encoding).decode(arrayBuffer);
+        if (iconv.encodingExists(encoding)) {
+          text = iconv.decode(buffer, encoding);
+        }
       } catch (e) {
          console.warn(`[RSS] Unsupported encoding ${encoding} for ${url}, using utf-8 fallback`);
       }
