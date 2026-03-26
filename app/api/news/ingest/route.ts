@@ -43,6 +43,8 @@ export async function GET() {
           title: item.title,
           link: item.link,
           published_at: item.pubDate ? new Date(item.pubDate).toISOString() : null,
+          image_url: item.imageUrl,
+          content: item.content,
         }, { onConflict: 'guid' });
         
         if (!upsertError && !existing) newCount++;

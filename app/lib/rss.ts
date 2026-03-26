@@ -26,7 +26,15 @@ export const RSS_SOURCES: RSSSource[] = [
   { id: "arabgt", name: "ArabGT", url: "https://www.arabgt.com/feed/", region: "ar" },
 ];
 
-const parser = new Parser();
+const parser = new Parser({
+  customFields: {
+    item: [
+      ['media:content', 'mediaContent'],
+      ['media:thumbnail', 'mediaThumbnail'],
+      ['content:encoded', 'contentEncoded']
+    ]
+  }
+});
 
 export async function fetchRSSFeed(url: string) {
   try {
@@ -56,14 +64,32 @@ export async function fetchRSSFeed(url: string) {
     }
 
     const feed = await parser.parseString(text);
-    return feed.items.map((item: any) => ({
-      title: item.title,
-      link: item.link,
-      pubDate: item.pubDate,
-      contentSnippet: item.contentSnippet,
-      guid: item.guid || item.link,
-      creator: item.creator,
-    }));
+    return feed.items.map((item: any) => {
+      // 1. Extract high-quality image URL from various possible RSS schemas
+      let imageUrl = null;
+      if (item.enclosure?.url) imageUrl = item.enclosure.url;
+      else if (item.mediaContent?.['$']?.url) imageUrl = item.mediaContent['$'].url;
+      else if (item.mediaThumbnail?.['$']?.url) imageUrl = item.mediaThumbnail['$'].url;
+      // Fallback: regex search through the HTML body for the first <img> tag
+      else if (item.content || item.contentEncoded) {
+         const imgMatch = (item.content || item.contentEncoded).match(/<img[^>]+src=["']([^"']+)["']/i);
+         if (imgMatch) imageUrl = imgMatch[1];
+      }
+
+      // 2. Extract full HTML article content
+      const fullContent = item.contentEncoded || item.content || item.contentSnippet || "";
+
+      return {
+        title: item.title,
+        link: item.link,
+        pubDate: item.pubDate,
+        contentSnippet: item.contentSnippet,
+        guid: item.guid || item.link,
+        creator: item.creator,
+        imageUrl,
+        content: fullContent
+      };
+    });
   } catch (error) {
     console.error(`[RSS] Error parsing feed from ${url}:`, error);
     return [];

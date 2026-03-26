@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/app/lib/supabase";
 import AiSummary from "@/app/components/AiSummary";
 import { cars } from "@/app/lib/data";
+import Link from "next/link";
 
 interface NewsItem {
   id: string;
@@ -13,6 +14,8 @@ interface NewsItem {
   source_id: string;
   published_at: string;
   summary: any;
+  image_url?: string;
+  content?: string;
 }
 
 // A massively expanded pool of premium automotive/tech abstract photos to prevent any perceived duplication
@@ -186,7 +189,7 @@ export default function NewsPage() {
 }
 
 function HeroNews({ featured }: { featured: NewsItem }) {
-  const [heroImgSrc, setHeroImgSrc] = useState(getDeterministicImage(featured.id));
+  const [heroImgSrc, setHeroImgSrc] = useState(featured.image_url || getDeterministicImage(featured.id));
 
   return (
     <div className="relative h-[70vh] mb-12 bg-black overflow-hidden group">
@@ -214,15 +217,13 @@ function HeroNews({ featured }: { featured: NewsItem }) {
           {featured.title}
         </h1>
         <div className="flex flex-wrap gap-4">
-          <a
-            href={featured.link}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={`/news/${featured.id}`}
             className="flex items-center gap-2 bg-white text-black px-8 py-3 rounded font-black uppercase text-xs tracking-widest hover:bg-accent hover:text-white transition-all shadow-xl"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
             Read Article
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -247,7 +248,7 @@ function NewsRow({ title, items }: { title: string; items: NewsItem[] }) {
 
 function NewsCard({ item }: { item: NewsItem }) {
   const [showSummary, setShowSummary] = useState(false);
-  const [imgSrc, setImgSrc] = useState(getDeterministicImage(item.id));
+  const [imgSrc, setImgSrc] = useState(item.image_url || getDeterministicImage(item.id));
 
   return (
     <div className="snap-start flex-shrink-0 w-[300px] md:w-[400px] group relative flex flex-col">
@@ -281,10 +282,10 @@ function NewsCard({ item }: { item: NewsItem }) {
       </div>
 
       <div className="px-1 flex flex-col flex-grow">
-        <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 leading-tight group-hover:text-accent transition-colors">
-          <a href={item.link} target="_blank" rel="noopener noreferrer">
+        <h3 className="text-lg font-bold text-white mb-2 line-clamp-4 leading-tight group-hover:text-accent transition-colors">
+          <Link href={`/news/${item.id}`}>
             {item.title}
-          </a>
+          </Link>
         </h3>
         <p className="text-gray-500 text-xs font-medium uppercase tracking-wider mb-3">
           {new Date(item.published_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
