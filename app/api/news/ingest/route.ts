@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { RSS_SOURCES, fetchRSSFeed } from "@/app/lib/rss";
 import { supabase } from "@/app/lib/supabase";
 
+export const maxDuration = 60; // Allow Vercel hobby tier to run up to 60s for massive RSS dumps
+
 export async function GET() {
   const results = [];
   

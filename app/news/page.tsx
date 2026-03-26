@@ -175,7 +175,7 @@ export default function NewsPage() {
 
   return (
     <div className="min-h-screen bg-black pb-24">
-      <HeroNews featured={featured} />
+      <HeroNews featured={featured} onSync={triggerIngestion} isSyncing={syncing} />
 
       {/* Horizontal Scrolling Rows */}
       <div className="space-y-12">
@@ -188,7 +188,7 @@ export default function NewsPage() {
   );
 }
 
-function HeroNews({ featured }: { featured: NewsItem }) {
+function HeroNews({ featured, onSync, isSyncing }: { featured: NewsItem, onSync: () => void, isSyncing: boolean }) {
   const [heroImgSrc, setHeroImgSrc] = useState(featured.image_url || getDeterministicImage(featured.id));
 
   return (
@@ -205,13 +205,27 @@ function HeroNews({ featured }: { featured: NewsItem }) {
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
 
       <div className="relative z-20 h-full flex flex-col justify-end pb-16 px-4 md:px-12 max-w-4xl">
-        <div className="flex items-center gap-3 mb-4">
-          <span className="bg-accent text-white px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg">
-            Breaking
-          </span>
-          <span className="text-gray-300 text-xs font-bold uppercase tracking-wider">
-            {featured.source_id.replace('-', ' ')}
-          </span>
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <span className="bg-accent text-white px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg">
+              Breaking
+            </span>
+            <span className="text-gray-300 text-xs font-bold uppercase tracking-wider">
+              {featured.source_id.replace('-', ' ')}
+            </span>
+          </div>
+          <button 
+            onClick={onSync}
+            disabled={isSyncing}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white backdrop-blur-md px-4 py-1.5 rounded-sm text-[10px] font-black leading-none uppercase tracking-widest transition-all disabled:opacity-50"
+          >
+            {isSyncing ? (
+              <>
+                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                FETCHING...
+              </>
+            ) : "🔄 LIVE SYNC"}
+          </button>
         </div>
         <h1 className="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-2xl leading-tight tracking-tighter italic">
           {featured.title}
