@@ -4,15 +4,8 @@ import { cars, getCarById, getRelatedVideosForCar } from "@/app/lib/data";
 import VideoCard from "@/app/components/VideoCard";
 import CompareVerdict from "@/app/components/CompareVerdict";
 
-export function generateStaticParams() {
-  const slugs = [];
-  for (let i = 0; i < cars.length; i++) {
-    for (let j = i + 1; j < cars.length; j++) {
-      slugs.push({ slug: `${cars[i].id}-vs-${cars[j].id}` });
-    }
-  }
-  return slugs;
-}
+// Force dynamic rendering so all car combos work without rebuild
+export const dynamic = "force-dynamic";
 
 export default async function CompareDetailPage({
   params,
