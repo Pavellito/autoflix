@@ -74,7 +74,11 @@ Do not include markdown backticks.`;
       textResult = chatCompletion.choices[0]?.message?.content || "";
     }
 
-    return NextResponse.json(JSON.parse(textResult.trim()));
+    const responseData = JSON.parse(textResult.trim());
+    return NextResponse.json({
+      ...responseData,
+      region: region || "us"
+    });
   } catch (error: any) {
     console.error("[Recommendation API Error]", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

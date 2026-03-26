@@ -182,6 +182,12 @@ export default function QuizPage() {
 }
 
 function QuizResults({ results, onReset }: { results: any; onReset: () => void }) {
+  const getRegionalPrice = (car: any) => {
+    const region = results.region || "us";
+    const prices: any = car.prices || {};
+    return prices[region] || car.price || "Contact for Price";
+  };
+
   return (
     <div className="min-h-screen bg-black pt-24 pb-12 px-4 animate-in fade-in duration-700">
       <div className="max-w-4xl mx-auto">
@@ -195,7 +201,7 @@ function QuizResults({ results, onReset }: { results: any; onReset: () => void }
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          {results.recommendations.map((rec: any, i: number) => {
+          {results.recommendations?.map((rec: any, i: number) => {
             const car = cars.find(c => c.id === rec.carId);
             if (!car) return null;
             return (
@@ -205,7 +211,10 @@ function QuizResults({ results, onReset }: { results: any; onReset: () => void }
                 </div>
                 <img src={car.image} alt={car.name} className="w-full aspect-[16/9] object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="p-8">
-                  <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter mb-4">{car.name}</h3>
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">{car.name}</h3>
+                    <span className="text-accent font-black text-sm">{getRegionalPrice(car)}</span>
+                  </div>
                   <p className="text-gray-300 text-sm leading-relaxed font-medium italic mb-6">"{rec.why}"</p>
                   <Link 
                     href={`/cars/${car.id}`}
