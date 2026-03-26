@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getVideoById, getVideosByCategory } from "@/app/lib/data";
 import VideoCard from "@/app/components/VideoCard";
+import AiSummary from "@/app/components/AiSummary";
 
 export default async function VideoPage({
   params,
@@ -51,15 +52,7 @@ export default async function VideoPage({
         </div>
         <p className="text-gray-300 max-w-3xl">{video.description}</p>
 
-        {/* AI Summary placeholder for Step 3 */}
-        <div className="mt-6 p-4 rounded-lg bg-card-bg border border-white/10">
-          <h3 className="text-sm font-semibold text-accent mb-2">
-            AI Summary
-          </h3>
-          <p className="text-sm text-gray-500 italic">
-            Coming soon — AI-powered summary of this video.
-          </p>
-        </div>
+        <AiSummary title={video.title} description={video.description} />
       </div>
 
       {/* Related videos */}
