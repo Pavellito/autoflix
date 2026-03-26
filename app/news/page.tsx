@@ -20,6 +20,7 @@ export default function NewsPage() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const [setupSql, setSetupSql] = useState<string | null>(null);
   const autoSyncAttempted = useRef(false);
 
   async function fetchNews() {
@@ -34,10 +35,9 @@ export default function NewsPage() {
         setNews(data);
         return data.length;
       }
-      // Table likely doesn't exist
       if (error) {
         console.warn("[News] Supabase error:", error.message);
-        setSyncError(error.message.includes("relation") ? "The 'news' table doesn't exist yet in Supabase." : error.message);
+        setSyncError("The 'news' table doesn't exist yet in Supabase.");
       }
       return 0;
     } catch (e: any) {
@@ -51,14 +51,26 @@ export default function NewsPage() {
   async function triggerIngestion() {
     setSyncing(true);
     setSyncError(null);
+    setSetupSql(null);
     try {
+      // First try to auto-setup the table
+      const setupRes = await fetch("/api/news/setup");
+      const setupData = await setupRes.json();
+      
+      if (!setupData.success && setupData.sql) {
+        setSyncError(setupData.message);
+        setSetupSql(setupData.sql);
+        setSyncing(false);
+        return;
+      }
+
+      // If setup worked (or table already existed), run ingest
       const res = await fetch("/api/news/ingest");
       const data = await res.json();
       if (data.success) {
-        // Re-fetch news after ingestion
         await fetchNews();
       } else {
-        setSyncError(data.error || "Ingestion failed. Check if the 'news' table exists in Supabase.");
+        setSyncError(data.error || "Ingestion failed.");
       }
     } catch (e: any) {
       setSyncError("Network error: " + e.message);
@@ -70,7 +82,6 @@ export default function NewsPage() {
   useEffect(() => {
     async function init() {
       const count = await fetchNews();
-      // Auto-sync on first visit if no news found
       if (count === 0 && !autoSyncAttempted.current) {
         autoSyncAttempted.current = true;
         await triggerIngestion();
@@ -91,7 +102,6 @@ export default function NewsPage() {
           </p>
         </header>
 
-        {/* Region Filters */}
         <div className="flex flex-wrap justify-center gap-2 mb-12">
           {["all", "global", "il", "ru", "ar"].map((r) => (
             <button
@@ -116,25 +126,34 @@ export default function NewsPage() {
             </p>
           </div>
         ) : news.length === 0 ? (
-          <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10 shadow-xl max-w-2xl mx-auto px-6">
+          <div className="text-center py-12 lg:py-20 bg-white/5 rounded-3xl border border-white/10 shadow-xl max-w-3xl mx-auto px-6">
             <div className="w-16 h-16 bg-accent/20 text-accent rounded-full flex items-center justify-center mx-auto mb-6">
               <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </div>
             <h3 className="text-2xl font-black text-white uppercase italic mb-4">Content Feed Offline</h3>
+            
             {syncError && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 text-left">
-                <p className="text-red-400 text-sm font-mono">{syncError}</p>
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 text-left inline-block">
+                <p className="text-red-400 text-sm font-mono whitespace-pre-wrap">{syncError}</p>
               </div>
             )}
-            <p className="text-gray-400 mb-8 leading-relaxed">
-              To activate the news engine, ensure the <span className="text-white font-bold">"news"</span> table exists in your Supabase dashboard.
-            </p>
+
+            {setupSql && (
+              <div className="bg-black border border-white/20 rounded-xl p-6 mb-8 text-left text-sm max-w-2xl mx-auto overflow-auto relative group">
+                <div className="absolute top-4 right-4 text-gray-500 font-mono text-[10px] uppercase tracking-widest bg-white/5 px-2 py-1 rounded">SQL Editor</div>
+                <pre className="text-green-400 font-mono whitespace-pre-wrap pr-16">{setupSql}</pre>
+                <div className="mt-4 pt-4 border-t border-white/10 text-gray-400 text-xs text-center">
+                  Copy this code and run it in your Supabase dashboard → SQL Editor → New Query.
+                </div>
+              </div>
+            )}
+            
             <button 
               onClick={triggerIngestion}
               disabled={syncing}
-              className="px-8 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all disabled:opacity-50"
+              className="mt-4 px-8 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all disabled:opacity-50"
             >
               {syncing ? "Syncing..." : "Retry Sync"}
             </button>

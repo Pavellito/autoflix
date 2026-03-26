@@ -697,7 +697,7 @@ export const cars: Car[] = [
       us: "Affordable alternative but limited dealer network.",
       ar: "Compact size makes it a great secondary city car for GCC families.",
     },
-    image: "https://cdn.motor1.com/images/mgl/BXx7eQ/s3/mg4-electric.jpg",
+    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2070&auto=format&fit=crop",
     relatedVideoIds: ["10", "15"],
   },
   {
@@ -720,7 +720,7 @@ export const cars: Car[] = [
       us: "Volvo's entry-level EV; small size but premium minimalist interior.",
       ar: "High-quality AC system; great for urban premium lifestyles in Dubai/Riyadh.",
     },
-    image: "https://cdn.motor1.com/images/mgl/MkO8QG/s3/volvo-ex30.jpg",
+    image: "https://images.unsplash.com/photo-1619767889222-38ecc1c6a2e8?q=80&w=2128&auto=format&fit=crop",
     relatedVideoIds: ["5", "18"],
   },
   {
@@ -743,7 +743,7 @@ export const cars: Car[] = [
       us: "Top-tier electric crossover; rivals the Model Y in tech and charging speed.",
       ar: "Futuristic design stands out; massive dealership support across the Middle East.",
     },
-    image: "https://cdn.motor1.com/images/mgl/ZnpYV0/s3/kia-ev6.jpg",
+    image: "https://images.unsplash.com/photo-1620891549027-942fdc95d3f5?q=80&w=2070&auto=format&fit=crop",
     relatedVideoIds: ["3", "27"],
   },
   {
@@ -766,7 +766,7 @@ export const cars: Car[] = [
       us: "One of the best long-distance cruisers; exceptional drag coefficient.",
       ar: "Cools down very quickly due to smart aerodynamics; great for luxury commutes.",
     },
-    image: "https://cdn.motor1.com/images/mgl/W81gVM/s3/hyundai-ioniq-6.jpg",
+    image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop",
     relatedVideoIds: ["24", "41"],
   },
   {
@@ -789,7 +789,7 @@ export const cars: Car[] = [
       us: "Practical family crossover with the soul of a Mustang; great blue cruise tech.",
       ar: "High-spec interior stays premium in heat; iconic design for the GCC streets.",
     },
-    image: "https://cdn.motor1.com/images/mgl/rKQnE0/s3/ford-mustang-mach-e.jpg",
+    image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=2128&auto=format&fit=crop",
     relatedVideoIds: ["7", "33"],
   },
 ];
