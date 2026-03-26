@@ -697,7 +697,7 @@ export const cars: Car[] = [
       us: "Affordable alternative but limited dealer network.",
       ar: "Compact size makes it a great secondary city car for GCC families.",
     },
-    image: "https://images.unsplash.com/photo-1692271810574-e8656f4d360f?q=80&w=2070&auto=format&fit=crop",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/MG4_Electric_%28SZS_130%29%2C_2023%2C_front_8.8.23.jpg/1280px-MG4_Electric_%28SZS_130%29%2C_2023%2C_front_8.8.23.jpg",
     relatedVideoIds: ["10", "15"],
   },
   {
@@ -720,7 +720,7 @@ export const cars: Car[] = [
       us: "Volvo's entry-level EV; small size but premium minimalist interior.",
       ar: "High-quality AC system; great for urban premium lifestyles in Dubai/Riyadh.",
     },
-    image: "https://images.unsplash.com/photo-1701389547844-42b714574972?q=80&w=2128&auto=format&fit=crop",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Volvo_EX30_Single_Motor_Extended_Range_Plus_%28MY_2024%29_%E2%80%93_f_30032024.jpg/1280px-Volvo_EX30_Single_Motor_Extended_Range_Plus_%28MY_2024%29_%E2%80%93_f_30032024.jpg",
     relatedVideoIds: ["5", "18"],
   },
   {
@@ -743,7 +743,7 @@ export const cars: Car[] = [
       us: "Top-tier electric crossover; rivals the Model Y in tech and charging speed.",
       ar: "Futuristic design stands out; massive dealership support across the Middle East.",
     },
-    image: "https://images.unsplash.com/photo-1678912952402-23961d76378e?q=80&w=2070&auto=format&fit=crop",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Kia_EV6_%28MY_2022%29_%E2%80%93_f_22082022.jpg/1280px-Kia_EV6_%28MY_2022%29_%E2%80%93_f_22082022.jpg",
     relatedVideoIds: ["3", "27"],
   },
   {
@@ -766,7 +766,7 @@ export const cars: Car[] = [
       us: "One of the best long-distance cruisers; exceptional drag coefficient.",
       ar: "Cools down very quickly due to smart aerodynamics; great for luxury commutes.",
     },
-    image: "https://images.unsplash.com/photo-1698656123041-36f78f69668d?q=80&w=2070&auto=format&fit=crop",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Hyundai_Ioniq_6_%28SB2%29_1X7A0110.jpg/1280px-Hyundai_Ioniq_6_%28SB2%29_1X7A0110.jpg",
     relatedVideoIds: ["24", "41"],
   },
   {
@@ -789,7 +789,7 @@ export const cars: Car[] = [
       us: "Practical family crossover with the soul of a Mustang; great blue cruise tech.",
       ar: "High-spec interior stays premium in heat; iconic design for the GCC streets.",
     },
-    image: "https://images.unsplash.com/photo-1678825832788-b2de69ce8028?q=80&w=2128&auto=format&fit=crop",
+    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Ford_Mustang_Mach-E_4x_IMG_3881.jpg/1280px-Ford_Mustang_Mach-E_4x_IMG_3881.jpg",
     relatedVideoIds: ["7", "33"],
   },
 ];

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/app/lib/supabase";
 import AiSummary from "@/app/components/AiSummary";
 
@@ -18,22 +18,65 @@ export default function NewsPage() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const autoSyncAttempted = useRef(false);
 
-  useEffect(() => {
-    async function fetchNews() {
-      setLoading(true);
+  async function fetchNews() {
+    setLoading(true);
+    try {
       let query = supabase.from("news").select("*").order("published_at", { ascending: false }).limit(20);
-      
       if (filter !== "all") {
         query = query.eq("region", filter);
       }
-      
       const { data, error } = await query;
-      if (!error && data) setNews(data);
+      if (!error && data) {
+        setNews(data);
+        return data.length;
+      }
+      // Table likely doesn't exist
+      if (error) {
+        console.warn("[News] Supabase error:", error.message);
+        setSyncError(error.message.includes("relation") ? "The 'news' table doesn't exist yet in Supabase." : error.message);
+      }
+      return 0;
+    } catch (e: any) {
+      console.warn("[News] Fetch error:", e);
+      return 0;
+    } finally {
       setLoading(false);
     }
-    
-    fetchNews();
+  }
+
+  async function triggerIngestion() {
+    setSyncing(true);
+    setSyncError(null);
+    try {
+      const res = await fetch("/api/news/ingest");
+      const data = await res.json();
+      if (data.success) {
+        // Re-fetch news after ingestion
+        await fetchNews();
+      } else {
+        setSyncError(data.error || "Ingestion failed. Check if the 'news' table exists in Supabase.");
+      }
+    } catch (e: any) {
+      setSyncError("Network error: " + e.message);
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  useEffect(() => {
+    async function init() {
+      const count = await fetchNews();
+      // Auto-sync on first visit if no news found
+      if (count === 0 && !autoSyncAttempted.current) {
+        autoSyncAttempted.current = true;
+        await triggerIngestion();
+      }
+    }
+    init();
   }, [filter]);
 
   return (
@@ -65,10 +108,12 @@ export default function NewsPage() {
           ))}
         </div>
 
-        {loading ? (
+        {loading || syncing ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <div className="w-12 h-12 border-4 border-accent/20 border-t-accent rounded-full animate-spin" />
-            <p className="text-gray-500 font-medium">Syncing with global news wires...</p>
+            <p className="text-gray-500 font-medium">
+              {syncing ? "Pulling latest news from global sources..." : "Loading news feed..."}
+            </p>
           </div>
         ) : news.length === 0 ? (
           <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10 shadow-xl max-w-2xl mx-auto px-6">
@@ -78,29 +123,21 @@ export default function NewsPage() {
               </svg>
             </div>
             <h3 className="text-2xl font-black text-white uppercase italic mb-4">Content Feed Offline</h3>
+            {syncError && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 text-left">
+                <p className="text-red-400 text-sm font-mono">{syncError}</p>
+              </div>
+            )}
             <p className="text-gray-400 mb-8 leading-relaxed">
-              To activate the news engine, ensure the <span className="text-white font-bold">"news"</span> table exists in your Supabase dashboard. 
-              Run the SQL script from our <span className="text-accent underline">Handover Guide</span> first.
+              To activate the news engine, ensure the <span className="text-white font-bold">"news"</span> table exists in your Supabase dashboard.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={async () => {
-                  const res = await fetch("/api/news/ingest");
-                  const data = await res.json();
-                  if (data.success) window.location.reload();
-                  else alert("Ingestion failed: " + (data.error || "Check database table."));
-                }}
-                className="px-8 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all"
-              >
-                Sync News Now
-              </button>
-              <a 
-                href="/walkthrough_2.0.md" 
-                className="px-8 py-3 bg-white/5 text-gray-400 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10 hover:bg-white/10 hover:text-white transition-all"
-              >
-                View Setup Guide
-              </a>
-            </div>
+            <button 
+              onClick={triggerIngestion}
+              disabled={syncing}
+              className="px-8 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all disabled:opacity-50"
+            >
+              {syncing ? "Syncing..." : "Retry Sync"}
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -163,7 +200,7 @@ function NewsCard({ item }: { item: NewsItem }) {
           <AiSummary 
             videoId={item.id} 
             title={item.title} 
-            description={item.title} // Use title as description for news
+            description={item.title}
           />
         </div>
       )}
