@@ -2,20 +2,21 @@ import { NextResponse } from "next/server";
 import { RSS_SOURCES, fetchRSSFeed } from "@/app/lib/rss";
 import { supabase } from "@/app/lib/supabase";
 
-// Trigger AI Processing (We'll call our existing internal logic or a separate function)
-async function getAISummaryForNews(title: string, content: string) {
-  // We'll reuse the logic from /api/summary but tailored for news
-  // For now, we'll return null and let a separate process or the UI trigger it
-  // to avoid hitting rate limits During bulk ingestion.
-  return null;
-}
-
 export async function GET() {
   const results = [];
   
   try {
+    for (const source of RSS_SOURCES) {
+      let newCount = 0;
+      const items = await fetchRSSFeed(source.url);
+      
+      if (!items || items.length === 0) {
+        results.push({ source: source.name, status: "Empty feed" });
+        continue;
+      }
+
       for (const item of items) {
-        // 1. Check if GUID exists
+        // 1. Check if GUID exists (PGRST116 means not found)
         const { data: existing, error: checkError } = await supabase
           .from("news")
           .select("id")
@@ -23,9 +24,9 @@ export async function GET() {
           .single();
           
         if (checkError && checkError.code !== 'PGRST116') {
-          console.error(`[Ingestion] Error checking GUID: ${checkError.message}`);
-          results.push({ source: source.name, error: "Database table 'news' might be missing. Please run the SQL from supabase_tables.md." });
-          break; // Stop for this source if table error
+          console.error(`[Ingestion] Error checking GUID for ${source.name}: ${checkError.message}`);
+          results.push({ source: source.name, error: "Database error. Table 'news' might be missing." });
+          break; // Stop for this source
         }
 
         if (!existing) {
@@ -54,6 +55,10 @@ export async function GET() {
     });
   } catch (error: any) {
     console.error("[Ingestion Error]", error);
-    return NextResponse.json({ success: false, error: "Ingestion failed. Ensure Supabase 'news' table exists.", details: error.message }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      error: "Ingestion failed. Ensure Supabase 'news' table exists.", 
+      details: error.message 
+    }, { status: 500 });
   }
 }

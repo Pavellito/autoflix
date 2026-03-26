@@ -75,8 +75,24 @@ Do not include markdown backticks.`;
     }
 
     const responseData = JSON.parse(textResult.trim());
+    
+    // Strict Validation: Ensure AI only returns IDs that actually exist in our data.ts
+    const validRecommendations = (responseData.recommendations || [])
+      .filter((rec: any) => cars.some(c => c.id === rec.carId))
+      .slice(0, 2);
+
+    // Fallback if AI failed to provide valid IDs
+    if (validRecommendations.length === 0) {
+      validRecommendations.push({
+        carId: "car-1",
+        why: "The Tesla Model 3 is a versatile all-rounder that fits most electric lifestyles perfectly.",
+        score: 90
+      });
+    }
+
     return NextResponse.json({
       ...responseData,
+      recommendations: validRecommendations,
       region: region || "us"
     });
   } catch (error: any) {
