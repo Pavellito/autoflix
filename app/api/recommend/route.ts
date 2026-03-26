@@ -3,10 +3,16 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import Groq from "groq-sdk";
 import { cars } from "@/app/lib/data";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-
 export async function POST(request: Request) {
+  const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
+  const GROQ_KEY = process.env.GROQ_API_KEY || "";
+
+  if (!GEMINI_KEY && !GROQ_KEY) {
+    return NextResponse.json({ error: "AI Providers not configured. Please add GEMINI_API_KEY/GROQ_API_KEY to environment." }, { status: 500 });
+  }
+
+  const genAI = new GoogleGenerativeAI(GEMINI_KEY);
+  const groq = new Groq({ apiKey: GROQ_KEY || "dummy_key" }); // Use dummy to prevent constructor crash if missing
   try {
     const { 
       budget, 
