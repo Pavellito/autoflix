@@ -22,6 +22,8 @@ export async function POST(request: Request) {
     ).join(", ");
 
     const prompt = `You are the AutoFlix AI Advisor. 
+IMPORTANT: Your ID selection MUST exactly match one of these IDs: [${cars.map(c => c.id).join(", ")}].
+
 User Profile:
 - Region: ${region}
 - Budget: ${budget}
@@ -38,12 +40,12 @@ Structure:
 {
   "recommendations": [
     {
-      "carId": "car-X",
+      "carId": "car-1", // MUST BE EXACT ID from the list
       "why": "Specific 2-sentence reason for this user in their region.",
-      "score": 95 // out of 100
+      "score": 95 
     },
     {
-      "carId": "car-Y",
+      "carId": "car-5", // MUST BE EXACT ID from the list
       "why": "Specific 2-sentence reason.",
       "score": 88
     }

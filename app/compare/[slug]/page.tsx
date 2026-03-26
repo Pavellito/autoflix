@@ -20,15 +20,20 @@ export default async function CompareDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const match = slug.match(/^(.+)-vs-(.+)$/);
+  
+  // More robust parsing for complex IDs
+  const parts = slug.split("-vs-");
+  if (parts.length !== 2) notFound();
 
-  if (!match) notFound();
-
-  const [, id1, id2] = match;
+  const [id1, id2] = parts;
   const car1 = getCarById(id1);
   const car2 = getCarById(id2);
 
-  if (!car1 || !car2) notFound();
+  if (!car1 || !car2) {
+    // Try one last thing: check if IDs are swapped or slightly different
+    console.error(`Comparison failed: ${id1} vs ${id2}`);
+    notFound();
+  }
 
   const car1Videos = getRelatedVideosForCar(car1).slice(0, 2);
   const car2Videos = getRelatedVideosForCar(car2).slice(0, 2);

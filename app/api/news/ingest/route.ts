@@ -14,20 +14,20 @@ export async function GET() {
   const results = [];
   
   try {
-    for (const source of RSS_SOURCES) {
-      console.log(`[Ingestion] Fetching source: ${source.name}...`);
-      const items = await fetchRSSFeed(source.url);
-      
-      let newCount = 0;
-      
       for (const item of items) {
         // 1. Check if GUID exists
-        const { data: existing } = await supabase
+        const { data: existing, error: checkError } = await supabase
           .from("news")
           .select("id")
           .eq("guid", item.guid)
           .single();
           
+        if (checkError && checkError.code !== 'PGRST116') {
+          console.error(`[Ingestion] Error checking GUID: ${checkError.message}`);
+          results.push({ source: source.name, error: "Database table 'news' might be missing. Please run the SQL from supabase_tables.md." });
+          break; // Stop for this source if table error
+        }
+
         if (!existing) {
           // 2. Insert new article
           const { error: insertError } = await supabase.from("news").insert({
@@ -40,6 +40,7 @@ export async function GET() {
           });
           
           if (!insertError) newCount++;
+          else console.error(`[Ingestion] Insert Error: ${insertError.message}`);
         }
       }
       
@@ -53,6 +54,6 @@ export async function GET() {
     });
   } catch (error: any) {
     console.error("[Ingestion Error]", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Ingestion failed. Ensure Supabase 'news' table exists.", details: error.message }, { status: 500 });
   }
 }
