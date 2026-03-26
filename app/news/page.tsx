@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/app/lib/supabase";
 import AiSummary from "@/app/components/AiSummary";
+import { cars } from "@/app/lib/data";
 
 interface NewsItem {
   id: string;
@@ -14,9 +15,18 @@ interface NewsItem {
   summary: any;
 }
 
+// Deterministically pick an image from our premium pool based on the news ID
+function getDeterministicImage(text: string) {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = text.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % cars.length;
+  return cars[index].image;
+}
+
 export default function NewsPage() {
   const [news, setNews] = useState<NewsItem[]>([]);
-  const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
@@ -26,11 +36,8 @@ export default function NewsPage() {
   async function fetchNews() {
     setLoading(true);
     try {
-      let query = supabase.from("news").select("*").order("published_at", { ascending: false }).limit(20);
-      if (filter !== "all") {
-        query = query.eq("region", filter);
-      }
-      const { data, error } = await query;
+      // Fetch more items to populate our rows
+      const { data, error } = await supabase.from("news").select("*").order("published_at", { ascending: false }).limit(60);
       if (!error && data) {
         setNews(data);
         return data.length;
@@ -53,15 +60,12 @@ export default function NewsPage() {
     setSyncError(null);
     setSetupSql(null);
     try {
-      // Try to ingest data first. If the table exists, this works perfectly.
       const res = await fetch("/api/news/ingest");
       const data = await res.json();
       
       if (data.success) {
-        // Success! Re-fetch news to show them on screen.
         await fetchNews();
       } else {
-        // Ingestion failed. Let's check if the table is missing.
         if (data.error && (data.error.includes("relation") || data.error.includes("does not exist"))) {
           const setupRes = await fetch("/api/news/setup");
           const setupData = await setupRes.json();
@@ -87,141 +91,186 @@ export default function NewsPage() {
       }
     }
     init();
-  }, [filter]);
+  }, []);
+
+  if (loading || syncing) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center py-20 gap-4">
+        <div className="w-12 h-12 border-4 border-accent/20 border-t-accent rounded-full animate-spin" />
+        <p className="text-gray-500 font-medium tracking-widest uppercase text-sm">
+          {syncing ? "Pulling latest news from global sources..." : "Loading news feed..."}
+        </p>
+      </div>
+    );
+  }
+
+  if (news.length === 0) {
+    return (
+      <div className="min-h-screen bg-black pt-32 pb-12 px-4 md:px-8 flex items-center justify-center">
+        <div className="text-center py-12 lg:py-20 bg-card-bg/60 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl max-w-3xl mx-auto px-6 w-full">
+          <div className="w-16 h-16 bg-accent/20 text-accent rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(229,9,20,0.3)]">
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </div>
+          <h3 className="text-3xl font-black text-white uppercase italic mb-4">Content Feed Offline</h3>
+          
+          {syncError && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 text-left inline-block">
+              <p className="text-red-400 text-sm font-mono whitespace-pre-wrap">{syncError}</p>
+            </div>
+          )}
+
+          {setupSql && (
+            <div className="bg-black/80 border border-white/20 rounded-xl p-6 mb-8 text-left text-sm max-w-2xl mx-auto overflow-auto relative group shadow-inner">
+              <div className="absolute top-4 right-4 text-gray-500 font-mono text-[10px] uppercase tracking-widest bg-white/5 px-2 py-1 rounded">SQL Editor</div>
+              <pre className="text-green-400 font-mono whitespace-pre-wrap pr-16">{setupSql}</pre>
+              <div className="mt-4 pt-4 border-t border-white/10 text-gray-400 text-xs text-center">
+                Copy this code and run it in your Supabase dashboard → SQL Editor → New Query.
+              </div>
+            </div>
+          )}
+          
+          <button 
+            onClick={triggerIngestion}
+            disabled={syncing}
+            className="mt-4 px-8 py-4 bg-white text-black rounded-full text-xs font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all disabled:opacity-50 shadow-xl"
+          >
+            {syncing ? "Syncing..." : "Retry Sync"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const featured = news[0];
+  const globalNews = news.filter(n => n.region === "global").slice(1);
+  const israelNews = news.filter(n => n.region === "il");
+  const russiaNews = news.filter(n => n.region === "ru");
+  const arabicNews = news.filter(n => n.region === "ar");
 
   return (
-    <div className="min-h-screen bg-black pt-24 pb-12 px-4 md:px-8">
-      <div className="max-w-6xl mx-auto">
-        <header className="mb-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter italic">
-            DAILY <span className="text-accent">AUTO</span> NEWS
-          </h1>
-          <p className="text-gray-400 max-w-2xl mx-auto text-sm md:text-base">
-            Global insights, local updates, and AI-powered summaries from across the automotive world.
-          </p>
-        </header>
-
-        <div className="flex flex-wrap justify-center gap-2 mb-12">
-          {["all", "global", "il", "ru", "ar"].map((r) => (
-            <button
-              key={r}
-              onClick={() => setFilter(r)}
-              className={`px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all ${
-                filter === r 
-                ? "bg-accent text-white shadow-lg shadow-accent/20" 
-                : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
-              }`}
-            >
-              {r === "all" ? "Everywhere" : r === "il" ? "Israel 🇮🇱" : r === "ru" ? "Russia 🇷🇺" : r === "ar" ? "Arabic World 🇸🇦" : "Global 🌍"}
-            </button>
-          ))}
+    <div className="min-h-screen bg-black pb-24">
+      {/* Netflix-style Hero Banner for News */}
+      <div className="relative h-[70vh] mb-12 bg-black overflow-hidden group">
+        <div className="absolute inset-0 w-full h-[120%] -top-[10%] z-0">
+          <img
+            src={getDeterministicImage(featured.id)}
+            alt={featured.title}
+            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[20s] ease-out"
+          />
         </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
 
-        {loading || syncing ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="w-12 h-12 border-4 border-accent/20 border-t-accent rounded-full animate-spin" />
-            <p className="text-gray-500 font-medium">
-              {syncing ? "Pulling latest news from global sources..." : "Loading news feed..."}
-            </p>
+        <div className="relative z-20 h-full flex flex-col justify-end pb-16 px-4 md:px-12 max-w-4xl">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="bg-accent text-white px-3 py-1 rounded-sm text-[10px] font-black uppercase tracking-widest shadow-lg">
+              Breaking
+            </span>
+            <span className="text-gray-300 text-xs font-bold uppercase tracking-wider">
+              {featured.source_id.replace('-', ' ')}
+            </span>
           </div>
-        ) : news.length === 0 ? (
-          <div className="text-center py-12 lg:py-20 bg-white/5 rounded-3xl border border-white/10 shadow-xl max-w-3xl mx-auto px-6">
-            <div className="w-16 h-16 bg-accent/20 text-accent rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-black text-white uppercase italic mb-4">Content Feed Offline</h3>
-            
-            {syncError && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-6 text-left inline-block">
-                <p className="text-red-400 text-sm font-mono whitespace-pre-wrap">{syncError}</p>
-              </div>
-            )}
-
-            {setupSql && (
-              <div className="bg-black border border-white/20 rounded-xl p-6 mb-8 text-left text-sm max-w-2xl mx-auto overflow-auto relative group">
-                <div className="absolute top-4 right-4 text-gray-500 font-mono text-[10px] uppercase tracking-widest bg-white/5 px-2 py-1 rounded">SQL Editor</div>
-                <pre className="text-green-400 font-mono whitespace-pre-wrap pr-16">{setupSql}</pre>
-                <div className="mt-4 pt-4 border-t border-white/10 text-gray-400 text-xs text-center">
-                  Copy this code and run it in your Supabase dashboard → SQL Editor → New Query.
-                </div>
-              </div>
-            )}
-            
-            <button 
-              onClick={triggerIngestion}
-              disabled={syncing}
-              className="mt-4 px-8 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-accent hover:text-white transition-all disabled:opacity-50"
+          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-2xl leading-tight tracking-tighter italic">
+            {featured.title}
+          </h1>
+          <div className="flex flex-wrap gap-4">
+            <a
+              href={featured.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-white text-black px-8 py-3 rounded font-black uppercase text-xs tracking-widest hover:bg-accent hover:text-white transition-all shadow-xl"
             >
-              {syncing ? "Syncing..." : "Retry Sync"}
-            </button>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+              Read Article
+            </a>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {news.map((item) => (
-              <NewsCard key={item.id} item={item} />
-            ))}
-          </div>
-        )}
+        </div>
+      </div>
+
+      {/* Horizontal Scrolling Rows */}
+      <div className="space-y-12">
+        <NewsRow title="Global Fleet" items={globalNews} />
+        <NewsRow title="Israel Market 🇮🇱" items={israelNews} />
+        <NewsRow title="Russian Intel 🇷🇺" items={russiaNews} />
+        <NewsRow title="Arabic Region 🇸🇦" items={arabicNews} />
       </div>
     </div>
   );
 }
 
+function NewsRow({ title, items }: { title: string; items: NewsItem[] }) {
+  if (!items || items.length === 0) return null;
+  return (
+    <section className="relative">
+      <h2 className="text-xl md:text-2xl font-black text-white mb-4 px-4 md:px-12 uppercase italic tracking-tighter">
+        {title}
+      </h2>
+      <div className="flex gap-4 overflow-x-auto scrollbar-hide px-4 md:px-12 pb-8 pt-2 snap-x snap-mandatory">
+        {items.map((item) => (
+          <NewsCard key={item.id} item={item} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function NewsCard({ item }: { item: NewsItem }) {
   const [showSummary, setShowSummary] = useState(false);
+  const image = getDeterministicImage(item.id);
 
   return (
-    <div className="group bg-card-bg/60 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-accent/40 transition-all duration-300 shadow-xl overflow-hidden flex flex-col">
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <span className="px-2 py-0.5 bg-accent/20 text-accent text-[10px] font-black uppercase rounded tracking-widest">
-            {item.region}
-          </span>
-          <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">
-            {item.source_id.replace('-', ' ')} • {new Date(item.published_at).toLocaleDateString()}
-          </span>
-        </div>
+    <div className="snap-start flex-shrink-0 w-[300px] md:w-[400px] group relative flex flex-col">
+      <div className="relative aspect-video rounded-xl overflow-hidden bg-card-bg mb-4 shadow-xl border border-white/5 transition-all duration-300 group-hover:border-accent/40 group-hover:shadow-[0_0_20px_rgba(229,9,20,0.2)]">
+        <img
+          src={image}
+          alt={item.title}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
         
-        <h2 className="text-xl md:text-2xl font-bold text-white mb-3 leading-tight group-hover:text-accent transition-colors">
+        {/* Source Badge */}
+        <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md px-2 py-1 rounded text-[10px] font-black text-white uppercase tracking-widest border border-white/10">
+          {item.source_id.replace('-', ' ')}
+        </div>
+
+        {/* Floating AI Button inside Image */}
+        <button 
+          onClick={() => setShowSummary(!showSummary)}
+          className={`absolute bottom-3 right-3 p-2 rounded-full cursor-pointer backdrop-blur-md transition-all shadow-xl z-20 ${
+            showSummary ? "bg-accent text-white" : "bg-white/10 text-white hover:bg-accent/80 border border-white/20"
+          }`}
+          title="AI Summary"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="px-1 flex flex-col flex-grow">
+        <h3 className="text-lg font-bold text-white mb-2 line-clamp-2 leading-tight group-hover:text-accent transition-colors">
           <a href={item.link} target="_blank" rel="noopener noreferrer">
             {item.title}
           </a>
-        </h2>
-        
-        <div className="flex items-center gap-4 mt-auto">
-          <button 
-            onClick={() => setShowSummary(!showSummary)}
-            className={`flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-all ${
-              showSummary ? "text-accent" : "text-gray-400 hover:text-white"
-            }`}
-          >
-            <svg className={`w-4 h-4 transition-transform ${showSummary ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-            {showSummary ? "Hide AI Analysis" : "Show AI Analysis"}
-          </button>
-          <a 
-            href={item.link} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest ml-auto"
-          >
-            Source Website →
-          </a>
-        </div>
-      </div>
+        </h3>
+        <p className="text-gray-500 text-xs font-medium uppercase tracking-wider mb-3">
+          {new Date(item.published_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+        </p>
 
-      {showSummary && (
-        <div className="p-6 pt-0 animate-in slide-in-from-top-4 duration-300">
-          <AiSummary 
-            videoId={item.id} 
-            title={item.title} 
-            description={item.title}
-          />
-        </div>
-      )}
+        {showSummary && (
+          <div className="mt-2 bg-card-bg/80 border border-accent/20 rounded-xl p-4 animate-in slide-in-from-top-2 duration-300 z-30 absolute top-full left-0 w-full shadow-2xl">
+            <h4 className="text-[10px] text-accent font-black uppercase tracking-widest mb-2 flex items-center gap-1">
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              AutoFlix AI Analysis
+            </h4>
+            <AiSummary videoId={item.id} title={item.title} description={item.title} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

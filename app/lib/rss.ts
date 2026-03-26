@@ -29,8 +29,28 @@ const parser = new Parser();
 
 export async function fetchRSSFeed(url: string) {
   try {
-    const feed = await parser.parseURL(url);
-    return feed.items.map(item => ({
+    const response = await fetch(url, { headers: { "User-Agent": "AutoFlix/2.0" } });
+    if (!response.ok) {
+      console.warn(`[RSS] Failed to fetch ${url}: ${response.statusText}`);
+      return [];
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    let text = new TextDecoder("utf-8").decode(arrayBuffer);
+    
+    // Detect custom encoding from XML declaration
+    const match = text.match(/<\?xml[^>]*encoding=['"]([^'"]+)['"]/i);
+    if (match && match[1].toLowerCase() !== 'utf-8') {
+      const encoding = match[1].toLowerCase();
+      try {
+        text = new TextDecoder(encoding).decode(arrayBuffer);
+      } catch (e) {
+         console.warn(`[RSS] Unsupported encoding ${encoding} for ${url}, using utf-8 fallback`);
+      }
+    }
+
+    const feed = await parser.parseString(text);
+    return feed.items.map((item: any) => ({
       title: item.title,
       link: item.link,
       pubDate: item.pubDate,
@@ -39,7 +59,7 @@ export async function fetchRSSFeed(url: string) {
       creator: item.creator,
     }));
   } catch (error) {
-    console.error(`Error fetching RSS feed from ${url}:`, error);
+    console.error(`[RSS] Error parsing feed from ${url}:`, error);
     return [];
   }
 }
