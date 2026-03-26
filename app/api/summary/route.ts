@@ -20,7 +20,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.0-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+      }
+    });
 
     const prompt = `You are an automotive expert writing for AutoFlix, a Netflix-style platform for car videos.
 
@@ -44,34 +49,21 @@ Return ONLY a valid JSON object matching this structure:
 No markdown blocks, no other text, just the raw JSON.`;
 
     const result = await model.generateContent(prompt);
-    let textResult = result.response.text().trim();
-    
-    // Clean up potential markdown code blocks returned by the model
-    if (textResult.startsWith("\`\`\`json")) {
-      textResult = textResult.substring(7);
-      if (textResult.endsWith("\`\`\`")) {
-        textResult = textResult.substring(0, textResult.length - 3);
-      }
-    } else if (textResult.startsWith("\`\`\`")) {
-      textResult = textResult.substring(3);
-      if (textResult.endsWith("\`\`\`")) {
-        textResult = textResult.substring(0, textResult.length - 3);
-      }
-    }
+    const textResult = result.response.text();
     
     let structuredData;
     try {
       structuredData = JSON.parse(textResult);
-    } catch (e) {
+    } catch (e: any) {
       console.error("Failed to parse Gemini JSON:", textResult);
-      throw new Error("Invalid AI response format");
+      throw new Error("Invalid AI response format: " + e.message);
     }
 
     return Response.json(structuredData);
-  } catch (error) {
+  } catch (error: any) {
     console.error("AI Summary error:", error);
     return Response.json(
-      { error: "Failed to generate summary" },
+      { error: error?.message || "Failed to generate summary" },
       { status: 500 }
     );
   }
