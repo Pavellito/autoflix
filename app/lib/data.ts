@@ -582,7 +582,7 @@ export const cars: Car[] = [
       us: "Eligible for federal tax credits; best value EV on the US market today.",
       ar: "Heat-resistant battery tech performs well; Service centers available in Riyadh and Dubai.",
     },
-    image: "https://i.ytimg.com/vi/z_3F98XIIKA/mqdefault.jpg",
+    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2070&auto=format&fit=crop",
     relatedVideoIds: ["11", "36", "50"],
   },
   {
@@ -605,7 +605,7 @@ export const cars: Car[] = [
       us: "Not officially sold in the US; high import tariffs apply.",
       ar: "Blade Battery tech handles extreme heat exceptionally well; growing service network.",
     },
-    image: "https://i.ytimg.com/vi/FemVjBnGP3g/mqdefault.jpg",
+    image: "https://images.unsplash.com/photo-1619767889222-38ecc1c6a2e8?q=80&w=2128&auto=format&fit=crop",
     relatedVideoIds: ["16", "12"],
   },
   {
@@ -628,7 +628,7 @@ export const cars: Car[] = [
       us: "Solid range and retro-future design; widely available at Hyundai dealers.",
       ar: "Standard V2L feature is great for desert camping; fast AC charging for home use.",
     },
-    image: "https://i.ytimg.com/vi/GItH7vwTR6k/mqdefault.jpg",
+    image: "https://images.unsplash.com/photo-1620891549027-942fdc95d3f5?q=80&w=2070&auto=format&fit=crop",
     relatedVideoIds: ["23", "6", "37"],
   },
   {
@@ -651,7 +651,7 @@ export const cars: Car[] = [
       us: "Competitive specs but currently limited by trade restrictions.",
       ar: "Intelligent thermal management keeps the cabin cool in GCC summer peaks.",
     },
-    image: "https://i.ytimg.com/vi/DHRxnTPrzOQ/mqdefault.jpg",
+    image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop",
     relatedVideoIds: ["22", "36", "42"],
   },
   {
@@ -674,7 +674,7 @@ export const cars: Car[] = [
       us: "Best selling car in the world for a reason; unmatched software and charging.",
       ar: "White interior recommended for GCC sunshine; Glass roof handles heat well.",
     },
-    image: "https://i.ytimg.com/vi/a3zBdK4LrX4/mqdefault.jpg",
+    image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=2128&auto=format&fit=crop",
     relatedVideoIds: ["1", "2", "39"],
   },
   {

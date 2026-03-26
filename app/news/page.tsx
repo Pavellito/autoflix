@@ -15,14 +15,39 @@ interface NewsItem {
   summary: any;
 }
 
+// A massively expanded pool of premium automotive/tech abstract photos to prevent any perceived duplication
+const NEWS_IMAGE_POOL = [
+  ...cars.map(c => c.image),
+  "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=2070&auto=format&fit=crop", // sports car blur
+  "https://images.unsplash.com/photo-1503378462226-9646b4ea39bc?q=80&w=2070&auto=format&fit=crop", // abstract highway
+  "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop", // neon car
+  "https://images.unsplash.com/photo-1469285994282-454ceb49e63c?q=80&w=2070&auto=format&fit=crop", // driving sunset
+  "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop", // luxury interior
+  "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2070&auto=format&fit=crop", // wheel rim
+  "https://images.unsplash.com/photo-1485291571150-772bcfc10da5?q=80&w=2128&auto=format&fit=crop", // dark highway
+  "https://images.unsplash.com/photo-1536700503339-1e4b06520771?q=80&w=2070&auto=format&fit=crop", // tesla steering
+  "https://images.unsplash.com/photo-1563720225384-9ca288210137?q=80&w=2148&auto=format&fit=crop", // futuristic lines
+  "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=2070&auto=format&fit=crop", // electric charger
+  "https://images.unsplash.com/photo-1590362891991-f776e747a588?q=80&w=2069&auto=format&fit=crop", // abstract speed
+  "https://images.unsplash.com/photo-1550524458-769a7122cf28?q=80&w=2070&auto=format&fit=crop", // dark night driving
+  "https://images.unsplash.com/photo-1556817411-31ae72fa3ea0?q=80&w=2070&auto=format&fit=crop", // sleek front grille
+  "https://images.unsplash.com/photo-1553440569-bfc1015e5c56?q=80&w=2070&auto=format&fit=crop", // dashboard lights
+  "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=2070&auto=format&fit=crop", // futuristic tunnel
+  "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop", // classic steering
+  "https://images.unsplash.com/photo-1471440671318-55bdbb772f93?q=80&w=2070&auto=format&fit=crop", // aerial road
+  "https://images.unsplash.com/photo-1502161254066-6c74afbf07aa?q=80&w=2071&auto=format&fit=crop", // city driving
+  "https://images.unsplash.com/photo-1583121280346-59dd228ff46e?q=80&w=2070&auto=format&fit=crop", // Porsche taycan
+  "https://images.unsplash.com/photo-1620891549420-5c6e8dc9fbd0?q=80&w=2070&auto=format&fit=crop"  // EV concept
+];
+
 // Deterministically pick an image from our premium pool based on the news ID
 function getDeterministicImage(text: string) {
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
     hash = text.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const index = Math.abs(hash) % cars.length;
-  return cars[index].image;
+  const index = Math.abs(hash) % NEWS_IMAGE_POOL.length;
+  return NEWS_IMAGE_POOL[index];
 }
 
 export default function NewsPage() {
