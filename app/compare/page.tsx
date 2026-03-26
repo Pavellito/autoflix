@@ -19,11 +19,11 @@ export default function CompareHubPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {matchups.map(({ car1, car2 }) => {
-          const slug = \`\${car1.id}-vs-\${car2.id}\`;
+          const slug = `${car1.id}-vs-${car2.id}`;
           return (
             <Link
               key={slug}
-              href={\`/compare/\${slug}\`}
+              href={`/compare/${slug}`}
               className="group flex flex-col items-center bg-card-bg rounded-lg overflow-hidden border border-white/10 hover:border-accent transition-all duration-300 shadow-lg hover:shadow-accent/20"
             >
               <div className="flex w-full h-32 relative">

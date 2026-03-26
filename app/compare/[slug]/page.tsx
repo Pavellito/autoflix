@@ -7,7 +7,7 @@ export function generateStaticParams() {
   const slugs = [];
   for (let i = 0; i < cars.length; i++) {
     for (let j = i + 1; j < cars.length; j++) {
-      slugs.push({ slug: \`\${cars[i].id}-vs-\${cars[j].id}\` });
+      slugs.push({ slug: `${cars[i].id}-vs-${cars[j].id}` });
     }
   }
   return slugs;
@@ -100,9 +100,9 @@ export default async function CompareDetailPage({
         ].map((row, i) => (
           <div
             key={row.label}
-            className={\`grid grid-cols-3 border-b border-white/5 \${
+            className={`grid grid-cols-3 border-b border-white/5 ${
               i % 2 === 0 ? "bg-white/[0.02]" : "bg-transparent"
-            }\`}
+            }`}
           >
             <div className="p-4 font-medium text-gray-400">{row.label}</div>
             <div className="p-4 text-white text-center">{row.v1}</div>
