@@ -15,6 +15,9 @@ export default function Header() {
           <Link href="/cars" className="text-white hover:text-accent transition">
             Cars
           </Link>
+          <Link href="/compare" className="text-white hover:text-accent transition">
+            Compare
+          </Link>
           <Link href="/search" className="text-white hover:text-accent transition">
             Search
           </Link>

@@ -1,69 +1,47 @@
 "use client";
 
-import Link from "next/link";
 import { useFavorites } from "@/app/lib/favorites-context";
-import { getVideoById } from "@/app/lib/data";
+import { videos } from "@/app/lib/data";
 import VideoCard from "@/app/components/VideoCard";
+import Link from "next/link";
 
 export default function MyListPage() {
   const { favorites, loading } = useFavorites();
 
+  // Map the favorited IDs back into full Video objects
   const favoriteVideos = favorites
-    .map((id) => getVideoById(id))
-    .filter((v) => v !== undefined);
+    .map((id) => videos.find((v) => v.id === id))
+    .filter(Boolean); // removes undefined
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
-      >
-        ← Back to Home
-      </Link>
-
-      <h1 className="text-2xl font-bold text-white mb-6">My List</h1>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-white mb-8">My List</h1>
 
       {loading ? (
-        <div className="flex items-center gap-3 text-gray-400 py-12">
-          <span className="inline-block w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-          Loading your favorites...
+        <div className="flex items-center justify-center h-64">
+          <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
         </div>
-      ) : favoriteVideos.length === 0 ? (
-        <div className="text-center py-16">
-          <svg
-            className="w-16 h-16 text-gray-600 mx-auto mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-            />
+      ) : favoriteVideos.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {favoriteVideos.map((video) => (
+            <VideoCard key={video?.id} video={video!} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center p-16 bg-card-bg border border-white/5 rounded-2xl shadow-xl text-center">
+          <svg className="w-24 h-24 text-gray-600 mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
           </svg>
-          <p className="text-gray-400 text-lg mb-2">Your list is empty</p>
-          <p className="text-gray-500 text-sm mb-6">
-            Click the heart icon on any video to add it to your list
+          <h2 className="text-2xl font-bold text-white mb-2">Your list is empty</h2>
+          <p className="text-gray-400 max-w-sm mb-8">
+            Add car reviews, comparisons, and tuning videos to your list to watch them later seamlessly.
           </p>
           <Link
             href="/"
-            className="bg-accent hover:bg-accent/80 text-white px-6 py-2.5 rounded-lg font-medium transition-colors"
+            className="bg-accent hover:bg-accent/80 text-white font-semibold py-3 px-8 rounded-full transition-colors shadow-lg shadow-accent/20"
           >
-            Browse Videos
+            Explore Videos
           </Link>
-        </div>
-      ) : (
-        <div>
-          <p className="text-sm text-gray-400 mb-4">
-            {favoriteVideos.length} video{favoriteVideos.length !== 1 && "s"} saved
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {favoriteVideos.map((video) => (
-              <VideoCard key={video.id} video={video} />
-            ))}
-          </div>
         </div>
       )}
     </div>

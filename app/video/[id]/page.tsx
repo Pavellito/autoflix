@@ -80,7 +80,7 @@ export default async function VideoPage({
           {video.description}
         </p>
 
-        <AiSummary title={video.title} description={video.description} />
+        <AiSummary videoId={video.id} title={video.title} description={video.description} />
       </div>
 
       {/* Related videos */}
