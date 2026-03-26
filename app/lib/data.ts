@@ -65,12 +65,12 @@ export const videos: Video[] = [
   {
     id: "5",
     title: "BMW iX3 Neue Klasse – BMW's Future",
-    thumbnail: "https://i.ytimg.com/vi/qgJp1Sg3cEc/mqdefault.jpg",
+    thumbnail: "https://i.ytimg.com/vi/IFP1c5QZkA8/mqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
       "BMW's Neue Klasse platform debuts with the iX3. Is it good enough?",
-    youtubeId: "qgJp1Sg3cEc",
+    youtubeId: "IFP1c5QZkA8",
   },
   {
     id: "6",
@@ -127,22 +127,22 @@ export const videos: Video[] = [
   {
     id: "11",
     title: "Tesla Model 3 Highland – The Best Tesla Yet?",
-    thumbnail: "https://i.ytimg.com/vi/Qf7y-g2Xk5A/mqdefault.jpg",
+    thumbnail: "https://i.ytimg.com/vi/z_3F98XIIKA/mqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
       "MKBHD reviews the refreshed Tesla Model 3 Highland. Better interior, improved range.",
-    youtubeId: "Qf7y-g2Xk5A",
+    youtubeId: "z_3F98XIIKA",
   },
   {
     id: "12",
     title: "BYD Dolphin – The Best Cheap EV?",
-    thumbnail: "https://i.ytimg.com/vi/R9IqYlZlI3Q/mqdefault.jpg",
+    thumbnail: "https://i.ytimg.com/vi/hFNE51tURBU/mqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
       "Is the BYD Dolphin the best budget electric car on the market right now?",
-    youtubeId: "R9IqYlZlI3Q",
+    youtubeId: "hFNE51tURBU",
   },
   {
     id: "13",
@@ -157,12 +157,12 @@ export const videos: Video[] = [
   {
     id: "14",
     title: "Hyundai Ioniq 6 – Better Than Tesla Model 3?",
-    thumbnail: "https://i.ytimg.com/vi/fT6i-h94GIA/mqdefault.jpg",
+    thumbnail: "https://i.ytimg.com/vi/Ca8QypN-fYA/mqdefault.jpg",
     category: "Electric Cars",
     year: 2024,
     description:
       "Hyundai's gorgeous streamliner with fast charging and incredible efficiency reviewed.",
-    youtubeId: "fT6i-h94GIA",
+    youtubeId: "Ca8QypN-fYA",
   },
   {
     id: "15",
@@ -289,22 +289,22 @@ export const videos: Video[] = [
   {
     id: "27",
     title: "2024 Mazda MX-5 – More Perfecter",
-    thumbnail: "https://i.ytimg.com/vi/_S0xY_fS_mQ/mqdefault.jpg",
+    thumbnail: "https://i.ytimg.com/vi/uH_JcnrkElY/mqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
       "The refreshed Mazda MX-5 Miata reviewed by Throttle House. Still pure driving joy.",
-    youtubeId: "_S0xY_fS_mQ",
+    youtubeId: "uH_JcnrkElY",
   },
   {
     id: "28",
     title: "Porsche 911 GT3 RS – Basically a Race Car",
-    thumbnail: "https://i.ytimg.com/vi/rC3x5m9_g7Q/mqdefault.jpg",
+    thumbnail: "https://i.ytimg.com/vi/usQiSjKFaso/mqdefault.jpg",
     category: "Reviews",
     year: 2024,
     description:
       "carwow takes the Porsche 911 GT3 RS to its absolute limits. Full review.",
-    youtubeId: "rC3x5m9_g7Q",
+    youtubeId: "usQiSjKFaso",
   },
   {
     id: "29",
@@ -471,12 +471,12 @@ export const videos: Video[] = [
   {
     id: "45",
     title: "EV Charging Costs: Home vs Public – Explained",
-    thumbnail: "https://i.ytimg.com/vi/oUo1aI-pC-g/mqdefault.jpg",
+    thumbnail: "https://i.ytimg.com/vi/VLTm4STELVU/mqdefault.jpg",
     category: "Comparisons",
     year: 2025,
     description:
       "How much does it really cost to charge an electric car? Home vs public compared.",
-    youtubeId: "oUo1aI-pC-g",
+    youtubeId: "VLTm4STELVU",
   },
 
   // ─── Tuning (5 videos) ──────────────────────────────────
@@ -558,7 +558,7 @@ export const cars: Car[] = [
     range: "513 km",
     battery: "60 kWh",
     price: "From $38,990",
-    image: "https://i.ytimg.com/vi/Z3vN6iH-fEw/mqdefault.jpg",
+    image: "https://i.ytimg.com/vi/z_3F98XIIKA/mqdefault.jpg",
     relatedVideoIds: ["11", "36", "50"],
   },
   {
