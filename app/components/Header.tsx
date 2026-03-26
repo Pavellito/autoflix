@@ -18,6 +18,9 @@ export default function Header() {
           <Link href="/news" className="text-white hover:text-accent transition">
             News
           </Link>
+          <Link href="/quiz" className="text-white hover:text-accent transition font-bold">
+            Advisor
+          </Link>
           <Link href="/compare" className="text-white hover:text-accent transition">
             Compare
           </Link>
