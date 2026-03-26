@@ -53,24 +53,23 @@ export default function NewsPage() {
     setSyncError(null);
     setSetupSql(null);
     try {
-      // First try to auto-setup the table
-      const setupRes = await fetch("/api/news/setup");
-      const setupData = await setupRes.json();
-      
-      if (!setupData.success && setupData.sql) {
-        setSyncError(setupData.message);
-        setSetupSql(setupData.sql);
-        setSyncing(false);
-        return;
-      }
-
-      // If setup worked (or table already existed), run ingest
+      // Try to ingest data first. If the table exists, this works perfectly.
       const res = await fetch("/api/news/ingest");
       const data = await res.json();
+      
       if (data.success) {
+        // Success! Re-fetch news to show them on screen.
         await fetchNews();
       } else {
-        setSyncError(data.error || "Ingestion failed.");
+        // Ingestion failed. Let's check if the table is missing.
+        if (data.error && (data.error.includes("relation") || data.error.includes("does not exist"))) {
+          const setupRes = await fetch("/api/news/setup");
+          const setupData = await setupRes.json();
+          setSyncError(setupData.message || "The 'news' table does not exist. Please create it.");
+          if (setupData.sql) setSetupSql(setupData.sql);
+        } else {
+          setSyncError(data.error || "Ingestion failed for an unknown reason.");
+        }
       }
     } catch (e: any) {
       setSyncError("Network error: " + e.message);

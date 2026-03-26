@@ -25,7 +25,14 @@ export async function GET() {
           
         if (checkError && checkError.code !== 'PGRST116') {
           console.error(`[Ingestion] Error checking GUID for ${source.name}: ${checkError.message}`);
-          results.push({ source: source.name, error: "Database error. Table 'news' might be missing." });
+          // If the table is missing, return immediately with a clear error
+          if (checkError.message.includes("relation") || checkError.message.includes("does not exist")) {
+            return NextResponse.json({
+              success: false,
+              error: checkError.message
+            });
+          }
+          results.push({ source: source.name, error: checkError.message });
           break; // Stop for this source
         }
 
@@ -57,7 +64,7 @@ export async function GET() {
     console.error("[Ingestion Error]", error);
     return NextResponse.json({ 
       success: false, 
-      error: "Ingestion failed. Ensure Supabase 'news' table exists.", 
+      error: error.message || "Ingestion failed. Ensure Supabase 'news' table exists.", 
       details: error.message 
     }, { status: 500 });
   }
