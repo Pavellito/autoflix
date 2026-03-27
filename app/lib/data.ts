@@ -13,14 +13,27 @@ export interface Car {
   name: string;
   brand: string;
   type: "EV" | "Hybrid" | "ICE";
-  range?: string;
+  range?: string; // Marketing range (WLTP)
+  realWorldRange?: {
+    city: string;
+    highway: string;
+    winter: string; // Critical for Russia/Cold climates
+  };
   battery?: string;
+  chargingCurve?: {
+    maxSpeed: string; // e.g., "250 kW"
+    tenToEighty: string; // e.g., "27 mins"
+  };
   price?: string; // Base/Global price
   prices?: {
     il: string;
     ru: string;
     us: string;
     ar: string;
+  };
+  depreciation?: {
+    yr3: string; // e.g., "-25%"
+    resaleValue: "Excellent" | "Good" | "Average" | "Poor";
   };
   regionalAdvice?: {
     il: string;
@@ -568,7 +581,16 @@ export const cars: Car[] = [
     brand: "Tesla",
     type: "EV",
     range: "513 km",
+    realWorldRange: {
+      city: "490 km",
+      highway: "375 km",
+      winter: "310 km",
+    },
     battery: "60 kWh",
+    chargingCurve: {
+      maxSpeed: "170 kW",
+      tenToEighty: "25 mins",
+    },
     price: "From $38,990",
     prices: {
       il: "₪210,000",
@@ -576,11 +598,15 @@ export const cars: Car[] = [
       us: "$38,990",
       ar: "146,000 SAR",
     },
+    depreciation: {
+      yr3: "-35%",
+      resaleValue: "Excellent",
+    },
     regionalAdvice: {
-      il: "Perfect for Israel's distances; extensive Supercharger network in the center and south.",
-      ru: "Requires heated garage in winter; check CCS2 adapter availability for local stations.",
+      il: "Perfect for Israel's distances; extensive Supercharger network in the center and south. Excellent resale demand.",
+      ru: "Requires heated garage in winter (drops to 310km range); check CCS2 adapter availability for local stations.",
       us: "Eligible for federal tax credits; best value EV on the US market today.",
-      ar: "Heat-resistant battery tech performs well; Service centers available in Riyadh and Dubai.",
+      ar: "Heat-resistant battery tech performs well; Service centers readily available in Riyadh and Dubai.",
     },
     image: "https://i.ytimg.com/vi/z_3F98XIIKA/mqdefault.jpg",
     relatedVideoIds: ["11", "36", "50"],
@@ -591,7 +617,16 @@ export const cars: Car[] = [
     brand: "BYD",
     type: "EV",
     range: "420 km",
+    realWorldRange: {
+      city: "380 km",
+      highway: "290 km",
+      winter: "270 km",
+    },
     battery: "60.5 kWh",
+    chargingCurve: {
+      maxSpeed: "88 kW",
+      tenToEighty: "44 mins",
+    },
     price: "From $38,000",
     prices: {
       il: "₪168,500",
@@ -599,11 +634,15 @@ export const cars: Car[] = [
       us: "N/A (Import only)",
       ar: "135,000 SAR",
     },
+    depreciation: {
+      yr3: "-42%",
+      resaleValue: "Good",
+    },
     regionalAdvice: {
-      il: "Most popular EV in Israel; incredible resale value and local support.",
-      ru: "Gaining popularity via parallel import; software localized to Russian is widely available.",
-      us: "Not officially sold in the US; high import tariffs apply.",
-      ar: "Blade Battery tech handles extreme heat exceptionally well; growing service network.",
+      il: "The absolute best-selling EV in Israel. Unbeatable value, massive local supply chain, and strong resale market.",
+      ru: "Gaining immense popularity via parallel import; software localized to Russian is widely available.",
+      us: "Not officially sold in the US; high import tariffs and no service network.",
+      ar: "Blade Battery tech handles extreme GCC heat exceptionally well; rapidly growing service network.",
     },
     image: "https://i.ytimg.com/vi/FemVjBnGP3g/mqdefault.jpg",
     relatedVideoIds: ["16", "12"],
