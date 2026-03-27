@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/app/lib/supabase";
-import AiSummary from "@/app/components/AiSummary";
 import Link from "next/link";
 
 export default function ArticlePage() {
@@ -85,20 +84,6 @@ export default function ArticlePage() {
         {/* Main Content Column */}
         <div className="lg:col-span-2">
           
-          {/* AI Summary Injection */}
-          <div className="mb-12 bg-card-bg border border-white/5 rounded-2xl p-6 shadow-2xl relative overflow-hidden group hover:border-accent/40 transition-colors">
-            <div className="absolute top-0 left-0 w-1 h-full bg-accent"></div>
-            <h3 className="text-xs text-accent font-black uppercase tracking-widest mb-4 flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              AutoFlix AI Analysis
-            </h3>
-            <AiSummary videoId={article.id} title={article.title} description={article.title} />
-          </div>
-
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-12"></div>
-
           {/* Render Full Raw HTML Article */}
           <article 
             className="text-gray-300 text-lg md:text-xl leading-relaxed font-sans 

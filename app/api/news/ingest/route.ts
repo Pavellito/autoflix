@@ -1,8 +1,35 @@
 import { NextResponse } from "next/server";
 import { RSS_SOURCES, fetchRSSFeed } from "@/app/lib/rss";
 import { supabase } from "@/app/lib/supabase";
+import { Readability } from "@mozilla/readability";
+import { JSDOM } from "jsdom";
 
 export const maxDuration = 60; // Allow Vercel hobby tier to run up to 60s for massive RSS dumps
+
+// Helper to scrape full HTML from the external news site
+async function scrapeFullArticle(url: string) {
+  try {
+    const res = await fetch(url, { headers: { "User-Agent": "AutoFlix/2.0 NewsCrawler" }, signal: AbortSignal.timeout(5000) });
+    if (!res.ok) return { content: null, imageUrl: null };
+    const html = await res.text();
+    const doc = new JSDOM(html, { url });
+    
+    // Extract real OG Image
+    let imageUrl = null;
+    const ogImage = doc.window.document.querySelector('meta[property="og:image"]');
+    if (ogImage) imageUrl = ogImage.getAttribute('content');
+
+    const reader = new Readability(doc.window.document);
+    const article = reader.parse();
+    
+    return {
+      content: article?.content || null,
+      imageUrl: imageUrl
+    };
+  } catch (e) {
+    return { content: null, imageUrl: null };
+  }
+}
 
 export async function GET() {
   const results = [];
@@ -29,7 +56,20 @@ export async function GET() {
           console.warn(`[Ingestion] Error checking GUID (ignoring for upsert): ${checkError.message}`);
         }
 
-        // 2. Upsert article to overwrite mangled text and populate native image_urls
+        // 2. SCRAPE FULL HTML IF NATIVE RSS CONTENT IS JUST A TEASER (e.g., < 400 chars)
+        let finalContent = item.content;
+        let finalImage = item.imageUrl;
+        
+        // Strip basic HTML tags from item.content to determine true text length
+        const pureTextLength = (item.content || "").replace(/<[^>]*>?/gm, '').length;
+        
+        if (pureTextLength < 400 && item.link) {
+          const scraped = await scrapeFullArticle(item.link);
+          if (scraped.content) finalContent = scraped.content;
+          if (scraped.imageUrl && !finalImage) finalImage = scraped.imageUrl;
+        }
+
+        // 3. Upsert article with FULL HTML and true source image
         const { error: upsertError } = await supabase.from("news").upsert({
           guid: item.guid,
           source_id: source.id,
@@ -37,8 +77,8 @@ export async function GET() {
           title: item.title,
           link: item.link,
           published_at: item.pubDate ? new Date(item.pubDate).toISOString() : null,
-          image_url: item.imageUrl,
-          content: item.content,
+          image_url: finalImage,
+          content: finalContent,
         }, { onConflict: 'guid' });
         
         if (!upsertError && !existing) return 1;

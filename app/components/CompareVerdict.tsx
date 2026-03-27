@@ -93,7 +93,7 @@ export default function CompareVerdict({ car1, car2 }: { car1: Car; car2: Car })
             <div className="bg-black/20 p-4 rounded-xl border border-white/5 h-full">
               <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3">Key Structural Differences</h4>
               <ul className="space-y-2">
-                {data.key_differences.map((diff, i) => (
+                {(Array.isArray(data.key_differences) ? data.key_differences : []).slice(0, 3).map((diff, i) => (
                   <li key={i} className="text-sm text-gray-300 flex gap-2">
                     <span className="text-accent font-bold">»</span> {diff}
                   </li>
