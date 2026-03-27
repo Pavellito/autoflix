@@ -79,15 +79,16 @@ export async function GET() {
         // 1. Check if GUID exists (for tracking new entries)
         const { data: existing, error: checkError } = await supabase
           .from("news")
-          .select("id")
-          .eq("guid", item.guid)
+          .select("id, title")
+          .or(`guid.eq."${item.guid}",title.eq."${item.title}"`)
+          .limit(1)
           .single();
           
         if (checkError && checkError.code !== 'PGRST116') {
-          console.warn(`[Ingestion] Error checking GUID (ignoring for upsert): ${checkError.message}`);
+          console.warn(`[Ingestion] Error checking duplication (ignoring): ${checkError.message}`);
         }
         
-        // CRITICAL PERFORMANCE FIX: If it already exists, skip it entirely! Do not re-scrape.
+        // CRITICAL PERFORMANCE FIX: If it already exists by GUID or TITLE, skip it!
         if (existing) return 0;
 
         // 2. SCRAPE FULL HTML IF NATIVE RSS CONTENT IS TRUNCATED OR MISSING IMAGE
