@@ -112,12 +112,7 @@ export async function GET() {
         return 0;
       });
 
-      const newCounts = [];
-      // Chunk concurrent processing to max 5 to prevent Supabase/Cloudflare 502 Bad Gateway
-      for (let i = 0; i < itemPromises.length; i += 5) {
-        const chunk = itemPromises.slice(i, i + 5);
-        newCounts.push(...(await Promise.all(chunk.map(fn => fn()))));
-      }
+      const newCounts = await Promise.all(itemPromises);
       newCount = 0;
       for (const c of newCounts) {
         if (typeof c === 'number') newCount += c;
