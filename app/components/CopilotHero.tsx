@@ -96,7 +96,7 @@ export default function CopilotHero() {
           {/* Suggested Prompts */}
           <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 mt-6">
             <span className="text-gray-600 text-[10px] font-black uppercase tracking-widest mr-2">Try:</span>
-            {["Best EV under ₪150k?", "Tesla Model 3 vs BYD Seal", "Most reliable EV battery?"].map((suggestion) => (
+            {["Zeekr 7X vs Model Y", "Xiaomi SU7 specs", "Rivian R1S in Israel?"].map((suggestion) => (
               <button
                 key={suggestion}
                 onClick={() => {
