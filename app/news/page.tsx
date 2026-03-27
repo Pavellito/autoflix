@@ -61,7 +61,7 @@ export default function NewsPage() {
     setLoading(true);
     try {
       // Fetch more items to populate our rows
-      const { data, error } = await supabase.from("news").select("*").order("published_at", { ascending: false }).limit(60);
+      const { data, error } = await supabase.from("news").select("*").order("published_at", { ascending: false }).limit(200);
       if (!error && data) {
         setNews(data);
         return data.length;

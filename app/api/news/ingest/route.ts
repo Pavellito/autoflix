@@ -40,8 +40,15 @@ async function scrapeFullArticle(url: string) {
     
     // Extract real OG Image
     let imageUrl = null;
-    const ogImage = doc.window.document.querySelector('meta[property="og:image"]');
-    if (ogImage) imageUrl = ogImage.getAttribute('content');
+    const ogSelector = [
+      'meta[property="og:image"]',
+      'meta[name="og:image"]',
+      'meta[property="twitter:image"]',
+      'meta[name="twitter:image"]',
+      'link[rel="image_src"]'
+    ].join(',');
+    const ogImage = doc.window.document.querySelector(ogSelector);
+    if (ogImage) imageUrl = ogImage.getAttribute('content') || ogImage.getAttribute('href');
 
     const reader = new Readability(doc.window.document);
     const article = reader.parse();
