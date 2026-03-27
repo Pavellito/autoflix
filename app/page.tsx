@@ -1,4 +1,5 @@
 import CopilotHero from "@/app/components/CopilotHero";
+import LiveNewsTicker from "@/app/components/LiveNewsTicker";
 import VideoRow from "@/app/components/VideoRow";
 import CarCard from "@/app/components/CarCard";
 import { categories, getVideosByCategory } from "@/app/lib/data";
@@ -12,6 +13,7 @@ export default async function Home() {
   return (
     <div className="bg-black min-h-screen">
       <CopilotHero />
+      <LiveNewsTicker />
       
       {/* Intelligence Dashboard Highlights */}
       <section className="max-w-7xl mx-auto px-6 mt-12 relative z-20">

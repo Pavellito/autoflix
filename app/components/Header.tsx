@@ -30,6 +30,10 @@ export default function Header() {
           <Link href="/my-list" className="text-white hover:text-accent transition">
             My List
           </Link>
+          <div className="w-[1px] h-4 bg-white/10" />
+          <button className="bg-white text-black px-4 py-1.5 rounded-full font-black text-[10px] uppercase tracking-widest hover:bg-accent hover:text-white transition-all shadow-lg active:scale-95">
+             Sign In
+          </button>
           <SearchBar />
         </nav>
       </div>

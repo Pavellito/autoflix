@@ -42,15 +42,16 @@ export default function CopilotHero() {
         </div>
 
         {/* Hero Copy */}
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 uppercase tracking-tighter italic leading-[0.9]">
-          The AI Platform <br className="hidden md:block"/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-500">
-            For Everything <span className="text-accent underline decoration-accent/30 decoration-8 underline-offset-8">EV</span>
+        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-6 uppercase tracking-tighter italic leading-[0.85]">
+          AI Platform <br className="hidden md:block"/>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-white to-gray-500">
+            For Your Next EV
           </span>
         </h1>
         
-        <p className="text-gray-400 text-sm md:text-lg max-w-2xl mx-auto font-medium mb-12 tracking-wide">
-          Stop guessing. Get instant, deeply intelligent technical advice, localized price checks, and data-backed buying recommendations utilizing our global EV neural network.
+        <p className="text-gray-400 text-sm md:text-xl max-w-2xl mx-auto font-medium mb-12 tracking-wide leading-relaxed">
+          The intelligence engine that actually knows the specs, local prices, and quirks of 37+ electric vehicles. Get expert advice in English, Hebrew, or Russian 
+          <span className="text-white"> before you buy.</span>
         </p>
 
         {/* Copilot Search Bar */}
