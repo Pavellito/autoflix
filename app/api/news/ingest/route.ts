@@ -72,6 +72,9 @@ export async function GET() {
         if (checkError && checkError.code !== 'PGRST116') {
           console.warn(`[Ingestion] Error checking GUID (ignoring for upsert): ${checkError.message}`);
         }
+        
+        // CRITICAL PERFORMANCE FIX: If it already exists, skip it entirely! Do not re-scrape.
+        if (existing) return 0;
 
         // 2. SCRAPE FULL HTML IF NATIVE RSS CONTENT IS TRUNCATED OR MISSING IMAGE
         let finalContent = item.content;
@@ -109,7 +112,12 @@ export async function GET() {
         return 0;
       });
 
-      const newCounts = await Promise.all(itemPromises);
+      const newCounts = [];
+      // Chunk concurrent processing to max 5 to prevent Supabase/Cloudflare 502 Bad Gateway
+      for (let i = 0; i < itemPromises.length; i += 5) {
+        const chunk = itemPromises.slice(i, i + 5);
+        newCounts.push(...(await Promise.all(chunk.map(fn => fn()))));
+      }
       newCount = 0;
       for (const c of newCounts) {
         if (typeof c === 'number') newCount += c;
