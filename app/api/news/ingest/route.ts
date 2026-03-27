@@ -47,7 +47,10 @@ export async function GET() {
       });
 
       const newCounts = await Promise.all(itemPromises);
-      newCount = newCounts.reduce((a, b) => a + b, 0);
+      newCount = 0;
+      for (const c of newCounts) {
+        if (typeof c === 'number') newCount += c;
+      }
       
       results.push({ source: source.name, fetched: items.length, new: newCount });
     }
