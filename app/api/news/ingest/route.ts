@@ -10,7 +10,14 @@ export const maxDuration = 60; // Allow Vercel hobby tier to run up to 60s for m
 // Helper to scrape full HTML from the external news site
 async function scrapeFullArticle(url: string) {
   try {
-    const res = await fetch(url, { headers: { "User-Agent": "AutoFlix/2.0 NewsCrawler" }, signal: AbortSignal.timeout(5000) });
+    const res = await fetch(url, { 
+      headers: { 
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9,ru;q=0.8,ar;q=0.7"
+      }, 
+      signal: AbortSignal.timeout(8000) 
+    });
     if (!res.ok) return { content: null, imageUrl: null };
     
     // Safely buffer the foreign payload to respect non-UTF8 encodings like Cyrillic windows-1251
