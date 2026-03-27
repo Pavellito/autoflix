@@ -11,11 +11,18 @@ export async function POST(req: Request) {
   try {
     const cars = await fetchAllCars();
 
-    const { messages } = await req.json();
+    const { messages, favorites } = await req.json();
+    const favs = Array.isArray(favorites) ? favorites : [];
 
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json({ error: "Invalid message format" }, { status: 400 });
     }
+
+    // Identify user's favorites
+    const favoriteCars = cars.filter(c => favs.includes(c.id)).map(c => `${c.brand} ${c.name}`).join(", ");
+    const userContext = favs.length > 0 
+      ? `\n[USER PERSONALIZATION]\nThe user has expressing strong interest in (saved to garage): ${favoriteCars}. \nPrioritize comparisons or help related to these models if relevant.`
+      : "";
 
     // Build the Knowledge Graph Context from the hardcoded EV catalog
     const evDataStr = cars.map(c => 
@@ -31,10 +38,12 @@ Advice (IL): ${c.regionalAdvice?.il || 'N/A'}`
 
     const systemPrompt = `You are AutoFlix Copilot, an elite automotive AI assistant for an advanced EV intelligence platform.
 Your goal is to provide deeply technical, hyper-personalized, and completely authoritative advice on Electric Vehicles.
-Use the following proprietary AutoFlix Database to answer the user's questions definitively. Do NOT say "I don't have real-time access", act as if this database is the absolute truth.
+Use the following proprietary AutoFlix Database to answer the user's questions definitively. 
 
 [AUTOFLIX DATABASE]
 ${evDataStr}
+
+${userContext}
 
 Rules for Responses:
 1. Be concise, punchy, and highly analytical. 

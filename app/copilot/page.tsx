@@ -1,8 +1,7 @@
-"use client";
-
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useFavorites } from "@/app/lib/favorites-context";
 
 interface Message {
   role: "user" | "assistant";
@@ -12,6 +11,7 @@ interface Message {
 function CopilotChat() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get("q") || "";
+  const { favorites } = useFavorites();
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -44,7 +44,10 @@ function CopilotChat() {
       const res = await fetch("/api/copilot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ 
+          messages: newMessages,
+          favorites: favorites 
+        }),
       });
       
       const data = await res.json();
