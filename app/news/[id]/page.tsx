@@ -98,12 +98,6 @@ export default function ArticlePage() {
                        [&_iframe]:w-full [&_iframe]:aspect-video [&_iframe]:rounded-2xl [&_iframe]:my-8"
             dangerouslySetInnerHTML={{ __html: article.content || '<p>No full text available for this article. Please read the AI summary above.</p>' }}
           />
-
-          <div className="mt-16 pt-8 border-t border-white/10">
-            <a href={article.link} target="_blank" rel="noopener noreferrer" className="inline-block bg-white text-black px-8 py-4 rounded font-black uppercase tracking-widest text-sm hover:bg-accent hover:text-white transition-all shadow-xl">
-              View External Source
-            </a>
-          </div>
         </div>
 
         {/* Sidebar */}

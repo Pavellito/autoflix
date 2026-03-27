@@ -56,14 +56,14 @@ export async function GET() {
           console.warn(`[Ingestion] Error checking GUID (ignoring for upsert): ${checkError.message}`);
         }
 
-        // 2. SCRAPE FULL HTML IF NATIVE RSS CONTENT IS JUST A TEASER (e.g., < 400 chars)
+        // 2. SCRAPE FULL HTML IF NATIVE RSS CONTENT IS TRUNCATED OR MISSING IMAGE
         let finalContent = item.content;
         let finalImage = item.imageUrl;
         
         // Strip basic HTML tags from item.content to determine true text length
         const pureTextLength = (item.content || "").replace(/<[^>]*>?/gm, '').length;
         
-        if (pureTextLength < 400 && item.link) {
+        if ((pureTextLength < 1500 || !item.imageUrl) && item.link) {
           const scraped = await scrapeFullArticle(item.link);
           if (scraped.content) finalContent = scraped.content;
           if (scraped.imageUrl && !finalImage) finalImage = scraped.imageUrl;
