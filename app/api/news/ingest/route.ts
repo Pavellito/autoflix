@@ -3,6 +3,7 @@ import { RSS_SOURCES, fetchRSSFeed } from "@/app/lib/rss";
 import { supabase } from "@/app/lib/supabase";
 import { Readability } from "@mozilla/readability";
 import { JSDOM } from "jsdom";
+import iconv from "iconv-lite";
 
 export const maxDuration = 60; // Allow Vercel hobby tier to run up to 60s for massive RSS dumps
 
@@ -11,7 +12,23 @@ async function scrapeFullArticle(url: string) {
   try {
     const res = await fetch(url, { headers: { "User-Agent": "AutoFlix/2.0 NewsCrawler" }, signal: AbortSignal.timeout(5000) });
     if (!res.ok) return { content: null, imageUrl: null };
-    const html = await res.text();
+    
+    // Safely buffer the foreign payload to respect non-UTF8 encodings like Cyrillic windows-1251
+    const arrayBuffer = await res.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    
+    let charset = "utf-8";
+    const contentType = res.headers.get("content-type") || "";
+    const match = contentType.match(/charset=([\w-]+)/i);
+    if (match && iconv.encodingExists(match[1])) {
+        charset = match[1].toLowerCase();
+    } else {
+        const headHtml = buffer.toString("utf-8", 0, Math.min(buffer.length, 2048));
+        const metaMatch = headHtml.match(/<meta[^>]*charset=['"]?([\w-]+)['"]?/i) || headHtml.match(/<meta[^>]*content=['"][^'"]*charset=([\w-]+)['"]/i);
+        if (metaMatch && iconv.encodingExists(metaMatch[1])) charset = metaMatch[1].toLowerCase();
+    }
+    
+    const html = iconv.decode(buffer, charset);
     const doc = new JSDOM(html, { url });
     
     // Extract real OG Image
@@ -67,6 +84,12 @@ export async function GET() {
           const scraped = await scrapeFullArticle(item.link);
           if (scraped.content) finalContent = scraped.content;
           if (scraped.imageUrl && !finalImage) finalImage = scraped.imageUrl;
+        }
+        
+        // Clean Arabic/WP boilerplate footprints from specific global blogs
+        if (finalContent) {
+           finalContent = finalContent.replace(/<p>The post .*? appeared first on .*?<\/p>/gi, '');
+           finalContent = finalContent.replace(/The post .*? appeared first on .*?\./gi, '');
         }
 
         // 3. Upsert article with FULL HTML and true source image
