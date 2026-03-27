@@ -15,7 +15,7 @@ export default function CopilotHero() {
   };
 
   return (
-    <div className="relative w-full h-[85vh] md:h-[75vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-black pb-12 rounded-b-3xl">
+    <div className="relative w-full h-[85vh] md:h-[75vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-black pb-32 rounded-b-3xl">
       {/* Background Video/Image Layer with AI Grid Overlay */}
       <div className="absolute inset-0 z-0 opacity-40">
         <img

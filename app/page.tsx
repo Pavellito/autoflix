@@ -12,7 +12,7 @@ export default function Home() {
       <CopilotHero />
       
       {/* Intelligence Dashboard Highlights */}
-      <section className="max-w-7xl mx-auto px-6 -mt-20 relative z-20">
+      <section className="max-w-7xl mx-auto px-6 mt-12 relative z-20">
         <div className="flex flex-col md:flex-row items-end justify-between mb-8 gap-4 px-2">
           <div>
             <h2 className="text-sm font-black text-accent uppercase tracking-[0.3em] mb-2">Global Fleet Highlights</h2>
