@@ -25,6 +25,12 @@ export default function CarCard({ car }: { car: Car }) {
           <span className="bg-accent/90 text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-[0.2em] shadow-lg">
             {car.type}
           </span>
+          {car.relatedVideoIds && car.relatedVideoIds.length > 0 && (
+            <span className="bg-indigo-600 text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-[0.2em] flex items-center gap-1">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm14 7V7H4v6h12z"/><path fillRule="evenodd" d="M10 8a1 1 0 01.553.894l2 1a1 1 0 010 1.788l-2 1A1 1 0 019 11V9a1 1 0 011-1z" clipRule="evenodd"/></svg>
+              Review
+            </span>
+          )}
         </div>
         
         <div className="absolute bottom-0 p-4 w-full">

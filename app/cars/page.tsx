@@ -1,26 +1,23 @@
 import {
   fetchAllCars,
 } from "@/app/lib/supabase-cars";
-import CarCard from "@/app/components/CarCard";
+import ShowroomGrid from "@/app/components/ShowroomGrid";
 
 export default async function CarsPage() {
   const cars = await fetchAllCars();
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">
-          Explore Cars
+    <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="mb-12 text-center md:text-left">
+        <h1 className="text-5xl font-black text-white mb-4 tracking-tighter uppercase italic">
+          The <span className="text-accent">Showroom</span>
         </h1>
-        <p className="text-gray-400">
-          Browse our database of top electric vehicles with specs and related reviews.
+        <p className="max-w-xl text-gray-500 text-sm font-medium uppercase tracking-widest leading-relaxed">
+           Our proprietary intelligence database of {cars.length} elite electric vehicles. Explore specifications, regional pricing breakthroughs, and AI-vetted advice.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {cars.map((car) => (
-          <CarCard key={car.id} car={car} />
-        ))}
-      </div>
+      <ShowroomGrid initialCars={cars} />
     </div>
   );
 }
