@@ -69,7 +69,7 @@ export default function CopilotHero() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ask anything about EVs (e.g., 'Compare Model 3 vs BYD Seal in Israel'...)"
               autoFocus
-              className="w-full bg-transparent border-none text-white text-base md:text-lg px-4 py-4 md:py-5 font-medium placeholder-gray-600 focus:outline-none focus:ring-0"
+              className="w-full bg-transparent border-none text-white text-base md:text-lg px-4 py-4 md:py-5 pr-16 md:pr-40 font-medium placeholder-gray-600 focus:outline-none focus:ring-0"
             />
             
             <button

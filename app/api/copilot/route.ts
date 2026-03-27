@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import Groq from "groq-sdk";
 import { cars } from "@/app/lib/data";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "dummy" });
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 export async function POST(req: Request) {
@@ -47,24 +49,46 @@ Rules for Responses:
 
     const lastMessage = messages[messages.length - 1].content;
 
-    const chat = model.startChat({
-      history: [
-        { role: "user", parts: [{ text: "SYSTEM PROMPT (ADHERE STRICTLY):\n" + systemPrompt }] },
-        { role: "model", parts: [{ text: "Understood. I am AutoFlix Copilot. I will use the database strictly." }] },
-        ...geminiHistory
-      ],
-      generationConfig: {
-        temperature: 0.3, // Low temperature for factual EV analysis
-      }
-    });
+    try {
+      const chat = model.startChat({
+        history: [
+          { role: "user", parts: [{ text: "SYSTEM PROMPT (ADHERE STRICTLY):\n" + systemPrompt }] },
+          { role: "model", parts: [{ text: "Understood. I am AutoFlix Copilot. I will use the database strictly." }] },
+          ...geminiHistory
+        ],
+        generationConfig: {
+          temperature: 0.3, // Low temperature for factual EV analysis
+        }
+      });
 
-    const result = await chat.sendMessage(lastMessage);
-    const text = result.response.text();
+      const result = await chat.sendMessage(lastMessage);
+      const text = result.response.text();
+      return NextResponse.json({ reply: text });
 
-    return NextResponse.json({ reply: text });
+    } catch (geminiError) {
+      console.warn("[Copilot API] Gemini failed, falling back to Groq Llama 3...");
+      
+      const groqMessages = [
+        { role: "system", content: systemPrompt },
+        ...messages.slice(0, -1).map((msg: any) => ({
+          role: msg.role === "user" ? "user" : "assistant",
+          content: msg.content
+        })),
+        { role: "user", content: lastMessage }
+      ];
+
+      const chatCompletion = await groq.chat.completions.create({
+        messages: groqMessages as any,
+        model: "llama-3.1-8b-instant",
+        temperature: 0.3,
+      });
+
+      const fallbackText = chatCompletion.choices[0]?.message?.content || "Neural link active, but response was empty.";
+      return NextResponse.json({ reply: fallbackText });
+    }
 
   } catch (error: any) {
     console.error("[Copilot API Error]", error);
-    return NextResponse.json({ error: "Neural link offline. Please try again later." }, { status: 500 });
+    return NextResponse.json({ error: `Neural link offline. ${error.message}` }, { status: 500 });
   }
 }
