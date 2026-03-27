@@ -608,7 +608,7 @@ export const cars: Car[] = [
       us: "Eligible for federal tax credits; best value EV on the US market today.",
       ar: "Heat-resistant battery tech performs well; Service centers readily available in Riyadh and Dubai.",
     },
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/9/91/2019_Tesla_Model_3_Performance_AWD_Front.jpg",
     relatedVideoIds: ["11", "36", "50"],
   },
   {
@@ -644,7 +644,7 @@ export const cars: Car[] = [
       us: "Not officially sold in the US; high import tariffs and no service network.",
       ar: "Blade Battery tech handles extreme GCC heat exceptionally well; rapidly growing service network.",
     },
-    image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/3/3e/BYD_Atto_3_1X7A6491.jpg",
     relatedVideoIds: ["16", "12"],
   },
   {
@@ -667,7 +667,7 @@ export const cars: Car[] = [
       us: "Solid range and retro-future design; widely available at Hyundai dealers.",
       ar: "Standard V2L feature is great for desert camping; fast AC charging for home use.",
     },
-    image: "https://images.unsplash.com/photo-1621360841013-c7683c659ec6?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/8/85/Hyundai_Ioniq_5_AWD_Techniq-Paket_%E2%80%93_f_31122024.jpg",
     relatedVideoIds: ["23", "6", "37"],
   },
   {
@@ -690,7 +690,7 @@ export const cars: Car[] = [
       us: "Competitive specs but currently limited by trade restrictions.",
       ar: "Intelligent thermal management keeps the cabin cool in GCC summer peaks.",
     },
-    image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_BYD_Seal.jpg",
     relatedVideoIds: ["22", "36", "42"],
   },
   {
@@ -713,7 +713,7 @@ export const cars: Car[] = [
       us: "Best selling car in the world for a reason; unmatched software and charging.",
       ar: "White interior recommended for GCC sunshine; Glass roof handles heat well.",
     },
-    image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/3/3d/2024_Tesla_Model_Y_RWD_front.jpg",
     relatedVideoIds: ["1", "2", "39"],
   },
   {
@@ -736,7 +736,7 @@ export const cars: Car[] = [
       us: "Affordable alternative but limited dealer network.",
       ar: "Compact size makes it a great secondary city car for GCC families.",
     },
-    image: "https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/1/12/MG4_Electric_%E2%80%93_f_21042025.jpg",
     relatedVideoIds: ["10", "15"],
   },
   {
@@ -759,7 +759,7 @@ export const cars: Car[] = [
       us: "Volvo's entry-level EV; small size but premium minimalist interior.",
       ar: "High-quality AC system; great for urban premium lifestyles in Dubai/Riyadh.",
     },
-    image: "https://images.unsplash.com/photo-1605515298946-d062f2e9da53?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Volvo_EX30_IMG_8923.jpg",
     relatedVideoIds: ["5", "18"],
   },
   {
@@ -782,7 +782,7 @@ export const cars: Car[] = [
       us: "Top-tier electric crossover; rivals the Model Y in tech and charging speed.",
       ar: "Futuristic design stands out; massive dealership support across the Middle East.",
     },
-    image: "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/d/d9/2021_Kia_EV6_GT-Line_S.jpg",
     relatedVideoIds: ["3", "27"],
   },
   {
@@ -805,7 +805,7 @@ export const cars: Car[] = [
       us: "One of the best long-distance cruisers; exceptional drag coefficient.",
       ar: "Cools down very quickly due to smart aerodynamics; great for luxury commutes.",
     },
-    image: "https://images.unsplash.com/photo-1606016159991-dfe4f2746ad5?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/9/96/2023_Hyundai_Ioniq_6_Limited%2C_front_4.27.23.jpg",
     relatedVideoIds: ["24", "41"],
   },
   {
@@ -828,7 +828,7 @@ export const cars: Car[] = [
       us: "Practical family crossover with the soul of a Mustang; great blue cruise tech.",
       ar: "High-spec interior stays premium in heat; iconic design for the GCC streets.",
     },
-    image: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/4/49/2021_Ford_Mustang_Mach-E_Standard_Range_Front.jpg",
     relatedVideoIds: ["7", "33"],
   },
   {
@@ -841,7 +841,7 @@ export const cars: Car[] = [
     price: "From $230,000",
     prices: { il: "₪1,200,000", ru: "25,000,000 ₽", us: "$230,000", ar: "865,000 SAR" },
     regionalAdvice: { il: "The ultimate status symbol EV in Tel Aviv.", ru: "Low ground clearance makes it tough for deep snow.", us: "The fastest 4-door EV on the planet.", ar: "Top-tier AC and sustained high-speed performance." },
-    image: "https://images.unsplash.com/photo-1541443131876-44b03de101c5?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/d/dc/2020_Porsche_Taycan_4S_79kWh_Front.jpg",
     relatedVideoIds: ["4", "28"]
   },
   {
@@ -854,7 +854,7 @@ export const cars: Car[] = [
     price: "From $74,400",
     prices: { il: "₪520,000", ru: "12,000,000 ₽", us: "$74,400", ar: "320,000 SAR" },
     regionalAdvice: { il: "Silent, massive, and luxurious for family trips.", ru: "Heavy with great AWD Quattro traction.", us: "Combines legacy luxury with electric efficiency.", ar: "Huge road presence and premium interior." },
-    image: "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/d/d5/2020_Audi_e-Tron_Sport_50_Quattro.jpg",
     relatedVideoIds: ["20", "38"]
   },
   {
@@ -867,7 +867,7 @@ export const cars: Car[] = [
     price: "From $104,400",
     prices: { il: "₪850,000", ru: "18,000,000 ₽", us: "$104,400", ar: "550,000 SAR" },
     regionalAdvice: { il: "The Electric S-Class. Huge range.", ru: "AWD available. Needs heated garage for battery care.", us: "The aerodynamics king of highway cruising.", ar: "Flagship luxury with an aggressive AC system." },
-    image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Mercedes-Benz_V297_Classic-Days_2022_DSC_0016.jpg",
     relatedVideoIds: ["17", "32"]
   },
   {
@@ -880,7 +880,7 @@ export const cars: Car[] = [
     price: "From $74,900",
     prices: { il: "N/A", ru: "14,000,000 ₽ (Import)", us: "$74,900", ar: "350,000 SAR (Import)" },
     regionalAdvice: { il: "Very rare import, heavy taxation applies.", ru: "Excellent off-roader for serious winter terrain.", us: "The ultimate outdoor adventure family SUV.", ar: "Massive presence and great dune bashing potential." },
-    image: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=800&sig=r1s",
+    image: "https://upload.wikimedia.org/wikipedia/commons/8/89/2023_Rivian_R1S_Adventure%2C_front_1.29.23.jpg",
     relatedVideoIds: ["15", "10"]
   },
   {
@@ -893,7 +893,7 @@ export const cars: Car[] = [
     price: "From $49,900",
     prices: { il: "₪245,000", ru: "5,500,000 ₽", us: "$49,900", ar: "195,000 SAR" },
     regionalAdvice: { il: "A sportier alternative to the Model 3 with Android built-in.", ru: "Volvo DNA makes it fantastic in the snow.", us: "Great lease deals often available.", ar: "Unique styling that stands out." },
-    image: "https://images.unsplash.com/photo-1605515298946-d062f2e9da53?auto=format&fit=crop&q=80&w=800&sig=p2",
+    image: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Polestar_2_%E2%80%93_f_02042021.jpg",
     relatedVideoIds: ["18", "38"]
   },
   {
@@ -956,7 +956,7 @@ export const cars: Car[] = [
       us: "Geely's masterpiece, sadly unavailable in North America.", 
       ar: "Aggressive styling and incredibly opulent interior for the Saudi market." 
     },
-    image: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&q=80&w=800&sig=z001",
+    image: "https://upload.wikimedia.org/wikipedia/commons/0/0a/2022_Zeekr_001_%28front%29.jpg",
     relatedVideoIds: []
   },
   {
@@ -977,7 +977,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Incredible ADAS (Advanced Driver Assistance) and top-tier massage seats." 
     },
-    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800&sig=xg9",
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/7f/2022_XPeng_G9_%28front%29.jpg",
     relatedVideoIds: []
   },
   {
@@ -998,7 +998,7 @@ export const cars: Car[] = [
       us: "Unavailable in the US market.", 
       ar: "Pinnacle of Chinese EV luxury sedans. NOMI digital assistant is highly advanced." 
     },
-    image: "https://images.unsplash.com/photo-1541443131876-44b03de101c5?auto=format&fit=crop&q=80&w=800&sig=net7",
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/70/NIO_ET7_1X7A6679_%28cropped%29.jpg",
     relatedVideoIds: []
   },
   {
@@ -1040,7 +1040,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Stunning drag coefficient (0.199 Cd) makes it hyper-efficient on long desert highways." 
     },
-    image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=800&sig=ge8",
+    image: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Geely_Galaxy_logo_%28Chinese%2C_vertical%29.svg",
     relatedVideoIds: []
   },
   {
@@ -1061,7 +1061,7 @@ export const cars: Car[] = [
       us: "Direct Model Y competitor. Excellent BlueCruise hands-free highway driving.", 
       ar: "Muscle car heritage with an EV twist. Solid ride quality." 
     },
-    image: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=800&sig=fmache",
+    image: "https://upload.wikimedia.org/wikipedia/commons/4/49/2021_Ford_Mustang_Mach-E_Standard_Range_Front.jpg",
     relatedVideoIds: []
   },
   {
@@ -1082,7 +1082,7 @@ export const cars: Car[] = [
       us: "Comfortable, quiet commuter SUV. Software is occasionally buggy.", 
       ar: "Highly reliable A-to-B family hauler with strong local parts availability." 
     },
-    image: "https://images.unsplash.com/photo-1541443131876-44b03de101c5?auto=format&fit=crop&q=80&w=800&sig=vid4",
+    image: "https://upload.wikimedia.org/wikipedia/commons/5/55/2025_Volkswagen_ID4_Pro_Redspot_front.jpg",
     relatedVideoIds: []
   },
   {
@@ -1103,7 +1103,7 @@ export const cars: Car[] = [
       us: "A massive step up from the Leaf. Extremely luxurious ride.", 
       ar: "Exceptional AC performance and incredibly quiet cabin isolation." 
     },
-    image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&q=80&w=800&sig=nariya",
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Nissan_Ariya_e-4ORCE_Evolve_Pack_%E2%80%93_f_31122024.jpg",
     relatedVideoIds: []
   },
   {
@@ -1124,7 +1124,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Incredible cheap thrills, though the range is quite poor under heavy throttle." 
     },
-    image: "https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&q=80&w=800&sig=mg4x",
+    image: "https://upload.wikimedia.org/wikipedia/commons/1/12/MG4_Electric_%E2%80%93_f_21042025.jpg",
     relatedVideoIds: []
   },
   {
@@ -1145,7 +1145,7 @@ export const cars: Car[] = [
       us: "Unavailable due to tariffs.", 
       ar: "CTB (Cell-to-Body) technology makes it feel incredibly rigid and safe on high-speed highways." 
     },
-    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800&sig=bseal",
+    image: "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_BYD_Seal.jpg",
     relatedVideoIds: []
   },
   {
@@ -1166,7 +1166,7 @@ export const cars: Car[] = [
       us: "Built on the same E-GMP platform as the Ioniq 5. Stunning futuristic looks.", 
       ar: "Excellent reliability record in the GCC. Futuristic design stands out in Dubai traffic." 
     },
-    image: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&q=80&w=800&sig=kev6",
+    image: "https://upload.wikimedia.org/wikipedia/commons/d/d9/2021_Kia_EV6_GT-Line_S.jpg",
     relatedVideoIds: []
   },
   {
@@ -1187,7 +1187,7 @@ export const cars: Car[] = [
       us: "Fastest charging in its class. Huge US tax credit eligibility for US-made units.", 
       ar: "Iconic design and very comfortable seats for long weekend drives from Riyadh." 
     },
-    image: "https://images.unsplash.com/photo-1621360841013-c7683c659ec6?auto=format&fit=crop&q=80&w=800&sig=i5_r",
+    image: "https://upload.wikimedia.org/wikipedia/commons/8/85/Hyundai_Ioniq_5_AWD_Techniq-Paket_%E2%80%93_f_31122024.jpg",
     relatedVideoIds: []
   },
   {
@@ -1208,7 +1208,7 @@ export const cars: Car[] = [
       us: "Excellent lease deals often available. Feels like a real BMW, not a gadget.", 
       ar: "High-speed stability on the highway is typical German excellence. AC is robust." 
     },
-    image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=800&sig=i4_r",
+    image: "https://upload.wikimedia.org/wikipedia/commons/a/ad/BMW_i4_IMG_6695.jpg",
     relatedVideoIds: []
   },
   {
@@ -1229,7 +1229,7 @@ export const cars: Car[] = [
       us: "Junior EQS. Great tech-heavy luxury experience.", 
       ar: "Unmatched cabin isolation and premium materials for a quiet commute." 
     },
-    image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/c/cb/Mercedes-Benz_V295_350%2B_Classic-Days_2022_DSC_0018.jpg",
     relatedVideoIds: []
   },
   {
@@ -1250,7 +1250,7 @@ export const cars: Car[] = [
       us: "The best electric truck ever made. Better than the F-150 Lightning for enthusiasts.", 
       ar: "Perfect for dune bashing. The 'Tank Turn' (now legacy) was a legend in Riyadh." 
     },
-    image: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=800&sig=r1t",
+    image: "https://upload.wikimedia.org/wikipedia/commons/e/e1/2022_Rivian_R1T_%28in_Glacier_White%29%2C_front_6.21.22.jpg",
     relatedVideoIds: []
   },
   {
@@ -1271,7 +1271,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Luxurious 6-seater that rivals the BMW X7 for interior comfort." 
     },
-    image: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&q=80&w=800&sig=es8",
+    image: "https://upload.wikimedia.org/wikipedia/commons/2/29/%28CHN-Jiangsu%29_Showcar_Nio_ES8_No-plate_2025-12-20.jpg",
     relatedVideoIds: []
   },
   {
@@ -1292,7 +1292,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Beautiful, sleek alternative to the Tesla Model 3 with a more premium interior." 
     },
-    image: "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/7b/NIO_ET5_IMG_8291.jpg",
     relatedVideoIds: []
   },
   {
@@ -1313,7 +1313,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Scissor-door version (P7 Wing) is a head-turner in Dubai." 
     },
-    image: "https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=800&sig=p7",
+    image: "https://upload.wikimedia.org/wikipedia/commons/0/06/XPeng_P7_II_MY2025_IMG03.jpg",
     relatedVideoIds: []
   },
   {
@@ -1334,7 +1334,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Palatial interior and incredibly quiet ride quality." 
     },
-    image: "https://images.unsplash.com/photo-1541443131876-44b03de101c5?auto=format&fit=crop&q=80&w=800&sig=han",
+    image: "https://upload.wikimedia.org/wikipedia/commons/a/ab/2023_BYD_Han_DM-i_%28facelift%29%2C_front_8.17.23.jpg",
     relatedVideoIds: []
   },
   {
@@ -1355,7 +1355,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Massive road presence and premium seating for the whole family." 
     },
-    image: "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=80&w=800&sig=tang",
+    image: "https://upload.wikimedia.org/wikipedia/commons/b/bb/BYD_Tang_DM-p_front_quarter_trimmed_2.jpg",
     relatedVideoIds: []
   },
   {
@@ -1376,7 +1376,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Great entry-level EV for city commuting in Riyadh or Jeddah." 
     },
-    image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=800&sig=zsev",
+    image: "https://upload.wikimedia.org/wikipedia/commons/c/cf/MG_ZS_%28crossover%2C_second_generation%29_DSC_8542.jpg",
     relatedVideoIds: []
   },
   {
@@ -1397,7 +1397,7 @@ export const cars: Car[] = [
       us: "Unavailable.", 
       ar: "Unique design makes it a favorite among younger drivers in the region." 
     },
-    image: "https://images.unsplash.com/photo-1605515298946-d062f2e9da53?auto=format&fit=crop&q=80&w=800&sig=gcat",
+    image: "https://upload.wikimedia.org/wikipedia/commons/1/1c/GWM_Ora_03_%E2%80%93_f_12102025.jpg",
     relatedVideoIds: []
   },
   {
@@ -1418,7 +1418,7 @@ export const cars: Car[] = [
       us: "Share's the Taycan's DNA. One of the best looking EVs in America.", 
       ar: "Sustained high-speed performance and incredible road handling." 
     },
-    image: "https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&q=80&w=800&sig=etgt",
+    image: "https://upload.wikimedia.org/wikipedia/commons/d/d5/Audi_e-tron_GT_IMG_5689.jpg",
     relatedVideoIds: []
   },
   {
@@ -1439,7 +1439,7 @@ export const cars: Car[] = [
       us: "BMW's electric flagship. Best interior of any BMW today.", 
       ar: "Commanding road presence and exceptional cooling performance." 
     },
-    image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=800&sig=ix50",
+    image: "https://upload.wikimedia.org/wikipedia/commons/b/b2/BMW_iX_IAA_2021_1X7A0204.jpg",
     relatedVideoIds: []
   }
 ];
