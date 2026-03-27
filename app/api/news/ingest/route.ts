@@ -17,8 +17,8 @@ export async function GET() {
         continue;
       }
 
-      for (const item of items) {
-        // 1. Check if GUID exists just for logging (we will upsert anyway)
+      const itemPromises = items.map(async (item) => {
+        // 1. Check if GUID exists (for tracking new entries)
         const { data: existing, error: checkError } = await supabase
           .from("news")
           .select("id")
@@ -26,18 +26,10 @@ export async function GET() {
           .single();
           
         if (checkError && checkError.code !== 'PGRST116') {
-          console.error(`[Ingestion] Error checking GUID for ${source.name}: ${checkError.message}`);
-          if (checkError.message.includes("relation") || checkError.message.includes("does not exist")) {
-            return NextResponse.json({
-              success: false,
-              error: checkError.message
-            });
-          }
-          results.push({ source: source.name, error: checkError.message });
-          break;
+          console.warn(`[Ingestion] Error checking GUID (ignoring for upsert): ${checkError.message}`);
         }
 
-        // 2. Upsert article to overwrite any previously mangled text (e.g. broken windows-1251 encoding)
+        // 2. Upsert article to overwrite mangled text and populate native image_urls
         const { error: upsertError } = await supabase.from("news").upsert({
           guid: item.guid,
           source_id: source.id,
@@ -49,9 +41,13 @@ export async function GET() {
           content: item.content,
         }, { onConflict: 'guid' });
         
-        if (!upsertError && !existing) newCount++;
-        if (upsertError) console.error(`[Ingestion] Upsert Error for ${source.name}: ${upsertError.message}`);
-      }
+        if (!upsertError && !existing) return 1;
+        if (upsertError) console.error(`[Ingestion] Upsert Error for ${item.title}: ${upsertError.message}`);
+        return 0;
+      });
+
+      const newCounts = await Promise.all(itemPromises);
+      newCount = newCounts.reduce((a, b) => a + b, 0);
       
       results.push({ source: source.name, fetched: items.length, new: newCount });
     }
