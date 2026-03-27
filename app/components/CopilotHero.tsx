@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Sparkles, Search, MoveRight, Database, Globe, Zap } from "lucide-react";
 
 export default function CopilotHero() {
   const [query, setQuery] = useState("");
@@ -9,109 +11,97 @@ export default function CopilotHero() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!query.trim()) return;
-    // Redirect to the new Copilot interface with the query
-    router.push(`/copilot?q=${encodeURIComponent(query)}`);
+    if (query.trim()) {
+      router.push(`/copilot?q=${encodeURIComponent(query)}`);
+    }
   };
 
   return (
-    <div className="relative w-full h-[85vh] md:h-[75vh] min-h-[600px] flex items-center justify-center overflow-hidden bg-black pb-32 rounded-b-3xl">
-      {/* Background Video/Image Layer with AI Grid Overlay */}
-      <div className="absolute inset-0 z-0 opacity-40">
-        <img
-          src="https://images.unsplash.com/photo-1593941707882-a5bba14938cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-          alt="EV Platform Background"
-          className="w-full h-full object-cover blur-[2px]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-      </div>
+    <section className="relative pt-32 pb-20 overflow-hidden bg-black">
+      {/* Dynamic Background Grid */}
+      <div className="absolute inset-0 z-0 opacity-20" 
+           style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #333 1px, transparent 0)", backgroundSize: "40px 40px" }}></div>
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-blue-900/10 to-transparent pointer-events-none"></div>
 
-      {/* Main Content */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 md:px-8 text-center flex flex-col items-center justify-center pt-24">
-        
-        {/* Startup Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 mb-8 animate-fade-in group hover:bg-accent/20 transition-colors cursor-default">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-          </span>
-          <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em] group-hover:text-white transition-colors">
-            AutoFlix Intelligence v3.0 Early Access
-          </span>
-        </div>
-
-        {/* Hero Copy */}
-        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-6 uppercase tracking-tighter italic leading-[0.85]">
-          AI Platform <br className="hidden md:block"/>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent via-white to-gray-500">
-            For Your Next EV
-          </span>
-        </h1>
-        
-        <p className="text-gray-400 text-sm md:text-xl max-w-2xl mx-auto font-medium mb-12 tracking-wide leading-relaxed">
-          The intelligence engine that actually knows the specs, local prices, and quirks of 37+ electric vehicles. Get expert advice in English, Hebrew, or Russian 
-          <span className="text-white"> before you buy.</span>
-        </p>
-
-        {/* Copilot Search Bar */}
-        <div className="w-full max-w-3xl relative animate-fade-in-up delay-200">
-          <div className="absolute -inset-1 bg-gradient-to-r from-accent/0 via-accent/30 to-accent/0 rounded-2xl blur-lg opacity-50" />
-          <form onSubmit={handleSearch} className="relative bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl flex items-center p-2 focus-within:border-accent/50 focus-within:ring-1 focus-within:ring-accent/50 transition-all duration-300 ease-out group">
-            <div className="pl-4 h-full flex items-center justify-center opacity-50 group-focus-within:opacity-100 group-focus-within:text-accent transition-all">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-              </svg>
-            </div>
-            
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ask anything about EVs (e.g., 'Compare Model 3 vs BYD Seal in Israel'...)"
-              autoFocus
-              className="w-full bg-transparent border-none text-white text-base md:text-lg px-4 py-4 md:py-5 pr-16 md:pr-40 font-medium placeholder-gray-600 focus:outline-none focus:ring-0"
-            />
-            
-            <button
-              type="submit"
-              disabled={!query.trim()}
-              className="absolute right-2 top-2 bottom-2 bg-white text-black px-6 md:px-8 rounded-xl font-black uppercase tracking-widest text-xs md:text-sm hover:bg-accent hover:text-white transition-all disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-black shadow-xl hidden sm:flex items-center justify-center gap-2"
-            >
-              Ask AI
-              <svg className="w-4 h-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </button>
-            <button
-              type="submit"
-              disabled={!query.trim()}
-              className="sm:hidden absolute right-2 top-2 bottom-2 bg-white text-black w-12 rounded-lg flex items-center justify-center"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </button>
-          </form>
-
-          {/* Suggested Prompts */}
-          <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 mt-6">
-            <span className="text-gray-600 text-[10px] font-black uppercase tracking-widest mr-2">Try:</span>
-            {["Zeekr 7X vs Model Y", "Xiaomi SU7 specs", "Rivian R1S in Israel?"].map((suggestion) => (
-              <button
-                key={suggestion}
-                onClick={() => {
-                   setQuery(suggestion);
-                   router.push(`/copilot?q=${encodeURIComponent(suggestion)}`);
-                }}
-                className="px-3 py-1.5 bg-white/[0.03] border border-white/5 rounded-full text-gray-400 text-xs hover:text-white hover:border-white/20 transition-all cursor-pointer whitespace-nowrap"
-              >
-                {suggestion}
-              </button>
-            ))}
+      <div className="container relative z-10 px-4 mx-auto text-center">
+        {/* Trust Badges */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className="flex items-center gap-2 px-3 py-1 text-xs font-semibold text-blue-400 uppercase tracking-widest bg-blue-500/10 border border-blue-500/20 rounded-full cursor-default">
+            <Database className="w-3 h-3" />
+            51 Live EV Models
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1 text-xs font-semibold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 rounded-full cursor-default">
+            <Globe className="w-3 h-3" />
+            Global Pricing Index
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1 text-xs font-semibold text-orange-400 uppercase tracking-widest bg-orange-500/10 border border-orange-500/20 rounded-full cursor-default">
+            <Zap className="w-3 h-3" />
+            Real-Time Intelligence
           </div>
         </div>
+
+        <h1 className="max-w-4xl mx-auto mb-6 text-5xl font-black leading-tight text-white md:text-7xl tracking-tighter">
+          The Intelligence Layer for <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-500">
+            The EV Revolution
+          </span>
+        </h1>
+
+        <p className="max-w-2xl mx-auto mb-10 text-lg text-gray-400 md:text-xl font-medium">
+          Don't just browse. Analyze. Compare 50+ electric vehicles using proprietary regional data, 
+          real-world range analysis, and AI-driven expert insights.
+        </p>
+
+        {/* The KILLER FEATURE: AI Search Bar */}
+        <div className="max-w-3xl mx-auto mb-12">
+          <form onSubmit={handleSearch} className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative flex flex-col md:flex-row gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
+                <input
+                  type="text"
+                  placeholder="Ask anything: 'Best family EV in Israel' or 'Tesla Model 3 vs BYD Seal'..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="w-full px-16 py-6 text-lg text-white bg-gray-900 border border-white/10 rounded-2xl md:rounded-l-2xl md:rounded-r-none focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all shadow-2xl"
+                />
+              </div>
+              <button 
+                type="submit"
+                className="flex items-center justify-center gap-2 px-10 py-6 text-lg font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-2xl md:rounded-l-none md:rounded-r-2xl transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/20"
+              >
+                Get Insights
+                <Sparkles className="w-5 h-5 fill-current" />
+              </button>
+            </div>
+          </form>
+          
+          <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm text-gray-500">
+            <span>Trending:</span>
+            <button type="button" onClick={() => router.push('/copilot?q=Tesla+vs+BYD')} className="hover:text-blue-400 transition-colors">Tesla vs BYD</button>
+            <span className="text-gray-800">•</span>
+            <button type="button" onClick={() => router.push('/copilot?q=Cheapest+EV+in+Russia')} className="hover:text-blue-400 transition-colors">Cheapest in Russia</button>
+            <span className="text-gray-800">•</span>
+            <button type="button" onClick={() => router.push('/copilot?q=Best+range+SUV')} className="hover:text-blue-400 transition-colors">Best Range SUVs</button>
+          </div>
+        </div>
+
+        {/* Secondary Links */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <Link 
+            href="/cars" 
+            className="group flex items-center gap-2 text-white font-bold hover:text-blue-400 transition-colors"
+          >
+            Explore Raw Data Grid
+            <MoveRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+          </Link>
+          <div className="hidden sm:block w-px h-6 bg-gray-800"></div>
+          <p className="text-sm text-gray-600">
+            Expert Analysis System <span className="text-gray-400">v3.0 Early Access</span>
+          </p>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,13 +1,22 @@
 import Link from "next/link";
 import SearchBar from "./SearchBar";
+import { Zap } from "lucide-react";
 
 export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-header-bg backdrop-blur-sm border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="text-accent text-2xl font-bold tracking-wider">
-          AUTOFLIX
-        </Link>
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 group-hover:bg-blue-500 transition-colors">
+              <Zap className="w-5 h-5 text-white fill-current" />
+            </div>
+            <span className="text-xl font-black tracking-tighter text-white uppercase italic">
+              Auto<span className="text-blue-500">Flix</span>
+            </span>
+            <div className="hidden sm:block ml-2 px-1.5 py-0.5 text-[8px] font-bold text-gray-500 border border-gray-800 rounded uppercase tracking-widest">
+              Intelligence
+            </div>
+          </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link href="/" className="text-white hover:text-accent transition">
             Home
