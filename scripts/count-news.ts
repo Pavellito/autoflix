@@ -12,7 +12,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
         return;
     }
     
-    const counts = data.reduce((acc, row) => {
+    const counts = (data || []).reduce((acc: Record<string, number>, row) => {
         acc[row.region] = (acc[row.region] || 0) + 1;
         return acc;
     }, {});
