@@ -166,7 +166,16 @@ function mapRowToCar(
 ): Car {
   const pricesObj = prices.reduce(
     (acc, p) => {
-      acc[p.region] = p.price;
+      let displayPrice = p.price;
+      // If the database returns a raw number (Phase 4 spec), format it automatically
+      if (/^\d+(\.\d+)?$/.test(p.price)) {
+        const num = Number(p.price);
+        if (p.region === 'il') displayPrice = `₪${num.toLocaleString('en-US')}`;
+        else if (p.region === 'us') displayPrice = `$${num.toLocaleString('en-US')}`;
+        else if (p.region === 'ru') displayPrice = `₽${num.toLocaleString('en-US')}`;
+        else if (p.region === 'ar') displayPrice = `د.إ${num.toLocaleString('en-US')}`;
+      }
+      acc[p.region] = displayPrice;
       return acc;
     },
     {} as Record<string, string>
