@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Tesla Model S Plaid",
+    "brand": "Tesla",
+    "type": "EV",
+    "range": "637 km",
+    "battery": "100 kWh",
+    "price": "From $89,990",
+    "image": "https://images.unsplash.com/photo-1560958089-b8a1929cea89?auto=format&fit=crop&q=80&w=800",
+    "realWorldRange": {
+      "city": "590 km",
+      "highway": "490 km",
+      "winter": "420 km"
+    },
+    "chargingCurve": {
+      "maxSpeed": "250 kW",
+      "tenToEighty": "25 mins"
+    },
+    "depreciation": {
+      "yr3": "-40%",
+      "resaleValue": "Good"
+    },
+    "relatedVideoIds": [],
+    "prices": {
+      "il": "₪550,000",
+      "ru": "12,000,000 ₽",
+      "us": "$89,990",
+      "ar": "380,000 SAR"
+    },
+    "regionalAdvice": {
+      "il": "The ultimate performance EV. Expensive in Israel but nothing else matches its acceleration.",
+      "ru": "Requires reliable charging infrastructure. A status symbol in Moscow.",
+      "us": "The fastest production sedan ever made. Incredible value for the performance.",
+      "ar": "Track-worthy performance with luxury comfort for the GCC market."
+    }
+  }
+]

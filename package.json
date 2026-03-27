@@ -1,0 +1,38 @@
+{
+  "name": "autoflix",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@mozilla/readability": "^0.6.0",
+    "@next/swc-wasm-nodejs": "^16.2.1",
+    "@supabase/supabase-js": "^2.100.1",
+    "groq-sdk": "^1.1.2",
+    "iconv-lite": "^0.7.2",
+    "jsdom": "^29.0.1",
+    "next": "16.2.1",
+    "openai": "^6.33.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "rss-parser": "^3.13.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/jsdom": "^28.0.1",
+    "@types/mozilla-readability": "^0.2.1",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.1",
+    "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}
