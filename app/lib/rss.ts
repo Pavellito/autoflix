@@ -19,7 +19,6 @@ export const RSS_SOURCES: RSSSource[] = [
   { id: "ynet-auto", name: "Ynet Auto", url: "https://www.ynet.co.il/Integration/StoryRss550.xml", region: "il" },
   
   // Russia
-  { id: "autoru", name: "Auto.ru News", url: "https://news.auto.ru/rss/all_recent_news.rss", region: "ru" },
   { id: "drom", name: "Drom.ru", url: "https://www.drom.ru/export/xml/news.rss", region: "ru" },
   
   // Arabic
