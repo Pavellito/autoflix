@@ -1,13 +1,33 @@
 import Link from "next/link";
 import { Car } from "@/app/lib/data";
 import VehicleImage from "@/app/components/VehicleImage";
+import { useFavorites } from "@/app/lib/favorites-context";
 
 export default function CarCard({ car }: { car: Car }) {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const active = isFavorite(car.id);
+
   return (
-    <Link
-      href={`/cars/${car.id}`}
-      className="group flex flex-col bg-card-bg rounded-2xl overflow-hidden border border-white/5 hover:border-accent/40 hover:shadow-[0_0_15px_rgba(229,9,20,0.15)] transition-all duration-300 transform hover:-translate-y-1"
-    >
+    <div className="relative group flex flex-col bg-card-bg rounded-2xl overflow-hidden border border-white/5 hover:border-accent/40 hover:shadow-[0_0_15px_rgba(229,9,20,0.15)] transition-all duration-300 transform hover:-translate-y-1">
+      {/* Heart Button */}
+      <button 
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleFavorite(car.id);
+        }}
+        className={`absolute top-3 left-3 z-30 p-2 rounded-full backdrop-blur-md border transition-all duration-300 active:scale-75 ${
+          active 
+            ? "bg-accent border-accent text-white shadow-[0_0_15px_rgba(229,9,20,0.5)]" 
+            : "bg-black/40 border-white/10 text-gray-400 hover:text-white"
+        }`}
+      >
+        <svg className={`w-4 h-4 ${active ? 'fill-current' : 'fill-none'}`} viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      </button>
+
+      <Link href={`/cars/${car.id}`} className="flex flex-col h-full">
       <div className="relative aspect-[16/10] overflow-hidden">
         <VehicleImage 
           src={car.image} 
@@ -50,6 +70,7 @@ export default function CarCard({ car }: { car: Car }) {
           <span className="text-sm font-bold text-gray-200">{car.battery || "N/A"}</span>
         </div>
       </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

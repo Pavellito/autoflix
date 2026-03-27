@@ -11,10 +11,11 @@ import {
 import { supabase } from "./supabase";
 
 interface FavoritesContextType {
-  favorites: string[]; // array of video IDs
-  isFavorite: (videoId: string) => boolean;
-  toggleFavorite: (videoId: string) => Promise<void>;
+  favorites: string[]; // array of item IDs (video or car)
+  isFavorite: (itemId: string) => boolean;
+  toggleFavorite: (itemId: string) => Promise<void>;
   loading: boolean;
+  user: any | null; // Placeholder for auth session
 }
 
 const FavoritesContext = createContext<FavoritesContextType>({
@@ -22,88 +23,60 @@ const FavoritesContext = createContext<FavoritesContextType>({
   isFavorite: () => false,
   toggleFavorite: async () => {},
   loading: true,
+  user: null,
 });
-
-const USER_ID = "anonymous"; // Will be replaced with auth in a later step
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any | null>(null);
 
-  // Load favorites from Supabase on mount
+  // Load favorites from Supabase
   useEffect(() => {
-    async function loadFavorites() {
-      try {
-        const { data, error } = await supabase
-          .from("favorites")
-          .select("video_id")
-          .eq("user_id", USER_ID);
-
-        if (error) {
-          console.error("Error loading favorites:", error);
-          return;
-        }
-
-        setFavorites(data?.map((row) => row.video_id) ?? []);
-      } catch (err) {
-        console.error("Failed to load favorites:", err);
-      } finally {
-        setLoading(false);
-      }
+    async function initAuth() {
+       const { data: { session } } = await supabase.auth.getSession();
+       setUser(session?.user ?? null);
+       
+       const userId = session?.user?.id || "anonymous";
+       const { data } = await supabase
+         .from("favorites")
+         .select("video_id")
+         .eq("user_id", userId);
+       
+       setFavorites(data?.map(r => r.video_id)??[]);
+       setLoading(false);
     }
-
-    loadFavorites();
+    initAuth();
   }, []);
 
   const isFavorite = useCallback(
-    (videoId: string) => favorites.includes(videoId),
+    (itemId: string) => favorites.includes(itemId),
     [favorites]
   );
 
   const toggleFavorite = useCallback(
-    async (videoId: string) => {
-      const isCurrentlyFavorite = favorites.includes(videoId);
+    async (itemId: string) => {
+      const userId = user?.id || "anonymous";
+      const isCurrentlyFavorite = favorites.includes(itemId);
 
-      // Optimistic update
-      if (isCurrentlyFavorite) {
-        setFavorites((prev) => prev.filter((id) => id !== videoId));
-      } else {
-        setFavorites((prev) => [...prev, videoId]);
-      }
+      // Optimistic
+      setFavorites(prev => isCurrentlyFavorite ? prev.filter(i => i !== itemId) : [...prev, itemId]);
 
       try {
         if (isCurrentlyFavorite) {
-          const { error } = await supabase
-            .from("favorites")
-            .delete()
-            .eq("user_id", USER_ID)
-            .eq("video_id", videoId);
-
-          if (error) throw error;
+          await supabase.from("favorites").delete().eq("user_id", userId).eq("video_id", itemId);
         } else {
-          const { error } = await supabase
-            .from("favorites")
-            .insert({ user_id: USER_ID, video_id: videoId });
-
-          if (error) throw error;
+          await supabase.from("favorites").insert({ user_id: userId, video_id: itemId });
         }
       } catch (err) {
-        // Revert optimistic update on error
-        console.error("Failed to toggle favorite:", err);
-        if (isCurrentlyFavorite) {
-          setFavorites((prev) => [...prev, videoId]);
-        } else {
-          setFavorites((prev) => prev.filter((id) => id !== videoId));
-        }
+        console.error("Toggle failed:", err);
       }
     },
-    [favorites]
+    [favorites, user]
   );
 
   return (
-    <FavoritesContext.Provider
-      value={{ favorites, isFavorite, toggleFavorite, loading }}
-    >
+    <FavoritesContext.Provider value={{ favorites, isFavorite, toggleFavorite, loading, user }}>
       {children}
     </FavoritesContext.Provider>
   );
