@@ -36,14 +36,14 @@ async function executePhase4RegionalScrape(region: string) {
     // evaluated nodes, here we stream them directly from our internal data array pipelines
     for (const car of cars) {
         // Step 1: Scrape local listing data
-        const rawRegionPrice = car.prices[region as keyof typeof car.prices];
+        const rawRegionPrice = car.prices ? (car.prices as Record<string, string>)[region] : undefined;
         
         if (rawRegionPrice) {
             // Step 2: Normalize
             const normalizedPrice = normalizePrice(rawRegionPrice);
             const currency = getCurrency(region);
             
-            console.log(`   🚘 [${car.name}] Scraped: ${rawRegionPrice.padEnd(12)} → Normalized: ${normalizedPrice} ${currency}`);
+            console.log(`   🚘 [${car.name}] Scraped: ${String(rawRegionPrice).padEnd(12)} → Normalized: ${normalizedPrice} ${currency}`);
             
             // Step 3: Save to Supabase DB (Upsert pipeline)
             const { data: existingPrices } = await supabase
