@@ -914,7 +914,7 @@ export const cars: Car[] = [
       us: "Geely brands face 100% tariffs; will not enter the US market.", 
       ar: "Luxury alternative to Tesla Model Y with far superior interior quality for the GCC heat." 
     },
-    image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=800&sig=z7x",
+    image: "https://upload.wikimedia.org/wikipedia/commons/4/47/Zeekr_7X_001.jpg",
     relatedVideoIds: []
   },
   {
@@ -935,7 +935,7 @@ export const cars: Car[] = [
       us: "Smartphone integration is unparalleled but totally banned in the US.", 
       ar: "Hypercar acceleration with the intelligence of a smartphone. A tech-lovers dream in Dubai." 
     },
-    image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=800&sig=su7",
+    image: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Xiaomi_SU7_Max_007.jpg",
     relatedVideoIds: []
   },
   {
@@ -1019,7 +1019,7 @@ export const cars: Car[] = [
       us: "The absolute king of EV range and motor efficiency. Nothing comes close.", 
       ar: "Backed by the Saudi PIF. Excellent availability and service network in KSA." 
     },
-    image: "https://images.unsplash.com/photo-1617704548623-340376564e68?auto=format&fit=crop&q=80&w=800",
+    image: "https://upload.wikimedia.org/wikipedia/commons/b/be/Lucid_Air.jpg",
     relatedVideoIds: []
   },
   {
