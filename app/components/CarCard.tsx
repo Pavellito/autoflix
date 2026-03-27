@@ -1,5 +1,4 @@
-import Link from "next/link";
-import type { Car } from "@/app/lib/data";
+import VehicleImage from "@/app/components/VehicleImage";
 
 export default function CarCard({ car }: { car: Car }) {
   return (
@@ -7,13 +6,12 @@ export default function CarCard({ car }: { car: Car }) {
       href={`/cars/${car.id}`}
       className="group flex flex-col bg-card-bg rounded-lg overflow-hidden border border-white/5 hover:border-accent/40 hover:shadow-[0_0_15px_rgba(229,9,20,0.15)] transition-all duration-300 transform hover:-translate-y-1"
     >
-      <div className="relative aspect-[16/10] bg-gray-900 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={car.image}
-          alt={car.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-        />
+      <VehicleImage 
+        src={car.image} 
+        alt={car.name} 
+        aspectRatio="aspect-[16/10]"
+        className="group-hover:scale-105" 
+      />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         
         {/* Absolute tags */}

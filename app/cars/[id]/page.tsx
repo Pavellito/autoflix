@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getCarById, getRelatedVideosForCar } from "@/app/lib/data";
 import VideoRow from "@/app/components/VideoRow";
 import RegionalCarInfo from "@/app/components/RegionalCarInfo";
+import VehicleImage from "@/app/components/VehicleImage";
 
 export default async function CarDetailPage({
   params,
@@ -28,15 +29,15 @@ export default async function CarDetailPage({
       </Link>
 
       <div className="bg-card-bg rounded-2xl overflow-hidden border border-white/5 mb-12 shadow-2xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-          <div className="relative aspect-video md:aspect-auto bg-gray-900 border-b md:border-b-0 md:border-r border-white/10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={car.image}
-              alt={car.name}
-              className="w-full h-full object-cover"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-0 relative">
+          <div className="relative aspect-video md:aspect-auto bg-gray-900 border-b md:border-b-0 md:border-r border-white/10 overflow-hidden">
+            <VehicleImage 
+              src={car.image} 
+              alt={car.name} 
+              aspectRatio="h-full"
+              className="w-full h-full" 
             />
-            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/80 via-black/20 to-transparent pointer-events-none" />
             
             <div className="absolute bottom-6 left-6 right-6">
               <div className="flex items-center gap-3 mb-2">

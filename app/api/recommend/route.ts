@@ -39,7 +39,7 @@ User Profile:
 
 Available Cars: [${carContext}]
 
-Recommend exactly 2 cars from the list that best fit this profile. 
+Recommend exactly 3 primary cars from the list that best fit this profile, ordered by match percentage. 
 Return ONLY a valid JSON object in ${language} language.
 
 Structure:
@@ -47,14 +47,10 @@ Structure:
   "recommendations": [
     {
       "carId": "car-1", // MUST BE EXACT ID from the list
-      "why": "Specific 2-sentence reason for this user in their region.",
+      "why": "Specific 2-sentence reason for this user in their region. Mention technical specs like range or charging if relevant.",
       "score": 95 
     },
-    {
-      "carId": "car-5", // MUST BE EXACT ID from the list
-      "why": "Specific 2-sentence reason.",
-      "score": 88
-    }
+    ... (total 3)
   ],
   "expert_tip": "One expert advice sentence for this specific region/budget."
 }
@@ -85,7 +81,7 @@ Do not include markdown backticks.`;
     // Strict Validation: Ensure AI only returns IDs that actually exist in our data.ts
     const validRecommendations = (responseData.recommendations || [])
       .filter((rec: any) => cars.some(c => c.id === rec.carId))
-      .slice(0, 2);
+      .slice(0, 3);
 
     // Fallback if AI failed to provide valid IDs
     if (validRecommendations.length === 0) {

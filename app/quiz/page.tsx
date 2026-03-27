@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { cars } from "@/app/lib/data";
 import Link from "next/link";
+import VehicleImage from "@/app/components/VehicleImage";
 
 export default function QuizPage() {
   const [step, setStep] = useState(1);
@@ -17,13 +18,14 @@ export default function QuizPage() {
     mileage: "medium"
   });
 
-  async function getRecommendations() {
+  async function getRecommendations(finalData?: any) {
     setLoading(true);
     try {
+      const dataToSubmit = finalData || formData;
       const res = await fetch("/api/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSubmit),
       });
       const data = await res.json();
       setResults(data);
@@ -157,7 +159,11 @@ export default function QuizPage() {
                  ].map((m) => (
                    <button
                      key={m.id}
-                     onClick={() => { setFormData({ ...formData, mileage: m.id }); getRecommendations(); }}
+                     onClick={() => { 
+                       const finalData = { ...formData, mileage: m.id };
+                       setFormData(finalData); 
+                       getRecommendations(finalData); 
+                     }}
                      className="p-4 bg-white/5 border border-white/10 rounded-2xl hover:border-accent/40 text-white font-bold transition-all"
                    >
                      {m.label}
@@ -200,57 +206,62 @@ function QuizResults({ results, onReset }: { results: any; onReset: () => void }
           </p>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {results.recommendations?.map((rec: any, i: number) => {
             const car = cars.find(c => c.id === rec.carId);
             if (!car) return null;
             return (
-              <div key={i} className="group flex flex-col bg-card-bg/40 backdrop-blur-3xl rounded-[2rem] border border-white/5 hover:border-accent/30 hover:bg-card-bg/60 transition-all duration-500 shadow-2xl relative overflow-hidden">
+              <div key={i} className="group flex flex-col bg-card-bg/40 backdrop-blur-3xl rounded-[2.5rem] border border-white/5 hover:border-accent/30 hover:bg-card-bg/60 transition-all duration-500 shadow-2xl relative overflow-hidden">
                 {/* Match Score Badge */}
-                <div className="absolute top-6 right-6 bg-black/80 backdrop-blur-md border border-accent/40 px-4 py-2 rounded-full flex items-center gap-2 z-20 shadow-xl group-hover:scale-105 transition-transform">
-                  <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-                  <span className="text-accent text-xs font-black uppercase tracking-widest leading-none mt-0.5">
+                <div className="absolute top-6 right-6 bg-black/80 backdrop-blur-md border border-accent/40 px-4 py-1.5 rounded-full flex items-center gap-2 z-20 shadow-xl group-hover:scale-105 transition-transform">
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                  <span className="text-accent text-[10px] font-black uppercase tracking-widest leading-none mt-0.5">
                     {rec.score}% Match
                   </span>
                 </div>
 
                 {/* Image Section */}
-                <div className="relative w-full aspect-[16/9] overflow-hidden">
+                <div className="relative w-full aspect-[4/3] overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
-                  <img src={car.image} alt={car.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                  <VehicleImage 
+                    src={car.image} 
+                    alt={car.name} 
+                    aspectRatio="aspect-[4/3]"
+                    className="group-hover:scale-105 transition-transform duration-700 ease-out" 
+                  />
                   <div className="absolute bottom-6 left-6 z-20">
                      <span className="text-white/70 text-[10px] font-black uppercase tracking-[0.2em] mb-1 block">
                        {car.brand}
                      </span>
-                     <h3 className="text-3xl font-black text-white uppercase italic tracking-tighter leading-none shadow-black drop-shadow-lg">
+                     <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-none shadow-black drop-shadow-lg">
                        {car.name.replace(car.brand, "")}
                      </h3>
                   </div>
                 </div>
 
                 {/* Content Section */}
-                <div className="p-8 flex flex-col flex-grow relative">
-                  <div className="absolute top-0 right-8 -translate-y-1/2 z-20 bg-accent text-white px-5 py-2 rounded-full text-sm font-black tracking-wider shadow-[0_10px_30px_rgba(229,9,20,0.4)]">
+                <div className="p-6 flex flex-col flex-grow relative">
+                  <div className="absolute top-0 right-6 -translate-y-1/2 z-20 bg-accent text-white px-4 py-1.5 rounded-full text-[11px] font-black tracking-wider shadow-[0_5px_15px_rgba(229,9,20,0.3)]">
                     {getRegionalPrice(car)}
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4 mb-8 pt-4 border-b border-white/5 pb-8">
+                  <div className="grid grid-cols-2 gap-3 mb-6 pt-2 border-b border-white/5 pb-6">
                     <div>
-                      <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest block mb-1">Range</span>
-                      <span className="text-white font-medium text-sm">{car.range || "N/A"}</span>
+                      <span className="text-gray-500 text-[9px] font-black uppercase tracking-widest block mb-0.5">Range</span>
+                      <span className="text-white font-bold text-xs">{car.range || "N/A"}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500 text-[10px] font-black uppercase tracking-widest block mb-1">Battery</span>
-                      <span className="text-white font-medium text-sm">{car.battery || "N/A"}</span>
+                      <span className="text-gray-500 text-[9px] font-black uppercase tracking-widest block mb-0.5">Battery</span>
+                      <span className="text-white font-bold text-xs">{car.battery || "N/A"}</span>
                     </div>
                   </div>
 
-                  <div className="mb-8 flex-grow">
-                    <div className="flex items-start gap-4 bg-white/[0.02] p-6 rounded-2xl border border-white/5">
-                      <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-1">
-                        <span className="text-accent text-lg">✨</span>
+                  <div className="mb-6 flex-grow">
+                    <div className="flex items-start gap-3 bg-white/[0.01] p-4 rounded-xl border border-white/5 h-full">
+                      <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <span className="text-accent text-sm">✨</span>
                       </div>
-                      <p className="text-gray-300 text-sm leading-relaxed font-medium italic">
+                      <p className="text-gray-400 text-xs leading-relaxed font-medium italic">
                         "{rec.why}"
                       </p>
                     </div>
@@ -258,11 +269,11 @@ function QuizResults({ results, onReset }: { results: any; onReset: () => void }
 
                   <Link 
                     href={`/cars/${car.id}`}
-                    className="w-full relative flex items-center justify-center py-4 bg-white text-black font-black uppercase text-xs tracking-[0.2em] rounded-xl hover:bg-accent hover:text-white transition-all overflow-hidden group/btn shadow-[0_5px_20px_rgba(255,255,255,0.1)]"
+                    className="w-full relative flex items-center justify-center py-3.5 bg-white text-black font-black uppercase text-[10px] tracking-[0.2em] rounded-xl hover:bg-accent hover:text-white transition-all overflow-hidden group/btn shadow-[0_5px_20px_rgba(255,255,255,0.05)]"
                   >
                     <span className="relative z-10 flex items-center gap-2">
-                      Explore Vehicle
-                      <svg className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                       Explore Tech Specs
+                      <svg className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                       </svg>
                     </span>
