@@ -2,10 +2,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getRelatedVideosForCar } from "@/app/lib/data";
 import { fetchCarById } from "@/app/lib/supabase-cars";
-import VideoCard from "@/app/components/VideoCard";
+import VideoRow from "@/app/components/VideoRow";
 import CompareVerdict from "@/app/components/CompareVerdict";
+import VehicleImage from "@/app/components/VehicleImage";
 
-// Force dynamic rendering so all car combos work without rebuild
 export const dynamic = "force-dynamic";
 
 export default async function CompareDetailPage({
@@ -14,133 +14,106 @@ export default async function CompareDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  
-  // More robust parsing for complex IDs
+
   const parts = slug.split("-vs-");
   if (parts.length !== 2) notFound();
 
   const [id1, id2] = parts;
-  const car1 = await fetchCarById(id1);
-  const car2 = await fetchCarById(id2);
+  const [car1, car2] = await Promise.all([fetchCarById(id1), fetchCarById(id2)]);
 
-  if (!car1 || !car2) {
-    // Try one last thing: check if IDs are swapped or slightly different
-    console.error(`Comparison failed: ${id1} vs ${id2}`);
-    notFound();
-  }
+  if (!car1 || !car2) notFound();
 
-  const car1Videos = getRelatedVideosForCar(car1).slice(0, 2);
-  const car2Videos = getRelatedVideosForCar(car2).slice(0, 2);
+  const car1Videos = getRelatedVideosForCar(car1);
+  const car2Videos = getRelatedVideosForCar(car2);
+
+  const specRows = [
+    { label: "Type", v1: car1.type, v2: car2.type },
+    { label: "Range (WLTP)", v1: car1.range || "N/A", v2: car2.range || "N/A" },
+    { label: "Battery", v1: car1.battery || "N/A", v2: car2.battery || "N/A" },
+    { label: "Price (US)", v1: car1.prices?.us || car1.price || "N/A", v2: car2.prices?.us || car2.price || "N/A" },
+    { label: "Price (Israel)", v1: car1.prices?.il || "N/A", v2: car2.prices?.il || "N/A" },
+    { label: "Price (Russia)", v1: car1.prices?.ru || "N/A", v2: car2.prices?.ru || "N/A" },
+    { label: "Price (Arabic)", v1: car1.prices?.ar || "N/A", v2: car2.prices?.ar || "N/A" },
+    ...(car1.realWorldRange || car2.realWorldRange
+      ? [
+          { label: "Highway Range", v1: car1.realWorldRange?.highway || "N/A", v2: car2.realWorldRange?.highway || "N/A" },
+          { label: "Winter Range", v1: car1.realWorldRange?.winter || "N/A", v2: car2.realWorldRange?.winter || "N/A" },
+        ]
+      : []),
+    ...(car1.chargingCurve || car2.chargingCurve
+      ? [
+          { label: "Max Charging", v1: car1.chargingCurve?.maxSpeed || "N/A", v2: car2.chargingCurve?.maxSpeed || "N/A" },
+          { label: "10-80% Time", v1: car1.chargingCurve?.tenToEighty || "N/A", v2: car2.chargingCurve?.tenToEighty || "N/A" },
+        ]
+      : []),
+    ...(car1.depreciation || car2.depreciation
+      ? [
+          { label: "3yr Depreciation", v1: car1.depreciation?.yr3 || "N/A", v2: car2.depreciation?.yr3 || "N/A" },
+          { label: "Resale Value", v1: car1.depreciation?.resaleValue || "N/A", v2: car2.depreciation?.resaleValue || "N/A" },
+        ]
+      : []),
+  ];
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Back button */}
-      <Link
-        href="/compare"
-        className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-8 transition-colors"
-      >
-        ← Back to Comparisons
-      </Link>
+    <div className="bg-[#141414] min-h-screen pt-20 pb-12">
+      <div className="max-w-5xl mx-auto px-[4%]">
+        {/* Back */}
+        <Link href="/compare" className="inline-flex items-center gap-2 text-[#777] hover:text-white mb-6 text-[14px] transition-colors">
+          &larr; Back to Compare
+        </Link>
 
-      {/* Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-3xl md:text-5xl font-black text-white mb-4 italic tracking-tighter">
-          <span className="text-accent underline decoration-accent/30">{car1.brand}</span> {car1.name.replace(car1.brand, "").trim()} 
-          <span className="mx-4 text-gray-600 font-light not-italic">VS</span> 
-          <span className="text-accent underline decoration-accent/30">{car2.brand}</span> {car2.name.replace(car2.brand, "").trim()}
-        </h1>
-        <p className="text-gray-400 text-sm tracking-widest uppercase font-bold">The Ultimate Side-by-Side Showdown</p>
-      </div>
+        {/* Hero: Side by Side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1 mb-8 relative">
+          {[car1, car2].map((car, i) => (
+            <div key={car.id} className="relative aspect-[16/9] overflow-hidden rounded">
+              <VehicleImage src={car.image} alt={car.name} aspectRatio="h-full" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+              <div className="absolute bottom-4 left-4">
+                <p className="text-[11px] text-[#e50914] font-bold uppercase tracking-wider mb-1">
+                  Car {i === 0 ? "A" : "B"}
+                </p>
+                <h2 className="text-[24px] md:text-[28px] font-bold text-white">{car.name}</h2>
+                <p className="text-[13px] text-white/60">{car.brand} &middot; {car.type}</p>
+              </div>
+            </div>
+          ))}
 
-      {/* Hero Images Side by Side */}
-      <div className="flex flex-col md:flex-row gap-4 mb-12 relative group">
-        <div className="w-full md:w-1/2 relative rounded-2xl overflow-hidden shadow-2xl bg-black border border-white/10">
-          <img
-            src={car1.image}
-            alt={car1.name}
-            className="w-full aspect-[16/9] object-cover opacity-80"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-          <div className="absolute bottom-0 left-0 right-0 p-6 pb-4">
-            <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase">{car1.name}</h2>
-            <p className="text-accent font-black tracking-widest text-xs uppercase">{car1.brand} Performance</p>
+          {/* VS Badge */}
+          <div className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#e50914] text-white font-black text-[16px] w-12 h-12 items-center justify-center rounded-full z-10 border-4 border-[#141414] shadow-xl">
+            VS
           </div>
         </div>
 
-        {/* VS Badge */}
-        <div className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-accent text-white font-black italic text-xl w-14 h-14 items-center justify-center rounded-full shadow-[0_0_40px_rgba(229,9,20,0.8)] z-10 border-4 border-black">
-          VS
-        </div>
+        {/* AI Verdict */}
+        <CompareVerdict car1={car1} car2={car2} />
 
-        <div className="w-full md:w-1/2 relative rounded-2xl overflow-hidden shadow-2xl bg-black border border-white/10">
-          <img
-            src={car2.image}
-            alt={car2.name}
-            className="w-full aspect-[16/9] object-cover opacity-80"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-          <div className="absolute bottom-0 left-0 right-0 p-6 pb-4">
-            <h2 className="text-2xl font-black text-white italic tracking-tighter uppercase">{car2.name}</h2>
-            <p className="text-accent font-black tracking-widest text-xs uppercase">{car2.brand} Excellence</p>
+        {/* Specs Table */}
+        <div className="bg-[#1a1a1a] rounded border border-white/10 overflow-hidden mb-10">
+          <div className="grid grid-cols-3 bg-[#111] border-b border-white/10">
+            <div className="p-4 text-[12px] text-[#777] font-bold uppercase tracking-wider">Specification</div>
+            <div className="p-4 text-[14px] text-white font-bold text-center">{car1.name}</div>
+            <div className="p-4 text-[14px] text-white font-bold text-center">{car2.name}</div>
           </div>
-        </div>
-      </div>
-
-      {/* 🤖 AI Expert Comparison Verdict (NEW) */}
-      <CompareVerdict car1={car1} car2={car2} />
-
-      {/* Tech Specs Table */}
-      <div className="bg-card-bg/60 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden mb-16 shadow-2xl">
-        <div className="grid grid-cols-3 bg-black/40 border-b border-white/5">
-          <div className="p-5 font-bold text-gray-500 uppercase text-[10px] tracking-widest">Main Technical Specs</div>
-          <div className="p-5 font-black text-white text-center uppercase tracking-tight italic">{car1.name}</div>
-          <div className="p-5 font-black text-white text-center uppercase tracking-tight italic">{car2.name}</div>
+          {specRows.map((row, i) => (
+            <div key={row.label} className={`grid grid-cols-3 border-b border-white/5 ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}>
+              <div className="p-4 text-[13px] text-[#999]">{row.label}</div>
+              <div className="p-4 text-[13px] text-white text-center font-medium">{row.v1}</div>
+              <div className="p-4 text-[13px] text-white text-center font-medium">{row.v2}</div>
+            </div>
+          ))}
         </div>
 
-        {[
-          { label: "Category", v1: car1.type, v2: car2.type },
-          { label: "Range (WLTP)", v1: car1.range || "N/A", v2: car2.range || "N/A" },
-          { label: "Battery", v1: car1.battery || "N/A", v2: car2.battery || "N/A" },
-          { label: "Price (Global)", v1: car1.prices?.us || car1.price, v2: car2.prices?.us || car2.price },
-          { label: "Price (Israel 🇮🇱)", v1: car1.prices?.il || "N/A", v2: car2.prices?.il || "N/A" },
-          { label: "Price (Russia 🇷🇺)", v1: car1.prices?.ru || "N/A", v2: car2.prices?.ru || "N/A" },
-          { label: "Price (Arabic 🇸🇦)", v1: car1.prices?.ar || "N/A", v2: car2.prices?.ar || "N/A" },
-        ].map((row, i) => (
-          <div
-            key={row.label}
-            className={`grid grid-cols-3 border-b border-white/5 items-center ${
-              i % 2 === 0 ? "bg-white/[0.03]" : "bg-transparent"
-            }`}
-          >
-            <div className="p-5 font-bold text-gray-400 text-xs italic tracking-wider">{row.label}</div>
-            <div className="p-5 text-white text-center text-sm font-medium">{row.v1}</div>
-            <div className="p-5 text-white text-center text-sm font-medium">{row.v2}</div>
+        {/* Related Videos */}
+        {(car1Videos.length > 0 || car2Videos.length > 0) && (
+          <div className="border-t border-white/10 pt-8">
+            {car1Videos.length > 0 && (
+              <VideoRow title={`${car1.name} Videos`} videos={car1Videos} />
+            )}
+            {car2Videos.length > 0 && (
+              <VideoRow title={`${car2.name} Videos`} videos={car2Videos} />
+            )}
           </div>
-        ))}
-      </div>
-
-      {/* Related Videos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div>
-          <h3 className="text-xl font-bold text-white mb-6 border-b border-white/10 pb-2">
-            Watch <span className="text-accent">{car1.name}</span> Reviews
-          </h3>
-          <div className="flex flex-col gap-4">
-            {car1Videos.map((video) => (
-              <VideoCard key={video.id} video={video} />
-            ))}
-          </div>
-        </div>
-        <div>
-          <h3 className="text-xl font-bold text-white mb-6 border-b border-white/10 pb-2">
-            Watch <span className="text-accent">{car2.name}</span> Reviews
-          </h3>
-          <div className="flex flex-col gap-4">
-            {car2Videos.map((video) => (
-              <VideoCard key={video.id} video={video} />
-            ))}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
