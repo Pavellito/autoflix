@@ -35,7 +35,7 @@ export default function CarSelector({
   const [enriching, setEnriching] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Close on outside click
   useEffect(() => {
