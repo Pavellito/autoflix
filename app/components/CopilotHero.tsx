@@ -1,106 +1,119 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Sparkles, Search, MoveRight, Database, Globe, Zap } from "lucide-react";
+import type { Car } from "@/app/lib/data";
 
-export default function CopilotHero() {
-  const [query, setQuery] = useState("");
-  const router = useRouter();
+const FEATURED_CARS = [
+  {
+    id: "tesla-model-y-juniper",
+    name: "Tesla Model Y Juniper",
+    tagline: "The best-selling EV on the planet, now completely redesigned for 2025.",
+    specs: "530 km range | 0-100 in 5.0s | Dual Motor AWD",
+    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=1920&q=80",
+  },
+  {
+    id: "porsche-taycan-turbo-s",
+    name: "Porsche Taycan Turbo S",
+    tagline: "Electrified precision. 761 horsepower of pure Porsche engineering.",
+    specs: "507 km range | 0-100 in 2.8s | Performance Battery Plus",
+    image: "https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=1920&q=80",
+  },
+  {
+    id: "byd-seal",
+    name: "BYD Seal",
+    tagline: "China's answer to the Model 3. Blade Battery tech meets stunning design.",
+    specs: "570 km range | 0-100 in 3.8s | 82 kWh Blade Battery",
+    image: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?w=1920&q=80",
+  },
+];
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (query.trim()) {
-      router.push(`/copilot?q=${encodeURIComponent(query)}`);
-    }
-  };
+export default function CopilotHero({ cars }: { cars?: Car[] }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const featured = FEATURED_CARS[activeIndex];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((i) => (i + 1) % FEATURED_CARS.length);
+    }, 12000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <section className="relative pt-32 pb-20 overflow-hidden bg-black">
-      {/* Dynamic Background Grid */}
-      <div className="absolute inset-0 z-0 opacity-20" 
-           style={{ backgroundImage: "radial-gradient(circle at 2px 2px, #333 1px, transparent 0)", backgroundSize: "40px 40px" }}></div>
-      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-blue-900/10 to-transparent pointer-events-none"></div>
-
-      <div className="container relative z-10 px-4 mx-auto text-center">
-        {/* Trust Badges */}
-        <div className="flex flex-wrap justify-center gap-4 mb-8">
-          <div className="flex items-center gap-2 px-3 py-1 text-xs font-semibold text-blue-400 uppercase tracking-widest bg-blue-500/10 border border-blue-500/20 rounded-full cursor-default">
-            <Database className="w-3 h-3" />
-            51 Live EV Models
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1 text-xs font-semibold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 border border-emerald-500/20 rounded-full cursor-default">
-            <Globe className="w-3 h-3" />
-            Global Pricing Index
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1 text-xs font-semibold text-orange-400 uppercase tracking-widest bg-orange-500/10 border border-orange-500/20 rounded-full cursor-default">
-            <Zap className="w-3 h-3" />
-            Real-Time Intelligence
-          </div>
+    <section className="relative h-[85vh] min-h-[600px] w-full">
+      {/* Background Image */}
+      {FEATURED_CARS.map((car, i) => (
+        <div
+          key={car.id}
+          className="absolute inset-0 transition-opacity duration-1000"
+          style={{ opacity: i === activeIndex ? 1 : 0 }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={car.image}
+            alt={car.name}
+            className="w-full h-full object-cover"
+          />
         </div>
+      ))}
 
-        <h1 className="max-w-4xl mx-auto mb-6 text-5xl font-black leading-tight text-white md:text-7xl tracking-tighter">
-          The Intelligence Layer for <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-500">
-            The EV Revolution
-          </span>
-        </h1>
+      {/* Netflix Gradient Overlays */}
+      <div className="absolute inset-0 billboard-vignette" />
+      <div className="absolute inset-0 billboard-bottom" />
 
-        <p className="max-w-2xl mx-auto mb-10 text-lg text-gray-400 md:text-xl font-medium">
-          Don't just browse. Analyze. Compare 50+ electric vehicles using proprietary regional data, 
-          real-world range analysis, and AI-driven expert insights.
+      {/* Content - Left Aligned like Netflix */}
+      <div className="absolute bottom-[35%] left-[4%] z-10 max-w-xl animate-fade-in" key={activeIndex}>
+        <p className="text-[12px] font-bold text-white/80 tracking-[0.3em] uppercase mb-3">
+          AutoFlix Featured
         </p>
+        <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-none" style={{ fontFamily: "Arial Black, Helvetica Neue, sans-serif" }}>
+          {featured.name}
+        </h1>
+        <p className="text-[18px] text-white/90 mb-2 font-medium leading-relaxed max-w-lg">
+          {featured.tagline}
+        </p>
+        <p className="text-[14px] text-white/60 mb-6">{featured.specs}</p>
 
-        {/* The KILLER FEATURE: AI Search Bar */}
-        <div className="max-w-3xl mx-auto mb-12">
-          <form onSubmit={handleSearch} className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-emerald-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative flex flex-col md:flex-row gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-gray-400 group-focus-within:text-blue-400 transition-colors" />
-                <input
-                  type="text"
-                  placeholder="Ask anything: 'Best family EV in Israel' or 'Tesla Model 3 vs BYD Seal'..."
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  className="w-full px-16 py-6 text-lg text-white bg-gray-900 border border-white/10 rounded-2xl md:rounded-l-2xl md:rounded-r-none focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20 transition-all shadow-2xl"
-                />
-              </div>
-              <button 
-                type="submit"
-                className="flex items-center justify-center gap-2 px-10 py-6 text-lg font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-2xl md:rounded-l-none md:rounded-r-2xl transition-all hover:scale-[1.02] active:scale-95 shadow-xl shadow-blue-900/20"
-              >
-                Get Insights
-                <Sparkles className="w-5 h-5 fill-current" />
-              </button>
-            </div>
-          </form>
-          
-          <div className="mt-4 flex flex-wrap justify-center gap-3 text-sm text-gray-500">
-            <span>Trending:</span>
-            <button type="button" onClick={() => router.push('/copilot?q=Tesla+vs+BYD')} className="hover:text-blue-400 transition-colors">Tesla vs BYD</button>
-            <span className="text-gray-800">•</span>
-            <button type="button" onClick={() => router.push('/copilot?q=Cheapest+EV+in+Russia')} className="hover:text-blue-400 transition-colors">Cheapest in Russia</button>
-            <span className="text-gray-800">•</span>
-            <button type="button" onClick={() => router.push('/copilot?q=Best+range+SUV')} className="hover:text-blue-400 transition-colors">Best Range SUVs</button>
-          </div>
-        </div>
-
-        {/* Secondary Links */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-          <Link 
-            href="/cars" 
-            className="group flex items-center gap-2 text-white font-bold hover:text-blue-400 transition-colors"
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/cars/${featured.id}`}
+            className="flex items-center gap-2 bg-white text-black px-7 py-2.5 rounded text-[16px] font-bold hover:bg-white/80 transition-colors"
           >
-            Explore Raw Data Grid
-            <MoveRight className="w-5 h-5 transition-transform group-hover:translate-x-2" />
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            Explore
           </Link>
-          <div className="hidden sm:block w-px h-6 bg-gray-800"></div>
-          <p className="text-sm text-gray-600">
-            Expert Analysis System <span className="text-gray-400">v3.0 Early Access</span>
-          </p>
+          <Link
+            href="/compare"
+            className="flex items-center gap-2 bg-[#6d6d6e]/70 text-white px-7 py-2.5 rounded text-[16px] font-bold hover:bg-[#6d6d6e]/50 transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            More Info
+          </Link>
         </div>
+      </div>
+
+      {/* Maturity Rating Badge - Bottom Right */}
+      <div className="absolute bottom-[35%] right-0 z-10 flex items-center">
+        <span className="bg-[#333]/60 text-white text-[14px] px-3 py-1 border-l-[3px] border-white/40">
+          EV
+        </span>
+      </div>
+
+      {/* Indicator Dots */}
+      <div className="absolute bottom-[28%] left-[4%] z-10 flex gap-1.5">
+        {FEATURED_CARS.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setActiveIndex(i)}
+            className={`h-[3px] rounded-full transition-all duration-300 ${
+              i === activeIndex ? "w-6 bg-white" : "w-3 bg-white/40"
+            }`}
+          />
+        ))}
       </div>
     </section>
   );

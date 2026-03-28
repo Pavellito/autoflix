@@ -1,73 +1,60 @@
 import CopilotHero from "./components/CopilotHero";
-import IntelligenceStats from "./components/IntelligenceStats";
-import LiveNewsTicker from "./components/LiveNewsTicker";
-import ShowroomGrid from "./components/ShowroomGrid";
-import ComparisonPreview from "./components/ComparisonPreview";
+import CarRow from "./components/CarRow";
+import VideoRow from "./components/VideoRow";
 import { fetchAllCars } from "./lib/supabase-cars";
+import { videos, getVideosByCategory } from "./lib/data";
 
 export default async function Home() {
   const cars = await fetchAllCars();
-  
+
+  const trending = getVideosByCategory("Trending");
+  const reviews = getVideosByCategory("Reviews");
+  const comparisons = getVideosByCategory("Comparisons");
+  const evVideos = getVideosByCategory("Electric Cars");
+
+  // Split cars into rows by brand groups
+  const teslas = cars.filter((c) => c.brand === "Tesla");
+  const byd = cars.filter((c) => c.brand === "BYD");
+  const premium = cars.filter((c) => ["Porsche", "Mercedes", "BMW", "Audi"].includes(c.brand));
+  const allCars = cars.slice(0, 12);
+
   return (
-    <main className="min-h-screen bg-black overflow-x-hidden">
-      <CopilotHero />
-      <IntelligenceStats />
-      
-      <div className="py-20 bg-[#070707] border-b border-white/5">
-        <div className="container px-4 mx-auto mb-10">
-          <div className="flex items-center gap-4 mb-3">
-            <div className="w-12 h-px bg-blue-500"></div>
-            <span className="text-xs font-black text-blue-500 uppercase tracking-[0.4em]">
-              Real-Time Feed
-            </span>
-          </div>
-          <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">
-            Global Market <span className="text-gray-500">Intelligence</span>
-          </h2>
-        </div>
-        <LiveNewsTicker />
+    <div className="bg-[#141414] min-h-screen">
+      <CopilotHero cars={cars} />
+
+      {/* Rows overlap the billboard bottom - Netflix style */}
+      <div className="-mt-[6vw] relative z-10">
+        <CarRow title="Popular on AutoFlix" cars={allCars} />
+        <VideoRow title="Trending Now" videos={trending} />
+        {teslas.length > 0 && <CarRow title="Tesla Fleet" cars={teslas} />}
+        <VideoRow title="Expert Reviews" videos={reviews} />
+        {byd.length > 0 && <CarRow title="BYD Collection" cars={byd} />}
+        <VideoRow title="Head-to-Head Comparisons" videos={comparisons} />
+        {premium.length > 0 && <CarRow title="Premium & Luxury" cars={premium} />}
+        <VideoRow title="Electric Revolution" videos={evVideos} />
       </div>
 
-      <ComparisonPreview />
-
-      {/* 4. THE RAW CATALOG (THE SCALE LAYER) */}
-      <div className="container px-4 py-24 mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div>
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-12 h-px bg-emerald-500"></div>
-              <span className="text-xs font-black text-emerald-500 uppercase tracking-[0.4em]">
-                Database Scale
-              </span>
-            </div>
-            <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase leading-none">
-              The Raw <span className="text-blue-500">Intelligence</span> Grid
-            </h2>
+      {/* Footer */}
+      <footer className="px-[4%] py-8 mt-12">
+        <div className="max-w-[980px] mx-auto">
+          <p className="text-[#737373] text-[13px] mb-4">Questions? Contact us.</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-[13px] text-[#737373] underline mb-6">
+            <a href="#">FAQ</a>
+            <a href="#">Help Center</a>
+            <a href="#">Account</a>
+            <a href="#">Media Center</a>
+            <a href="#">Investor Relations</a>
+            <a href="#">Jobs</a>
+            <a href="#">Ways to Watch</a>
+            <a href="#">Terms of Use</a>
+            <a href="#">Privacy</a>
+            <a href="#">Cookie Preferences</a>
+            <a href="#">Corporate Information</a>
+            <a href="#">Speed Test</a>
           </div>
-          <div className="text-xs font-bold text-gray-700 tracking-[0.2em] uppercase italic border-l-2 border-gray-900 pl-6 py-2">
-            Normalizing Performance Specs <br />
-            For 51+ Global EV Models
-          </div>
-        </div>
-        
-        <ShowroomGrid initialCars={cars} />
-      </div>
-
-      {/* 5. FOOTER BRANDING */}
-      <footer className="py-20 bg-black border-t border-white/5 text-center">
-        <div className="container px-4 mx-auto">
-          <div className="text-2xl font-black text-white italic tracking-tighter uppercase mb-2">
-            Auto<span className="text-blue-500">Flix</span>
-          </div>
-          <p className="text-sm text-gray-600 mb-8 max-w-sm mx-auto">
-            The elite intelligence layer for the global transition to electric mobility. 
-            Data-driven. AI-First. Absolute.
-          </p>
-          <div className="text-[10px] text-gray-800 font-bold uppercase tracking-[0.5em]">
-            © 2026 AUTOFLIX INTELLIGENCE SYSTEMS
-          </div>
+          <p className="text-[#737373] text-[11px]">&copy; 2026 AutoFlix</p>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }
