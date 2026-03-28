@@ -1,15 +1,15 @@
 "use client";
 
 import { useRef } from "react";
-import VideoCard from "./VideoCard";
-import type { Video } from "@/app/lib/data";
+import CarCard from "./CarCard";
+import type { Car } from "@/app/lib/data";
 
-export default function VideoRow({
+export default function CarRow({
   title,
-  videos,
+  cars,
 }: {
   title: string;
-  videos: Video[];
+  cars: Car[];
 }) {
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -21,6 +21,8 @@ export default function VideoRow({
       behavior: "smooth",
     });
   }
+
+  if (!cars.length) return null;
 
   return (
     <section className="row-container relative mb-2 group/row">
@@ -35,7 +37,6 @@ export default function VideoRow({
       </h2>
 
       <div className="relative">
-        {/* Left arrow */}
         <button
           onClick={() => scroll("left")}
           className="row-arrow absolute left-0 top-0 bottom-0 z-20 w-12 lg:w-14 bg-[#141414]/60 hover:bg-[#141414]/90 flex items-center justify-center transition rounded-r-[4px]"
@@ -45,17 +46,15 @@ export default function VideoRow({
           </svg>
         </button>
 
-        {/* Slider */}
         <div
           ref={sliderRef}
           className="netflix-slider flex gap-1.5 overflow-x-auto scrollbar-hide px-4 lg:px-14 pb-4 pt-2"
         >
-          {videos.map((video) => (
-            <VideoCard key={video.id} video={video} />
+          {cars.map((car) => (
+            <CarCard key={car.id} car={car} />
           ))}
         </div>
 
-        {/* Right arrow */}
         <button
           onClick={() => scroll("right")}
           className="row-arrow absolute right-0 top-0 bottom-0 z-20 w-12 lg:w-14 bg-[#141414]/60 hover:bg-[#141414]/90 flex items-center justify-center transition rounded-l-[4px]"

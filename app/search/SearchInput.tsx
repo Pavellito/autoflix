@@ -15,17 +15,17 @@ export default function SearchInput({ initialQuery }: { initialQuery: string }) 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-3">
+    <form onSubmit={handleSubmit} className="flex gap-2 max-w-xl">
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search for cars, EVs, maintenance tips..."
-        className="flex-1 bg-black/60 border border-white/20 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-accent transition"
+        placeholder="Search for cars, reviews, tips..."
+        className="flex-1 bg-[#333] border border-[#333] text-white px-4 py-2.5 rounded-[4px] text-sm focus:border-white/50 transition placeholder-[#808080]"
       />
       <button
         type="submit"
-        className="bg-accent hover:bg-accent/80 text-white px-6 py-2.5 rounded-lg font-medium transition-colors"
+        className="bg-[#e50914] text-white px-6 py-2.5 rounded-[4px] text-sm font-bold hover:bg-[#f40612] transition"
       >
         Search
       </button>

@@ -21,7 +21,7 @@ export default function SearchBar() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="text-gray-300 hover:text-white transition"
+          className="text-white hover:text-[#b3b3b3] transition"
           aria-label="Open search"
         >
           <svg
@@ -42,22 +42,27 @@ export default function SearchBar() {
       )}
 
       {open && (
-        <form onSubmit={handleSubmit} className="flex items-center gap-2">
-          <input
-            autoFocus
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onBlur={() => !query && setOpen(false)}
-            placeholder="Search cars, EVs, tips..."
-            className="bg-black/80 border border-white/20 text-white text-sm px-3 py-1.5 rounded w-48 focus:w-64 transition-all focus:outline-none focus:border-accent"
-          />
-          <button
-            type="submit"
-            className="text-sm text-accent hover:text-white transition"
-          >
-            Go
-          </button>
+        <form onSubmit={handleSubmit} className="flex items-center">
+          <div className="relative">
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-white w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <circle cx="11" cy="11" r="8" strokeWidth="2" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" strokeWidth="2" />
+            </svg>
+            <input
+              autoFocus
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onBlur={() => !query && setOpen(false)}
+              placeholder="Titles, cars, brands"
+              className="bg-black border border-white text-white text-sm pl-9 pr-3 py-1.5 w-52 focus:w-64 transition-all placeholder-[#808080]"
+            />
+          </div>
         </form>
       )}
     </div>

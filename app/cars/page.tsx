@@ -3,20 +3,18 @@ import CarCard from "@/app/components/CarCard";
 
 export default function CarsPage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">
-          Explore Cars
-        </h1>
-        <p className="text-gray-400">
-          Browse our database of top electric vehicles with specs and related reviews.
+    <div className="bg-[#141414] min-h-screen pt-24 pb-16">
+      <div className="px-4 lg:px-14">
+        <h1 className="text-white text-3xl font-bold mb-1">Explore Cars</h1>
+        <p className="text-[#808080] text-sm mb-8">
+          Browse our database of electric vehicles with specs and reviews.
         </p>
-      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {cars.map((car) => (
-          <CarCard key={car.id} car={car} />
-        ))}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+          {cars.map((car) => (
+            <CarCard key={car.id} car={car} />
+          ))}
+        </div>
       </div>
     </div>
   );
