@@ -1,65 +1,58 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SearchBar() {
-  const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  function handleSubmit(e: React.FormEvent) {
+  const handleToggle = () => {
+    if (!open) {
+      setOpen(true);
+      setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  };
+
+  const handleBlur = () => {
+    if (!query.trim()) setOpen(false);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const q = query.trim();
-    if (!q) return;
-    router.push(`/search?q=${encodeURIComponent(q)}`);
-    setOpen(false);
-  }
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query)}`);
+      setQuery("");
+      setOpen(false);
+    }
+  };
 
   return (
-    <div className="relative">
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="text-gray-300 hover:text-white transition"
-          aria-label="Open search"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    <form onSubmit={handleSubmit} className="flex items-center">
+      <div
+        className={`flex items-center transition-all duration-300 ${
+          open ? "w-[255px] border border-white bg-[#141414] px-2" : "w-auto"
+        }`}
+      >
+        <button type="button" onClick={handleToggle} className="p-1.5 flex-shrink-0">
+          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </button>
-      )}
-
-      {open && (
-        <form onSubmit={handleSubmit} className="flex items-center gap-2">
+        {open && (
           <input
-            autoFocus
+            ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onBlur={() => !query && setOpen(false)}
-            placeholder="Search cars, EVs, tips..."
-            className="bg-black/80 border border-white/20 text-white text-sm px-3 py-1.5 rounded w-48 focus:w-64 transition-all focus:outline-none focus:border-accent"
+            onBlur={handleBlur}
+            placeholder="Titles, cars, genres"
+            className="bg-transparent text-[14px] text-white w-full py-1 outline-none placeholder:text-[#737373]"
           />
-          <button
-            type="submit"
-            className="text-sm text-accent hover:text-white transition"
-          >
-            Go
-          </button>
-        </form>
-      )}
-    </div>
+        )}
+      </div>
+    </form>
   );
 }

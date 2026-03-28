@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import VideoCard from "./VideoCard";
-import type { Video } from "@/app/lib/data";
+import type { Car } from "@/app/lib/data";
+import CarCard from "./CarCard";
 
-export default function VideoRow({ title, videos }: { title: string; videos: Video[] }) {
+export default function CarRow({ title, cars }: { title: string; cars: Car[] }) {
   const rowRef = useRef<HTMLDivElement>(null);
 
   const scroll = (dir: "left" | "right") => {
@@ -13,7 +13,7 @@ export default function VideoRow({ title, videos }: { title: string; videos: Vid
     rowRef.current.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
   };
 
-  if (videos.length === 0) return null;
+  if (cars.length === 0) return null;
 
   return (
     <section className="row-container mb-[3vw] relative group/row">
@@ -43,8 +43,8 @@ export default function VideoRow({ title, videos }: { title: string; videos: Vid
           ref={rowRef}
           className="flex gap-[4px] overflow-x-auto scrollbar-hide px-[60px] py-4"
         >
-          {videos.map((video) => (
-            <VideoCard key={video.id} video={video} />
+          {cars.map((car) => (
+            <CarCard key={car.id} car={car} />
           ))}
         </div>
 

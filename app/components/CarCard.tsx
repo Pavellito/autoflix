@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Car } from "@/app/lib/data";
 import VehicleImage from "@/app/components/VehicleImage";
@@ -8,68 +10,67 @@ export default function CarCard({ car }: { car: Car }) {
   const active = isFavorite(car.id);
 
   return (
-    <div className="relative group flex flex-col bg-card-bg rounded-2xl overflow-hidden border border-white/5 hover:border-accent/40 hover:shadow-[0_0_15px_rgba(229,9,20,0.15)] transition-all duration-300 transform hover:-translate-y-1">
-      {/* Heart Button */}
-      <button 
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          toggleFavorite(car.id);
-        }}
-        className={`absolute top-3 left-3 z-30 p-2 rounded-full backdrop-blur-md border transition-all duration-300 active:scale-75 ${
-          active 
-            ? "bg-accent border-accent text-white shadow-[0_0_15px_rgba(229,9,20,0.5)]" 
-            : "bg-black/40 border-white/10 text-gray-400 hover:text-white"
-        }`}
-      >
-        <svg className={`w-4 h-4 ${active ? 'fill-current' : 'fill-none'}`} viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>
-      </button>
+    <div className="netflix-card flex-shrink-0 w-[calc(100vw/2.3)] sm:w-[calc(100vw/3.3)] md:w-[calc(100vw/4.3)] lg:w-[calc(100vw/6.2)] rounded overflow-hidden relative group cursor-pointer">
+      <Link href={`/cars/${car.id}`}>
+        {/* Thumbnail */}
+        <div className="relative aspect-[16/9] bg-[#333]">
+          <VehicleImage
+            src={car.image}
+            alt={car.name}
+            aspectRatio="aspect-full"
+            className="w-full h-full object-cover"
+          />
+          {/* Car name overlay at bottom */}
+          <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+            <p className="text-[13px] font-bold text-white truncate">{car.name}</p>
+          </div>
+        </div>
 
-      <Link href={`/cars/${car.id}`} className="flex flex-col h-full">
-      <div className="relative aspect-[16/10] overflow-hidden">
-        <VehicleImage 
-          src={car.image} 
-          alt={car.name} 
-          aspectRatio="aspect-full"
-          className="group-hover:scale-110 transition-transform duration-700" 
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        
-        {/* Absolute tags */}
-        <div className="absolute top-3 right-3 flex flex-col gap-1 items-end">
-          <span className="bg-black/60 backdrop-blur-md text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-[0.2em] border border-white/10">
-            {car.brand}
-          </span>
-          <span className="bg-accent/90 text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-[0.2em] shadow-lg">
-            {car.type}
-          </span>
-          {car.relatedVideoIds && car.relatedVideoIds.length > 0 && (
-            <span className="bg-indigo-600 text-white text-[10px] font-black px-2 py-1 rounded uppercase tracking-[0.2em] flex items-center gap-1">
-              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm14 7V7H4v6h12z"/><path fillRule="evenodd" d="M10 8a1 1 0 01.553.894l2 1a1 1 0 010 1.788l-2 1A1 1 0 019 11V9a1 1 0 011-1z" clipRule="evenodd"/></svg>
-              Review
-            </span>
+        {/* Hover Popup */}
+        <div className="absolute top-full left-0 right-0 bg-[#181818] p-3 rounded-b shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto z-40">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 mb-2">
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-white/80"
+            >
+              <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(car.id); }}
+              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${
+                active ? "border-white bg-white/20 text-white" : "border-[#fff]/40 text-white hover:border-white"
+              }`}
+            >
+              {active ? (
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
+                </svg>
+              )}
+            </button>
+          </div>
+
+          {/* Match + Info */}
+          <div className="flex items-center gap-2 text-[12px] mb-1">
+            <span className="text-[#46d369] font-bold">98% Match</span>
+            <span className="border border-white/30 text-white/60 px-1 text-[10px]">{car.type}</span>
+          </div>
+
+          {/* Specs */}
+          <div className="flex items-center gap-2 text-[12px] text-white/70">
+            {car.range && <span>{car.range}</span>}
+            {car.battery && <><span className="text-white/30">|</span><span>{car.battery}</span></>}
+          </div>
+          {car.price && (
+            <p className="text-[12px] text-white/50 mt-1">{car.price}</p>
           )}
         </div>
-        
-        <div className="absolute bottom-0 p-4 w-full">
-          <h3 className="text-xl font-black text-white mb-0.5 drop-shadow-lg uppercase italic tracking-tighter">{car.name}</h3>
-          <p className="text-sm text-accent font-bold">{car.price}</p>
-        </div>
-      </div>
-      
-      <div className="p-4 flex items-center justify-between bg-white/[0.02] border-t border-white/5">
-        <div className="flex flex-col">
-          <span className="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-black mb-0.5">Range</span>
-          <span className="text-sm font-bold text-gray-200">{car.range || "N/A"}</span>
-        </div>
-        <div className="w-[1px] h-6 bg-white/10" />
-        <div className="flex flex-col items-end">
-          <span className="text-[9px] text-gray-500 uppercase tracking-[0.2em] font-black mb-0.5">Battery</span>
-          <span className="text-sm font-bold text-gray-200">{car.battery || "N/A"}</span>
-        </div>
-      </div>
       </Link>
     </div>
   );
