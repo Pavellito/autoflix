@@ -41,52 +41,89 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${
-        scrolled ? "bg-[#141414]" : "bg-gradient-to-b from-black/80 via-black/40 to-transparent"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "bg-[#141414]"
+          : "bg-gradient-to-b from-black/70 to-transparent"
       }`}
     >
-      <div className="flex items-center px-4 lg:px-14 py-0 h-[68px]">
-        {/* Logo */}
-        <Link href="/" className="mr-6 lg:mr-10 flex-shrink-0">
-          <span className="text-[#e50914] text-2xl lg:text-[28px] font-extrabold tracking-wider" style={{ fontFamily: "'Bebas Neue', 'Helvetica Neue', sans-serif" }}>
-            AUTOFLIX
-          </span>
+      <div className="flex items-center h-[68px] px-4 md:px-8 lg:px-[60px]">
+        {/* Netflix-style Logo */}
+        <Link href="/" className="mr-5 lg:mr-[25px] flex-shrink-0">
+          <svg viewBox="0 0 120 34" className="h-[25px] lg:h-[28px] fill-[#e50914]">
+            <text
+              x="0"
+              y="28"
+              style={{
+                fontSize: "32px",
+                fontWeight: 900,
+                fontFamily: "Arial Black, Impact, sans-serif",
+                letterSpacing: "-0.5px",
+              }}
+            >
+              AUTOFLIX
+            </text>
+          </svg>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-5 text-[14px]">
+        {/* Desktop Nav - Netflix uses light weight text */}
+        <nav className="hidden lg:flex items-center gap-[18px]">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-[#e5e5e5] hover:text-[#b3b3b3] transition-colors duration-300"
+              className="text-[14px] text-[#e5e5e5] hover:text-[#b3b3b3] transition-colors duration-400"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        {/* Mobile hamburger */}
-        <button
-          className="lg:hidden ml-2 text-white"
-          onClick={() => setMobileNavOpen(!mobileNavOpen)}
-        >
-          <span className="text-[14px] font-medium text-white flex items-center gap-1">
+        {/* Mobile Browse dropdown */}
+        <div className="lg:hidden relative ml-2">
+          <button
+            className="text-[14px] font-medium text-white flex items-center gap-1"
+            onClick={() => setMobileNavOpen(!mobileNavOpen)}
+          >
             Browse
-            <svg className={`w-4 h-4 transition-transform ${mobileNavOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <svg
+              className={`w-[16px] h-[16px] transition-transform ${mobileNavOpen ? "rotate-180" : ""}`}
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M7 10l5 5 5-5z" />
             </svg>
-          </span>
-        </button>
+          </button>
+          {mobileNavOpen && (
+            <div className="absolute top-full left-0 mt-2 w-[200px] bg-[#000]/95 border border-[#404040] py-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block px-5 py-2.5 text-[13px] text-[#e5e5e5] hover:bg-[#333] text-center"
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
 
-        {/* Right side controls */}
-        <div className="ml-auto flex items-center gap-4">
+        {/* Right side */}
+        <div className="ml-auto flex items-center gap-[15px]">
+          {/* Search */}
           <SearchBar />
 
-          {/* Notifications bell */}
-          <button className="hidden md:block text-white hover:text-[#b3b3b3] transition">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+          {/* Kids - Netflix has this */}
+          <Link href="/quiz" className="hidden md:block text-[14px] text-[#e5e5e5] hover:text-[#b3b3b3]">
+            Advisor
+          </Link>
+
+          {/* Bell */}
+          <button className="hidden md:flex items-center text-white hover:text-[#b3b3b3] transition relative">
+            <svg className="w-[22px] h-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
             </svg>
           </button>
 
@@ -95,88 +132,58 @@ export default function Header() {
             <div className="relative" ref={profileRef}>
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 group"
+                className="flex items-center gap-1.5"
               >
                 <img
                   src={user.avatar}
                   alt={user.name}
-                  className="w-8 h-8 rounded-[4px]"
+                  className="w-[32px] h-[32px] rounded-[4px]"
                 />
                 <svg
-                  className={`w-4 h-4 text-white transition-transform duration-200 ${
-                    profileOpen ? "rotate-180" : ""
-                  }`}
-                  fill="none"
+                  className={`w-[16px] h-[16px] text-white transition-transform ${profileOpen ? "rotate-180" : ""}`}
+                  fill="currentColor"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <path d="M7 10l5 5 5-5z" />
                 </svg>
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 top-12 w-[220px] bg-[#000000]/90 border border-[#333] rounded-[2px] py-2 animate-fade-in">
-                  <div className="px-3 py-2 flex items-center gap-3 border-b border-[#333]">
-                    <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-[4px]" />
-                    <div>
-                      <p className="text-white text-sm font-medium">{user.name}</p>
-                      <p className="text-[#808080] text-xs">{user.email}</p>
+                <div className="absolute right-0 top-[48px] w-[230px] bg-[#000]/95 border border-[#404040] py-0 animate-fade-in">
+                  <div className="px-[10px] py-[10px] flex items-center gap-[10px] border-b border-[#404040]">
+                    <img src={user.avatar} alt="" className="w-[32px] h-[32px] rounded-[4px]" />
+                    <div className="overflow-hidden">
+                      <p className="text-[13px] text-white font-medium truncate">{user.name}</p>
+                      <p className="text-[11px] text-[#808080] truncate">{user.email}</p>
                     </div>
                   </div>
-                  <Link
-                    href="/my-list"
-                    className="block px-3 py-2 text-[13px] text-[#b3b3b3] hover:text-white transition"
-                    onClick={() => setProfileOpen(false)}
-                  >
+                  <Link href="/my-list" className="block px-[10px] py-[8px] text-[13px] text-[#b3b3b3] hover:underline" onClick={() => setProfileOpen(false)}>
                     My List
                   </Link>
-                  <Link
-                    href="/copilot"
-                    className="block px-3 py-2 text-[13px] text-[#b3b3b3] hover:text-white transition"
-                    onClick={() => setProfileOpen(false)}
-                  >
+                  <Link href="/copilot" className="block px-[10px] py-[8px] text-[13px] text-[#b3b3b3] hover:underline" onClick={() => setProfileOpen(false)}>
                     AI Copilot
                   </Link>
-                  <button
-                    onClick={() => {
-                      signOut();
-                      setProfileOpen(false);
-                    }}
-                    className="w-full text-left px-3 py-2 text-[13px] text-[#b3b3b3] hover:text-white transition border-t border-[#333] mt-1"
-                  >
-                    Sign out of AutoFlix
-                  </button>
+                  <div className="border-t border-[#404040]">
+                    <button
+                      onClick={() => { signOut(); setProfileOpen(false); }}
+                      className="w-full text-center px-[10px] py-[10px] text-[13px] text-[#b3b3b3] hover:underline"
+                    >
+                      Sign out of AutoFlix
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           ) : (
             <button
               onClick={() => setShowSignIn(true)}
-              className="bg-[#e50914] text-white px-4 py-1.5 rounded-[4px] text-[14px] font-medium hover:bg-[#f40612] transition"
+              className="bg-[#e50914] text-white text-[14px] font-medium px-[16px] py-[5px] rounded-[3px] hover:bg-[#f6121d] transition"
             >
               Sign In
             </button>
           )}
         </div>
       </div>
-
-      {/* Mobile nav dropdown */}
-      {mobileNavOpen && (
-        <div className="lg:hidden bg-[#141414]/95 border-t border-[#333] animate-fade-in">
-          <nav className="flex flex-col py-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-6 py-3 text-[14px] text-[#e5e5e5] hover:bg-[#333] transition"
-                onClick={() => setMobileNavOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      )}
     </header>
   );
 }

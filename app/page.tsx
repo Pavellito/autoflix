@@ -9,20 +9,17 @@ export default function Home() {
   const hybridCars = cars.filter((c) => c.type === "Hybrid" || c.type === "ICE");
 
   return (
-    <div className="bg-[#141414] min-h-screen">
-      {/* Netflix-style billboard hero */}
+    <div className="bg-[#141414]">
+      {/* Billboard hero — overlaps into row section */}
       <CopilotHero />
 
-      {/* Content rows - overlapping the billboard slightly */}
-      <div className="relative z-10 -mt-12 space-y-1 pb-20">
-        {/* Car rows */}
-        <CarRow title="Popular Cars" cars={topCars} />
+      {/* Content rows — pulled up to overlap the hero bottom gradient */}
+      <div className="relative z-10 -mt-[6vw] pb-[50px]">
+        <CarRow title="Popular on AutoFlix" cars={topCars} />
         <CarRow title="Electric Vehicles" cars={evCars} />
         {hybridCars.length > 0 && (
           <CarRow title="Hybrid & ICE" cars={hybridCars} />
         )}
-
-        {/* Video rows */}
         {categories.map((category) => (
           <VideoRow
             key={category}
