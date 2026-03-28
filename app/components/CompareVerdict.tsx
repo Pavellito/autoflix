@@ -23,6 +23,17 @@ export default function CompareVerdict({ car1, car2 }: { car1: Car; car2: Car })
     { code: "ar", label: "العربية" },
   ];
 
+  // Safely convert any value to a renderable string
+  function toStr(val: unknown): string {
+    if (val == null) return "";
+    if (typeof val === "string") return val;
+    if (typeof val === "object") {
+      // Handle objects like {practical_buyer: "...", performance_buyer: "..."}
+      return Object.values(val as Record<string, unknown>).filter(v => typeof v === "string").join(" · ");
+    }
+    return String(val);
+  }
+
   async function getVerdict() {
     setLoading(true);
     setError(null);
@@ -34,7 +45,15 @@ export default function CompareVerdict({ car1, car2 }: { car1: Car; car2: Car })
       });
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.error || "Failed to compare");
-      setData(resData);
+      // Normalize fields to strings (AI may return objects)
+      setData({
+        comparison_summary: toStr(resData.comparison_summary),
+        winner_verdict: toStr(resData.winner_verdict),
+        key_differences: Array.isArray(resData.key_differences)
+          ? resData.key_differences.map((d: unknown) => toStr(d))
+          : [],
+        regional_buying_tip: toStr(resData.regional_buying_tip),
+      });
     } catch (e: any) {
       setError(e.message);
     } finally {

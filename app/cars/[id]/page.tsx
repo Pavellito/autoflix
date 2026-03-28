@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRelatedVideosForCar } from "@/app/lib/data";
-import { fetchCarById } from "@/app/lib/supabase-cars";
+import { fetchCarById, fetchNewsForCar } from "@/app/lib/supabase-cars";
 import VideoRow from "@/app/components/VideoRow";
 import RegionalCarInfo from "@/app/components/RegionalCarInfo";
 import VehicleImage from "@/app/components/VehicleImage";
@@ -19,7 +19,10 @@ export default async function CarDetailPage({
     notFound();
   }
 
-  const relatedVideos = getRelatedVideosForCar(car);
+  const [relatedVideos, relatedNews] = await Promise.all([
+    Promise.resolve(getRelatedVideosForCar(car)),
+    fetchNewsForCar(car),
+  ]);
 
   return (
     <div className="bg-[#141414] min-h-screen">
@@ -122,6 +125,44 @@ export default async function CarDetailPage({
             <RegionalCarInfo car={car} />
           </div>
         </div>
+
+        {/* Related News */}
+        {relatedNews.length > 0 && (
+          <div className="border-t border-white/10 pt-8 mb-8">
+            <h2 className="text-[20px] font-bold text-white mb-4">{car.brand} in the News</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {relatedNews.slice(0, 6).map((article) => (
+                <Link
+                  key={article.id}
+                  href={`/news/${article.id}`}
+                  className="group bg-[#1a1a1a] rounded overflow-hidden border border-white/5 hover:border-white/20 transition-colors"
+                >
+                  {article.image_url && (
+                    <div className="aspect-[16/9] overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={article.image_url}
+                        alt={article.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  <div className="p-3">
+                    <p className="text-[13px] text-white font-medium line-clamp-2 group-hover:text-white/80">
+                      {article.title}
+                    </p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-[11px] text-[#e50914] font-bold uppercase">{article.source_id}</span>
+                      <span className="text-[11px] text-[#777]">
+                        {article.published_at ? new Date(article.published_at).toLocaleDateString() : ""}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Related Videos */}
         {relatedVideos.length > 0 && (

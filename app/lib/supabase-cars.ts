@@ -157,6 +157,62 @@ export async function fetchCarsByBrand(brand: string): Promise<Car[]> {
   return cars.map((row: CarRow) => mapRowToCar(row, pricesByCarId[row.id], adviceByCarId[row.id]));
 }
 
+// ─── News Functions ──────────────────────────────────────
+
+export interface NewsItem {
+  id: string;
+  title: string;
+  link: string;
+  region: string;
+  source_id: string;
+  published_at: string;
+  image_url?: string;
+}
+
+/**
+ * Fetch news articles related to a car by matching brand and model name in titles.
+ * Uses Supabase ilike for text search across the title column.
+ */
+export async function fetchNewsForCar(car: Car): Promise<NewsItem[]> {
+  // Build search terms: brand name and key model words
+  const brandTerm = car.brand;
+  // Extract model name without the brand prefix (e.g., "Model Y" from "Tesla Model Y")
+  const modelName = car.name.replace(car.brand, "").trim();
+  // Get the first significant word of the model (e.g., "Model" from "Model Y Juniper")
+  const modelWords = modelName.split(/\s+/).filter((w) => w.length > 1);
+
+  // Search for articles mentioning brand AND at least part of model name
+  const orFilters = [
+    `title.ilike.%${car.name}%`, // Full name match (best)
+  ];
+
+  // Also match brand + first model word for broader results
+  if (modelWords.length > 0) {
+    orFilters.push(`title.ilike.%${modelWords[0]}%`);
+  }
+
+  const { data, error } = await supabase
+    .from("news")
+    .select("id, title, link, region, source_id, published_at, image_url")
+    .or(orFilters.join(","))
+    .order("published_at", { ascending: false })
+    .limit(12);
+
+  if (error) {
+    console.error("Error fetching news for car:", error);
+    return [];
+  }
+
+  // Post-filter: ensure results actually relate to this brand (avoid false positives)
+  const filtered = (data ?? []).filter((article: NewsItem) => {
+    const titleLower = article.title.toLowerCase();
+    const brandLower = brandTerm.toLowerCase();
+    return titleLower.includes(brandLower) || titleLower.includes(car.name.toLowerCase());
+  });
+
+  return filtered as NewsItem[];
+}
+
 // ─── Helper Functions ────────────────────────────────────
 
 function mapRowToCar(

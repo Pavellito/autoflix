@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useAuth } from "@/app/lib/auth-context";
 import SearchBar from "./SearchBar";
+import HeaderCarNav from "./HeaderCarNav";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -93,6 +94,7 @@ export default function Header() {
 
         {/* Right Section */}
         <div className="flex items-center gap-4 ml-auto">
+          <HeaderCarNav />
           <SearchBar />
 
           {isSignedIn && user ? (
