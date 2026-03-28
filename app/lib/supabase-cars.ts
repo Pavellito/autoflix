@@ -32,6 +32,7 @@ interface CarRow {
   charging_curve: { maxSpeed: string; tenToEighty: string } | null;
   depreciation: { yr3: string; resaleValue: "Excellent" | "Good" | "Average" | "Poor" } | null;
   related_video_ids: string[];
+  external_data?: Record<string, unknown> | null;
 }
 
 // ─── Public Functions ────────────────────────────────────
@@ -264,6 +265,9 @@ function mapRowToCar(
       : undefined,
     image: row.image,
     relatedVideoIds: row.related_video_ids ?? [],
+    externalData: row.external_data
+      ? (row.external_data as Car["externalData"])
+      : undefined,
   };
 }
 

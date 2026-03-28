@@ -43,6 +43,32 @@ export interface Car {
   };
   image: string;
   relatedVideoIds: string[];
+  // Extended data from FuelEconomy.gov / NHTSA (on-demand enrichment)
+  externalData?: {
+    source: string;
+    externalId: string;
+    fetchedAt: string;
+    year?: number;
+    fuelType?: string;
+    drive?: string;
+    transmission?: string;
+    vehicleClass?: string;
+    cylinders?: string;
+    displacement?: string;
+    mpgCity?: number;
+    mpgHighway?: number;
+    mpgCombined?: number;
+    evMotor?: string;
+    batteryKwh?: number;
+    rangeCombined?: number;
+    rangeCity?: number;
+    rangeHighway?: number;
+    chargeTime240v?: number;
+    co2TailpipeGpm?: number;
+    fuelCostAnnual?: number;
+    feScore?: number;
+    ghgScore?: number;
+  };
 }
 
 export const videos: Video[] = [
