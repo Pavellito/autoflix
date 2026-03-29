@@ -34,6 +34,68 @@ export interface ExternalCarResult {
   seats?: number;
   doors?: number;
   bodyClass?: string;
+  // Extended from FuelEconomy.gov
+  engineDescription?: string; // e.g. "SIDI; Turbocharged"
+  hasTurbo?: boolean;
+  hasSupercharger?: boolean;
+  hasStartStop?: boolean;
+  passengerVolume?: number; // cubic feet
+  cargoVolume?: number; // cubic feet
+  youSaveSpend?: number; // $ vs average car (+/-)
+  // NHTSA Physical Specs (cm → stored as mm)
+  nhtsaLengthMm?: number;
+  nhtsaWidthMm?: number;
+  nhtsaHeightMm?: number;
+  nhtsaWheelbaseMm?: number;
+  nhtsaCurbWeightKg?: number;
+  nhtsaTrackFrontMm?: number;
+  nhtsaTrackRearMm?: number;
+  nhtsaWeightDistribution?: string;
+  nhtsaTrimVariants?: string[]; // All available trims
+  // Estimated MSRP
+  estimatedMsrp?: number;
+}
+
+// ─── MSRP Estimation by Vehicle Class ─────────────────────
+// Based on average 2025 MSRP data by EPA vehicle class
+const CLASS_MSRP: Record<string, number> = {
+  "Subcompact Cars": 24000,
+  "Compact Cars": 28000,
+  "Midsize Cars": 34000,
+  "Large Cars": 42000,
+  "Small Station Wagons": 36000,
+  "Midsize Station Wagons": 42000,
+  "Two Seaters": 45000,
+  "Minicompact Cars": 32000,
+  "Small Sport Utility Vehicle 2WD": 32000,
+  "Small Sport Utility Vehicle 4WD": 35000,
+  "Standard Sport Utility Vehicle 2WD": 48000,
+  "Standard Sport Utility Vehicle 4WD": 52000,
+  "Sport Utility Vehicle": 45000,
+  "Small Pickup Trucks 2WD": 32000,
+  "Small Pickup Trucks 4WD": 36000,
+  "Standard Pickup Trucks 2WD": 42000,
+  "Standard Pickup Trucks 4WD": 48000,
+  "Minivan - 2WD": 38000,
+  "Minivan - 4WD": 42000,
+  "Vans Passenger": 40000,
+  "Special Purpose Vehicle": 55000,
+};
+
+function estimateMsrp(vehicleClass: string, type: "EV" | "Hybrid" | "ICE", make: string): number {
+  let base = CLASS_MSRP[vehicleClass] ?? 38000;
+
+  // Luxury brand markup
+  const luxury = ["BMW", "Mercedes-Benz", "Audi", "Lexus", "Cadillac", "Lincoln", "Volvo", "Infiniti", "Genesis", "Acura"];
+  const ultraLuxury = ["Porsche", "Maserati", "Bentley", "Rolls-Royce", "Ferrari", "Lamborghini", "McLaren", "Aston Martin", "Lucid"];
+  if (ultraLuxury.some(l => make.toLowerCase().includes(l.toLowerCase()))) base *= 3.0;
+  else if (luxury.some(l => make.toLowerCase().includes(l.toLowerCase()))) base *= 1.4;
+
+  // EV premium
+  if (type === "EV") base *= 1.15;
+  else if (type === "Hybrid") base *= 1.08;
+
+  return Math.round(base / 100) * 100; // Round to nearest $100
 }
 
 // ─── FuelEconomy.gov API ────────────────────────────────
@@ -120,16 +182,20 @@ function classifyFuelType(fuelType1: string, fuelType2: string, atvType: string)
 }
 
 /**
- * Fetch full details for a specific car from FuelEconomy.gov
+ * Fetch full details for a specific car from FuelEconomy.gov + NHTSA specs.
+ * Merges data from both free APIs for comprehensive coverage.
  */
 export async function fetchCarDetails(year: number, make: string, model: string): Promise<ExternalCarResult | null> {
   try {
     const options = await getVehicleOptions(year, make, model);
     if (options.length === 0) return null;
 
-    // Get the first trim/option
+    // Get the first trim/option + NHTSA specs in parallel
     const vehicleId = options[0].value;
-    const v = await getVehicleById(vehicleId);
+    const [v, nhtsaSpecs] = await Promise.all([
+      getVehicleById(vehicleId),
+      fetchNHTSASpecs(year, make, model).catch(() => null),
+    ]);
 
     const carType = classifyFuelType(v.fuelType1 || "", v.fuelType2 || "", v.atvType || "");
 
@@ -148,29 +214,125 @@ export async function fetchCarDetails(year: number, make: string, model: string)
       ghgScore: v.ghgScore ? parseInt(v.ghgScore, 10) : undefined,
       fuelCostAnnual: v.fuelCost08 ? parseInt(v.fuelCost08, 10) : undefined,
       co2TailpipeGpm: v.co2TailpipeGpm ? parseFloat(v.co2TailpipeGpm) : undefined,
+      // Extended fields
+      engineDescription: v.eng_dscr || undefined,
+      hasTurbo: v.tCharger === "T",
+      hasSupercharger: v.sCharger === "S",
+      hasStartStop: v.startStop === "Y",
+      youSaveSpend: v.youSaveSpend ? parseInt(v.youSaveSpend, 10) : undefined,
+      // Passenger/Cargo volume (cubic feet)
+      passengerVolume: (v.pv4 && parseFloat(v.pv4) > 0) ? parseFloat(v.pv4) :
+                       (v.pv2 && parseFloat(v.pv2) > 0) ? parseFloat(v.pv2) :
+                       (v.hpv && parseFloat(v.hpv) > 0) ? parseFloat(v.hpv) : undefined,
+      cargoVolume: (v.lv4 && parseFloat(v.lv4) > 0) ? parseFloat(v.lv4) :
+                   (v.lv2 && parseFloat(v.lv2) > 0) ? parseFloat(v.lv2) :
+                   (v.hlv && parseFloat(v.hlv) > 0) ? parseFloat(v.hlv) : undefined,
+      // Cylinders & displacement for ALL types
+      cylinders: v.cylinders || undefined,
+      displacement: v.displ || undefined,
     };
 
-    if (carType === "EV") {
+    // MPG for all types
+    result.mpgCity = v.city08 ? parseInt(v.city08, 10) : undefined;
+    result.mpgHighway = v.highway08 ? parseInt(v.highway08, 10) : undefined;
+    result.mpgCombined = v.comb08 ? parseInt(v.comb08, 10) : undefined;
+
+    if (carType === "EV" || carType === "Hybrid") {
       result.rangeCombined = v.range ? parseInt(v.range, 10) : undefined;
       result.rangeCity = v.rangeCity ? parseFloat(v.rangeCity) : undefined;
       result.rangeHighway = v.rangeHwy ? parseFloat(v.rangeHwy) : undefined;
       result.chargeTime240v = v.charge240 ? parseFloat(v.charge240) : undefined;
       result.evMotor = v.evMotor || undefined;
-      // MPGe for EVs
-      result.mpgCity = v.city08 ? parseInt(v.city08, 10) : undefined;
-      result.mpgHighway = v.highway08 ? parseInt(v.highway08, 10) : undefined;
-      result.mpgCombined = v.comb08 ? parseInt(v.comb08, 10) : undefined;
-    } else {
-      result.mpgCity = v.city08 ? parseInt(v.city08, 10) : undefined;
-      result.mpgHighway = v.highway08 ? parseInt(v.highway08, 10) : undefined;
-      result.mpgCombined = v.comb08 ? parseInt(v.comb08, 10) : undefined;
-      result.cylinders = v.cylinders || undefined;
-      result.displacement = v.displ || undefined;
+      result.batteryKwh = v.barrelsTailpipe08 || undefined; // Not always available
     }
+
+    // NHTSA physical specs (cm from API → mm for our data model)
+    if (nhtsaSpecs) {
+      result.nhtsaLengthMm = nhtsaSpecs.lengthCm ? Math.round(nhtsaSpecs.lengthCm * 10) : undefined;
+      result.nhtsaWidthMm = nhtsaSpecs.widthCm ? Math.round(nhtsaSpecs.widthCm * 10) : undefined;
+      result.nhtsaHeightMm = nhtsaSpecs.heightCm ? Math.round(nhtsaSpecs.heightCm * 10) : undefined;
+      result.nhtsaWheelbaseMm = nhtsaSpecs.wheelbaseCm ? Math.round(nhtsaSpecs.wheelbaseCm * 10) : undefined;
+      result.nhtsaCurbWeightKg = nhtsaSpecs.curbWeightKg;
+      result.nhtsaTrackFrontMm = nhtsaSpecs.trackFrontCm ? Math.round(nhtsaSpecs.trackFrontCm * 10) : undefined;
+      result.nhtsaTrackRearMm = nhtsaSpecs.trackRearCm ? Math.round(nhtsaSpecs.trackRearCm * 10) : undefined;
+      result.nhtsaWeightDistribution = nhtsaSpecs.weightDistribution;
+      result.nhtsaTrimVariants = nhtsaSpecs.trimVariants;
+    }
+
+    // Estimated MSRP
+    result.estimatedMsrp = estimateMsrp(v.VClass || "", carType, v.make);
 
     return result;
   } catch (err) {
     console.error("Error fetching car details:", err);
+    return null;
+  }
+}
+
+// ─── NHTSA Canadian Vehicle Specifications ──────────────
+// Free API: returns physical dimensions, weight, track width for any make/model/year
+
+interface NHTSAPhysicalSpecs {
+  lengthCm?: number;
+  widthCm?: number;
+  heightCm?: number;
+  wheelbaseCm?: number;
+  curbWeightKg?: number;
+  trackFrontCm?: number;
+  trackRearCm?: number;
+  weightDistribution?: string;
+  trimVariants: string[];
+}
+
+interface NHTSACanadianSpec {
+  Name: string;
+  Value: string;
+}
+
+/**
+ * Fetch physical specs from NHTSA Canadian Vehicle Specifications API.
+ * Returns dimensions (cm), weight (kg), and track widths.
+ */
+export async function fetchNHTSASpecs(year: number, make: string, model: string): Promise<NHTSAPhysicalSpecs | null> {
+  try {
+    const url = `https://vpic.nhtsa.dot.gov/api/vehicles/GetCanadianVehicleSpecifications/?year=${year}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&units=&format=json`;
+    const data = await fetchJson<{
+      Count: number;
+      Results: Array<{ Specs: NHTSACanadianSpec[] }>;
+    }>(url);
+
+    if (!data.Results || data.Results.length === 0) return null;
+
+    // Use the first variant for base specs, collect all trim names
+    const firstVariant = data.Results[0].Specs;
+    const specsMap: Record<string, string> = {};
+    for (const s of firstVariant) {
+      specsMap[s.Name] = s.Value;
+    }
+
+    const trimVariants = data.Results.map(r => {
+      const modelSpec = r.Specs.find(s => s.Name === "Model");
+      return modelSpec?.Value || "";
+    }).filter(Boolean);
+
+    // Collect all curb weights across variants for range display
+    const allWeights = data.Results.map(r => {
+      const cw = r.Specs.find(s => s.Name === "CW");
+      return cw?.Value ? parseFloat(cw.Value) : 0;
+    }).filter(w => w > 0);
+
+    return {
+      lengthCm: specsMap["OL"] ? parseFloat(specsMap["OL"]) : undefined,
+      widthCm: specsMap["OW"] ? parseFloat(specsMap["OW"]) : undefined,
+      heightCm: specsMap["OH"] ? parseFloat(specsMap["OH"]) : undefined,
+      wheelbaseCm: specsMap["WB"] ? parseFloat(specsMap["WB"]) : undefined,
+      curbWeightKg: allWeights.length > 0 ? Math.round(allWeights.reduce((a, b) => a + b, 0) / allWeights.length) : undefined,
+      trackFrontCm: specsMap["TWF"] ? parseFloat(specsMap["TWF"]) : undefined,
+      trackRearCm: specsMap["TWR"] ? parseFloat(specsMap["TWR"]) : undefined,
+      weightDistribution: specsMap["WD"] || undefined,
+      trimVariants,
+    };
+  } catch {
     return null;
   }
 }

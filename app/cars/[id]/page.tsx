@@ -62,6 +62,8 @@ async function fetchCarFromExternalApi(id: string): Promise<Car | null> {
       ? `${details.rangeCombined} mi (${Math.round(details.rangeCombined * 1.609)} km)`
       : details.mpgCombined ? `${details.mpgCombined} MPG` : undefined;
 
+    const estimatedPrice = details.estimatedMsrp ? `From ~$${details.estimatedMsrp.toLocaleString()}` : undefined;
+
     return {
       id,
       name: `${makeName} ${details.model}`,
@@ -69,7 +71,7 @@ async function fetchCarFromExternalApi(id: string): Promise<Car | null> {
       type: details.type,
       range: rangeTxt,
       battery: details.batteryKwh ? `${details.batteryKwh} kWh` : undefined,
-      price: details.fuelCostAnnual ? `$${details.fuelCostAnnual}/yr fuel` : undefined,
+      price: estimatedPrice || (details.fuelCostAnnual ? `$${details.fuelCostAnnual}/yr fuel` : undefined),
       image: imageUrl,
       realWorldRange: isEV && details.rangeCity && details.rangeHighway
         ? { city: `${Math.round(details.rangeCity)} mi`, highway: `${Math.round(details.rangeHighway)} mi`, winter: `~${Math.round(details.rangeCity * 0.7)} mi` }
@@ -79,7 +81,7 @@ async function fetchCarFromExternalApi(id: string): Promise<Car | null> {
         : undefined,
       relatedVideoIds: [],
       externalData: {
-        source: "fueleconomy.gov",
+        source: "fueleconomy.gov + NHTSA",
         externalId: details.externalId,
         fetchedAt: new Date().toISOString(),
         year: details.year,
@@ -102,6 +104,25 @@ async function fetchCarFromExternalApi(id: string): Promise<Car | null> {
         fuelCostAnnual: details.fuelCostAnnual,
         feScore: details.feScore,
         ghgScore: details.ghgScore,
+        // Extended engine info
+        engineDescription: details.engineDescription,
+        hasTurbo: details.hasTurbo,
+        hasSupercharger: details.hasSupercharger,
+        hasStartStop: details.hasStartStop,
+        passengerVolume: details.passengerVolume,
+        cargoVolume: details.cargoVolume,
+        youSaveSpend: details.youSaveSpend,
+        // NHTSA physical dimensions
+        nhtsaLengthMm: details.nhtsaLengthMm,
+        nhtsaWidthMm: details.nhtsaWidthMm,
+        nhtsaHeightMm: details.nhtsaHeightMm,
+        nhtsaWheelbaseMm: details.nhtsaWheelbaseMm,
+        nhtsaCurbWeightKg: details.nhtsaCurbWeightKg,
+        nhtsaTrackFrontMm: details.nhtsaTrackFrontMm,
+        nhtsaTrackRearMm: details.nhtsaTrackRearMm,
+        nhtsaWeightDistribution: details.nhtsaWeightDistribution,
+        nhtsaTrimVariants: details.nhtsaTrimVariants,
+        estimatedMsrp: details.estimatedMsrp,
       },
     };
   } catch {
@@ -208,14 +229,20 @@ export default async function CarDetailPage({
           <QuickStat label="Torque" value={engine?.torque_nm ? `${Math.round(engine.torque_nm)} Nm` : null} />
           <QuickStat label="0-100 km/h" value={spec?.acceleration_0_100 ? `${spec.acceleration_0_100}s` : null} />
           <QuickStat label="Top Speed" value={spec?.max_speed_km ? `${Math.round(spec.max_speed_km)} km/h` : null} />
-          <QuickStat label="Weight" value={dimensions?.curb_weight_kg ? `${Math.round(dimensions.curb_weight_kg)} kg` : null} />
+          <QuickStat label="Weight" value={
+            dimensions?.curb_weight_kg ? `${Math.round(dimensions.curb_weight_kg)} kg` :
+            (ext?.nhtsaCurbWeightKg as number) ? `${ext!.nhtsaCurbWeightKg} kg` : null
+          } />
           <QuickStat label="Range" value={
             car.range ? car.range :
             evSpecs[0]?.range_wltp_km ? `${Math.round(evSpecs[0].range_wltp_km)} km WLTP` :
             ext?.rangeCombined ? `${ext.rangeCombined} mi` : null
           } />
           <QuickStat label="MPG Combined" value={ext?.mpgCombined && !isEV ? `${ext.mpgCombined}` : null} />
-          <QuickStat label="Price" value={car.price || (ext?.fuelCostAnnual ? `$${ext.fuelCostAnnual}/yr fuel` : null)} />
+          <QuickStat label="Est. MSRP" value={
+            (ext?.estimatedMsrp as number) ? `~$${(ext!.estimatedMsrp as number).toLocaleString()}` :
+            car.price || null
+          } />
         </div>
       </div>
 
@@ -257,15 +284,19 @@ export default async function CarDetailPage({
             {/* Engine / Powertrain */}
             {engine && <EnginePanel engine={engine} />}
 
-            {/* Basic specs from FuelEconomy.gov (when no deep engine data) */}
+            {/* Basic specs from FuelEconomy.gov + NHTSA (when no deep engine data) */}
             {!engine && ext && (
-              <PanelWrapper title="Powertrain" icon="&#9881;" color="red">
+              <PanelWrapper title="Engine / Powertrain" icon="&#9881;" color="red">
                 <SpecRow label="Drivetrain" value={ext.drive as string} />
                 <SpecRow label="Transmission" value={ext.transmission as string} />
                 <SpecRow label="Fuel Type" value={ext.fuelType as string} />
                 {!isEV && <SpecRow label="Cylinders" value={ext.cylinders as string} />}
                 {!isEV && <SpecRow label="Displacement" value={ext.displacement ? `${ext.displacement}L` : null} />}
-                {(isEV || isHybrid) && <SpecRow label="Motor" value={ext.evMotor as string} />}
+                {ext.engineDescription && <SpecRow label="Engine Details" value={ext.engineDescription as string} />}
+                {ext.hasTurbo && <SpecRow label="Turbocharger" value="Yes" />}
+                {ext.hasSupercharger && <SpecRow label="Supercharger" value="Yes" />}
+                {ext.hasStartStop && <SpecRow label="Start-Stop System" value="Yes" />}
+                {(isEV || isHybrid) && <SpecRow label="Electric Motor" value={ext.evMotor as string} />}
                 {(isEV || isHybrid) && <SpecRow label="Battery" value={car.battery} />}
                 {car.chargingCurve && (
                   <>
@@ -276,8 +307,33 @@ export default async function CarDetailPage({
               </PanelWrapper>
             )}
 
-            {/* Dimensions & Weight */}
-            {dimensions && <DimensionsPanel dimensions={dimensions} />}
+            {/* Dimensions & Weight — from vehicle_specs DB or NHTSA */}
+            {dimensions ? (
+              <DimensionsPanel dimensions={dimensions} />
+            ) : ext?.nhtsaLengthMm ? (
+              <PanelWrapper title="Dimensions & Weight" icon="&#128207;" color="blue">
+                <SpecRow label="Length" value={`${ext.nhtsaLengthMm} mm`} />
+                <SpecRow label="Width" value={ext.nhtsaWidthMm ? `${ext.nhtsaWidthMm} mm` : null} />
+                <SpecRow label="Height" value={ext.nhtsaHeightMm ? `${ext.nhtsaHeightMm} mm` : null} />
+                <SpecRow label="Wheelbase" value={ext.nhtsaWheelbaseMm ? `${ext.nhtsaWheelbaseMm} mm` : null} />
+                <SpecRow label="Curb Weight" value={ext.nhtsaCurbWeightKg ? `${ext.nhtsaCurbWeightKg} kg` : null} />
+                <SpecRow label="Track Front" value={ext.nhtsaTrackFrontMm ? `${ext.nhtsaTrackFrontMm} mm` : null} />
+                <SpecRow label="Track Rear" value={ext.nhtsaTrackRearMm ? `${ext.nhtsaTrackRearMm} mm` : null} />
+                <SpecRow label="Weight Distribution" value={ext.nhtsaWeightDistribution as string} />
+                {ext.passengerVolume && <SpecRow label="Passenger Volume" value={`${ext.passengerVolume} cu ft`} />}
+                {ext.cargoVolume && <SpecRow label="Cargo Volume" value={`${ext.cargoVolume} cu ft`} />}
+                {(ext.nhtsaTrimVariants as string[])?.length > 1 && (
+                  <div className="mt-3 pt-3 border-t border-white/5">
+                    <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2">Available Trims</p>
+                    <div className="flex flex-wrap gap-1">
+                      {(ext.nhtsaTrimVariants as string[]).map((trim, i) => (
+                        <span key={i} className="text-[10px] bg-white/5 text-gray-400 px-2 py-0.5 rounded">{trim}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </PanelWrapper>
+            ) : null}
 
             {/* General Specifications */}
             {spec && <GeneralSpecsPanel spec={spec} />}
@@ -390,6 +446,24 @@ export default async function CarDetailPage({
           <div className="space-y-6">
             <RegionalCarInfo car={car} />
 
+            {/* Estimated Price Card */}
+            {ext?.estimatedMsrp && (
+              <div className="bg-gradient-to-br from-[#1a1a1a] to-[#0f1f0f] rounded-lg border border-emerald-500/20 p-4">
+                <h3 className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest mb-2">Estimated MSRP</h3>
+                <p className="text-[32px] font-black text-white leading-tight">
+                  ~${(ext.estimatedMsrp as number).toLocaleString()}
+                </p>
+                <p className="text-[11px] text-gray-500 mt-1">*Estimated based on vehicle class & segment</p>
+                {ext.youSaveSpend && (
+                  <div className={`mt-3 pt-3 border-t border-white/5 text-[13px] font-bold ${(ext.youSaveSpend as number) < 0 ? "text-red-400" : "text-emerald-400"}`}>
+                    {(ext.youSaveSpend as number) < 0
+                      ? `You spend $${Math.abs(ext.youSaveSpend as number).toLocaleString()} more in fuel vs avg car over 5 years`
+                      : `You save $${(ext.youSaveSpend as number).toLocaleString()} in fuel vs avg car over 5 years`}
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Quick Facts */}
             <div className="bg-[#1a1a1a] rounded-lg border border-white/10 p-4">
               <h3 className="text-[14px] font-bold text-white mb-3">Quick Facts</h3>
@@ -400,11 +474,13 @@ export default async function CarDetailPage({
                 <FactRow label="Class" value={ext?.vehicleClass as string || spec?.body_type} />
                 <FactRow label="Drive" value={ext?.drive as string || spec?.drive_type} />
                 <FactRow label="Fuel" value={ext?.fuelType as string || spec?.fuel_type} />
+                <FactRow label="Transmission" value={ext?.transmission as string} />
                 <FactRow label="Doors" value={spec?.doors_count} />
                 <FactRow label="Seats" value={spec?.seats_count} />
+                {ext?.nhtsaCurbWeightKg && <FactRow label="Curb Weight" value={`${ext.nhtsaCurbWeightKg} kg`} />}
                 {ext?.fuelCostAnnual && (
                   <div className="flex justify-between pt-2 border-t border-white/5">
-                    <span className="text-[#777]">Annual Cost</span>
+                    <span className="text-[#777]">Annual Fuel Cost</span>
                     <span className="text-[#46d369] font-bold">${ext.fuelCostAnnual as number}/yr</span>
                   </div>
                 )}
