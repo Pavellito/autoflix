@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Car } from "@/app/lib/data";
 import { getRelatedVideosForCar } from "@/app/lib/data";
 import { fetchCarById, fetchNewsForCar, type NewsItem } from "@/app/lib/supabase-cars";
-import { fetchCarDetails, getCarImageUrl } from "@/app/lib/car-api";
+import { fetchCarDetails, getCarImageUrl, type TrimVariant, type RegionalPricing } from "@/app/lib/car-api";
 import { findVehicleByMakeModelYear } from "@/app/lib/vehicle-queries";
 import type { VehicleDetailData, Engine, Dimensions, FuelEconomy, SafetyRating, EvSpec } from "@/app/lib/vehicle-types";
 import VideoRow from "@/app/components/VideoRow";
@@ -123,6 +123,8 @@ async function fetchCarFromExternalApi(id: string): Promise<Car | null> {
         nhtsaWeightDistribution: details.nhtsaWeightDistribution,
         nhtsaTrimVariants: details.nhtsaTrimVariants,
         estimatedMsrp: details.estimatedMsrp,
+        trimVariants: details.trimVariants,
+        regionalPricing: details.regionalPricing,
       },
     };
   } catch {
@@ -307,6 +309,11 @@ export default async function CarDetailPage({
               </PanelWrapper>
             )}
 
+            {/* All Trim / Engine Variants from FuelEconomy.gov */}
+            {(ext?.trimVariants as TrimVariant[])?.length > 1 && (
+              <TrimVariantsPanel variants={ext!.trimVariants as TrimVariant[]} />
+            )}
+
             {/* Dimensions & Weight — from vehicle_specs DB or NHTSA */}
             {dimensions ? (
               <DimensionsPanel dimensions={dimensions} />
@@ -446,21 +453,23 @@ export default async function CarDetailPage({
           <div className="space-y-6">
             <RegionalCarInfo car={car} />
 
-            {/* Estimated Price Card */}
-            {ext?.estimatedMsrp && (
+            {/* Regional Pricing Card */}
+            {ext?.regionalPricing && (
+              <RegionalPricingCard
+                pricing={ext.regionalPricing as RegionalPricing}
+                trimVariants={(ext.trimVariants as TrimVariant[]) || []}
+                youSaveSpend={ext.youSaveSpend as number | undefined}
+              />
+            )}
+
+            {/* Fallback: Simple estimated MSRP when no regional pricing */}
+            {!ext?.regionalPricing && ext?.estimatedMsrp && (
               <div className="bg-gradient-to-br from-[#1a1a1a] to-[#0f1f0f] rounded-lg border border-emerald-500/20 p-4">
                 <h3 className="text-[11px] font-bold text-emerald-400 uppercase tracking-widest mb-2">Estimated MSRP</h3>
                 <p className="text-[32px] font-black text-white leading-tight">
                   ~${(ext.estimatedMsrp as number).toLocaleString()}
                 </p>
                 <p className="text-[11px] text-gray-500 mt-1">*Estimated based on vehicle class & segment</p>
-                {ext.youSaveSpend && (
-                  <div className={`mt-3 pt-3 border-t border-white/5 text-[13px] font-bold ${(ext.youSaveSpend as number) < 0 ? "text-red-400" : "text-emerald-400"}`}>
-                    {(ext.youSaveSpend as number) < 0
-                      ? `You spend $${Math.abs(ext.youSaveSpend as number).toLocaleString()} more in fuel vs avg car over 5 years`
-                      : `You save $${(ext.youSaveSpend as number).toLocaleString()} in fuel vs avg car over 5 years`}
-                  </div>
-                )}
               </div>
             )}
 
@@ -763,5 +772,206 @@ function EvPanel({ data }: { data: EvSpec[] }) {
         <p className="text-[10px] text-gray-600 mt-3 italic">+ {data.length - 1} more variant(s) available</p>
       )}
     </PanelWrapper>
+  );
+}
+
+// ─── Trim Variants Comparison Panel ─────────────────────
+function TrimVariantsPanel({ variants }: { variants: TrimVariant[] }) {
+  // Group by unique engine configs to avoid duplicate-looking rows
+  const uniqueTrims = variants.reduce<TrimVariant[]>((acc, trim) => {
+    const key = `${trim.displacement || ""}-${trim.cylinders || ""}-${trim.drive}-${trim.type}`;
+    if (!acc.find(t => `${t.displacement || ""}-${t.cylinders || ""}-${t.drive}-${t.type}` === key)) {
+      acc.push(trim);
+    }
+    return acc;
+  }, []);
+
+  return (
+    <PanelWrapper title={`All Available Trims (${variants.length})`} icon="&#9881;" color="red">
+      <div className="overflow-x-auto -mx-5 px-5">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-[10px] text-gray-500 uppercase tracking-widest border-b border-white/10">
+              <th className="text-left pb-3 pr-3 font-black">Trim / Engine</th>
+              <th className="text-center pb-3 px-2 font-black">Power</th>
+              <th className="text-center pb-3 px-2 font-black">Drive</th>
+              <th className="text-center pb-3 px-2 font-black">MPG</th>
+              <th className="text-center pb-3 px-2 font-black">CO₂</th>
+              <th className="text-right pb-3 pl-2 font-black">Est. MSRP</th>
+            </tr>
+          </thead>
+          <tbody>
+            {uniqueTrims.map((trim, i) => {
+              const engineLabel = trim.displacement
+                ? `${trim.displacement}L ${trim.cylinders ? `${trim.cylinders}cyl` : ""} ${trim.hasTurbo ? "Turbo" : trim.hasSupercharger ? "S/C" : ""}`.trim()
+                : trim.evMotor || trim.fuelType;
+              return (
+                <tr key={i} className="border-b border-white/5 last:border-0 hover:bg-white/[0.02] transition-colors">
+                  <td className="py-3 pr-3">
+                    <div className="font-semibold text-white text-[13px] leading-tight">{trim.trimName}</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">
+                      {engineLabel} · {trim.transmission}
+                      {trim.engineDescription && <span className="text-gray-600"> · {trim.engineDescription}</span>}
+                    </div>
+                  </td>
+                  <td className="text-center px-2">
+                    <span className="text-white font-bold text-[14px]">{trim.horsepower ? `${trim.horsepower}` : "—"}</span>
+                    <span className="text-gray-500 text-[10px] block">HP (est)</span>
+                  </td>
+                  <td className="text-center px-2">
+                    <span className="text-gray-300 text-[12px] font-medium">{trim.drive}</span>
+                  </td>
+                  <td className="text-center px-2">
+                    {trim.mpgCombined ? (
+                      <>
+                        <span className="text-white font-bold text-[14px]">{trim.mpgCombined}</span>
+                        <span className="text-gray-500 text-[10px] block">
+                          {trim.mpgCity}/{trim.mpgHighway}
+                        </span>
+                      </>
+                    ) : trim.rangeCombined ? (
+                      <>
+                        <span className="text-emerald-400 font-bold text-[14px]">{trim.rangeCombined}</span>
+                        <span className="text-gray-500 text-[10px] block">mi range</span>
+                      </>
+                    ) : (
+                      <span className="text-gray-600">—</span>
+                    )}
+                  </td>
+                  <td className="text-center px-2">
+                    {trim.co2TailpipeGpm !== undefined ? (
+                      <span className={`text-[12px] font-medium ${trim.co2TailpipeGpm === 0 ? "text-emerald-400" : "text-gray-300"}`}>
+                        {trim.co2TailpipeGpm === 0 ? "Zero" : `${Math.round(trim.co2TailpipeGpm)} g/mi`}
+                      </span>
+                    ) : (
+                      <span className="text-gray-600">—</span>
+                    )}
+                  </td>
+                  <td className="text-right pl-2">
+                    {trim.estimatedMsrp ? (
+                      <span className="text-emerald-400 font-bold text-[13px]">
+                        ~${trim.estimatedMsrp.toLocaleString()}
+                      </span>
+                    ) : (
+                      <span className="text-gray-600">—</span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-[10px] text-gray-600 mt-4 italic">
+        * Horsepower estimated from displacement. MSRP estimated by vehicle class & engine size.
+        Data from FuelEconomy.gov EPA database.
+      </p>
+    </PanelWrapper>
+  );
+}
+
+// ─── Regional Pricing Card ──────────────────────────────
+function RegionalPricingCard({
+  pricing,
+  trimVariants,
+  youSaveSpend,
+}: {
+  pricing: RegionalPricing;
+  trimVariants: TrimVariant[];
+  youSaveSpend?: number;
+}) {
+  // Find min/max MSRP across trims for price range display
+  const msrps = trimVariants.map(t => t.estimatedMsrp).filter((m): m is number => !!m);
+  const minMsrp = msrps.length > 0 ? Math.min(...msrps) : pricing.usd;
+  const maxMsrp = msrps.length > 1 ? Math.max(...msrps) : null;
+
+  const regions = [
+    {
+      flag: "🇺🇸",
+      label: "United States",
+      currency: "USD",
+      symbol: "$",
+      price: pricing.usd,
+      maxPrice: maxMsrp,
+      note: "Base MSRP",
+    },
+    {
+      flag: "🇮🇱",
+      label: "ישראל (Israel)",
+      currency: "ILS",
+      symbol: "₪",
+      price: pricing.ils,
+      maxPrice: maxMsrp ? Math.round(maxMsrp * 1.83 * 1.17 * pricing.rates.usdToIls / 100) * 100 : null,
+      note: "Incl. ~83% purchase tax + 17% VAT",
+    },
+    {
+      flag: "🇷🇺",
+      label: "Россия (Russia)",
+      currency: "RUB",
+      symbol: "₽",
+      price: pricing.rub,
+      maxPrice: maxMsrp ? Math.round(maxMsrp * 1.30 * 1.20 * pricing.rates.usdToRub / 1000) * 1000 : null,
+      note: "Incl. ~30% customs + 20% VAT",
+    },
+    {
+      flag: "🇦🇪",
+      label: "الإمارات (UAE)",
+      currency: "AED",
+      symbol: "د.إ",
+      price: pricing.aed,
+      maxPrice: maxMsrp ? Math.round(maxMsrp * 1.05 * 1.05 * pricing.rates.usdToAed / 100) * 100 : null,
+      note: "Incl. 5% VAT + 5% duty",
+    },
+  ];
+
+  return (
+    <div className="bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1a] rounded-xl border border-indigo-500/20 overflow-hidden">
+      <div className="px-4 py-3 border-b border-white/5 bg-indigo-500/5">
+        <h3 className="text-[11px] font-black text-indigo-400 uppercase tracking-widest">
+          Regional Pricing
+        </h3>
+        {minMsrp && maxMsrp && maxMsrp > minMsrp && (
+          <p className="text-[10px] text-gray-500 mt-0.5">
+            US range: ${minMsrp.toLocaleString()} – ${maxMsrp.toLocaleString()}
+          </p>
+        )}
+      </div>
+      <div className="p-4 space-y-3">
+        {regions.map((r) => (
+          <div key={r.currency} className="flex items-start justify-between py-2 border-b border-white/5 last:border-0">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">{r.flag}</span>
+              <div>
+                <p className="text-[12px] text-white font-semibold">{r.label}</p>
+                <p className="text-[9px] text-gray-600">{r.note}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[15px] font-black text-white">
+                {r.symbol}{r.price.toLocaleString()}
+              </p>
+              {r.maxPrice && r.maxPrice > r.price && (
+                <p className="text-[10px] text-gray-500">
+                  up to {r.symbol}{r.maxPrice.toLocaleString()}
+                </p>
+              )}
+              <p className="text-[9px] text-gray-600">{r.currency}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      {youSaveSpend !== undefined && (
+        <div className={`px-4 py-3 border-t border-white/5 text-[12px] font-bold ${youSaveSpend < 0 ? "text-red-400 bg-red-500/5" : "text-emerald-400 bg-emerald-500/5"}`}>
+          {youSaveSpend < 0
+            ? `You spend $${Math.abs(youSaveSpend).toLocaleString()} more in fuel vs avg car over 5 years`
+            : `You save $${youSaveSpend.toLocaleString()} in fuel vs avg car over 5 years`}
+        </div>
+      )}
+      <div className="px-4 py-2 bg-black/20">
+        <p className="text-[9px] text-gray-600">
+          * Prices are estimates based on US MSRP + regional taxes. Exchange rates: 1 USD ≈ {pricing.rates.usdToIls} ILS · {pricing.rates.usdToRub} RUB · {pricing.rates.usdToAed} AED
+        </p>
+      </div>
+    </div>
   );
 }

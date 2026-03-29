@@ -2,8 +2,52 @@
 // Wraps FuelEconomy.gov + NHTSA vPIC for on-demand car data
 // Both APIs are free and require no API keys
 
+// ─── Trim Variant (one per engine/trim option) ──────────
+export interface TrimVariant {
+  trimName: string; // e.g. "2.0L 4cyl Turbo AWD" or "3.0L V6 RWD"
+  externalId: string;
+  fuelType: string;
+  type: "EV" | "Hybrid" | "ICE";
+  drive: string;
+  transmission: string;
+  cylinders?: string;
+  displacement?: string;
+  engineDescription?: string;
+  hasTurbo?: boolean;
+  hasSupercharger?: boolean;
+  hasStartStop?: boolean;
+  horsepower?: number; // parsed from FuelEconomy barrels data or NHTSA
+  mpgCity?: number;
+  mpgHighway?: number;
+  mpgCombined?: number;
+  co2TailpipeGpm?: number;
+  fuelCostAnnual?: number;
+  feScore?: number;
+  ghgScore?: number;
+  youSaveSpend?: number;
+  // EV-specific
+  evMotor?: string;
+  batteryKwh?: number;
+  rangeCombined?: number;
+  rangeCity?: number;
+  rangeHighway?: number;
+  chargeTime240v?: number;
+  // Estimated MSRP for this specific trim
+  estimatedMsrp?: number;
+}
+
+// ─── Regional Pricing ───────────────────────────────────
+export interface RegionalPricing {
+  usd: number; // Base MSRP in USD
+  ils: number; // Israel (ILS) — ~83% purchase tax
+  rub: number; // Russia (RUB) — ~30% import duty + VAT
+  aed: number; // UAE/Arabic (AED) — ~5% VAT
+  // Exchange rates used (for display)
+  rates: { usdToIls: number; usdToRub: number; usdToAed: number };
+}
+
 export interface ExternalCarResult {
-  externalId: string; // FuelEconomy.gov vehicle ID
+  externalId: string; // FuelEconomy.gov vehicle ID (primary trim)
   make: string;
   model: string;
   baseModel: string;
@@ -54,6 +98,10 @@ export interface ExternalCarResult {
   nhtsaTrimVariants?: string[]; // All available trims
   // Estimated MSRP
   estimatedMsrp?: number;
+  // ─── NEW: All trim/engine variants ───
+  trimVariants: TrimVariant[];
+  // ─── NEW: Regional pricing ───
+  regionalPricing?: RegionalPricing;
 }
 
 // ─── MSRP Estimation by Vehicle Class ─────────────────────
@@ -82,7 +130,7 @@ const CLASS_MSRP: Record<string, number> = {
   "Special Purpose Vehicle": 55000,
 };
 
-function estimateMsrp(vehicleClass: string, type: "EV" | "Hybrid" | "ICE", make: string): number {
+function estimateMsrp(vehicleClass: string, type: "EV" | "Hybrid" | "ICE", make: string, displacement?: string): number {
   let base = CLASS_MSRP[vehicleClass] ?? 38000;
 
   // Luxury brand markup
@@ -95,7 +143,49 @@ function estimateMsrp(vehicleClass: string, type: "EV" | "Hybrid" | "ICE", make:
   if (type === "EV") base *= 1.15;
   else if (type === "Hybrid") base *= 1.08;
 
+  // Engine size premium: larger displacement = higher trim = higher price
+  if (displacement) {
+    const displ = parseFloat(displacement);
+    if (displ >= 4.0) base *= 1.35;
+    else if (displ >= 3.0) base *= 1.2;
+    else if (displ >= 2.5) base *= 1.1;
+    // 2.0L and below = base price
+  }
+
   return Math.round(base / 100) * 100; // Round to nearest $100
+}
+
+// ─── Regional Pricing Calculator ────────────────────────
+// Approximate exchange rates (updated periodically, not real-time)
+const EXCHANGE_RATES = {
+  usdToIls: 3.65, // 1 USD ≈ 3.65 ILS
+  usdToRub: 92.0, // 1 USD ≈ 92 RUB
+  usdToAed: 3.67, // 1 USD ≈ 3.67 AED (pegged)
+};
+
+function calculateRegionalPricing(baseMsrpUsd: number, isEV: boolean): RegionalPricing {
+  // Israel: ~83% purchase tax for ICE, ~20% for EVs (green incentive), + 17% VAT on top
+  const israelTaxMultiplier = isEV ? 1.20 : 1.83;
+  const israelVAT = 1.17;
+  const israelUsd = baseMsrpUsd * israelTaxMultiplier * israelVAT;
+
+  // Russia: ~25-30% customs duty + 20% VAT, EVs get slight reduction
+  const russiaDuty = isEV ? 1.15 : 1.30;
+  const russiaVAT = 1.20;
+  const russiaUsd = baseMsrpUsd * russiaDuty * russiaVAT;
+
+  // UAE/Arabic: 5% VAT, very low import duty (~5%)
+  const uaeDuty = 1.05;
+  const uaeVAT = 1.05;
+  const uaeUsd = baseMsrpUsd * uaeDuty * uaeVAT;
+
+  return {
+    usd: Math.round(baseMsrpUsd / 100) * 100,
+    ils: Math.round(israelUsd * EXCHANGE_RATES.usdToIls / 100) * 100,
+    rub: Math.round(russiaUsd * EXCHANGE_RATES.usdToRub / 1000) * 1000,
+    aed: Math.round(uaeUsd * EXCHANGE_RATES.usdToAed / 100) * 100,
+    rates: EXCHANGE_RATES,
+  };
 }
 
 // ─── FuelEconomy.gov API ────────────────────────────────
@@ -182,25 +272,99 @@ function classifyFuelType(fuelType1: string, fuelType2: string, atvType: string)
 }
 
 /**
+ * Parse a single FuelEconomy.gov vehicle record into a TrimVariant.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parseVehicleToTrim(v: any, trimName: string): TrimVariant {
+  const carType = classifyFuelType(v.fuelType1 || "", v.fuelType2 || "", v.atvType || "");
+  const trim: TrimVariant = {
+    trimName,
+    externalId: String(v.id),
+    fuelType: v.fuelType1 || v.fuelType || "Unknown",
+    type: carType,
+    drive: v.drive || "Unknown",
+    transmission: v.trany || "Unknown",
+    cylinders: v.cylinders || undefined,
+    displacement: v.displ || undefined,
+    engineDescription: v.eng_dscr || undefined,
+    hasTurbo: v.tCharger === "T",
+    hasSupercharger: v.sCharger === "S",
+    hasStartStop: v.startStop === "Y",
+    mpgCity: v.city08 ? parseInt(v.city08, 10) : undefined,
+    mpgHighway: v.highway08 ? parseInt(v.highway08, 10) : undefined,
+    mpgCombined: v.comb08 ? parseInt(v.comb08, 10) : undefined,
+    co2TailpipeGpm: v.co2TailpipeGpm ? parseFloat(v.co2TailpipeGpm) : undefined,
+    fuelCostAnnual: v.fuelCost08 ? parseInt(v.fuelCost08, 10) : undefined,
+    feScore: v.feScore ? parseInt(v.feScore, 10) : undefined,
+    ghgScore: v.ghgScore ? parseInt(v.ghgScore, 10) : undefined,
+    youSaveSpend: v.youSaveSpend ? parseInt(v.youSaveSpend, 10) : undefined,
+  };
+
+  // Estimate HP from displacement + turbo (FuelEconomy.gov doesn't provide HP directly)
+  if (v.displ) {
+    const displ = parseFloat(v.displ);
+    // Rough estimation: naturally aspirated ~70 HP/L, turbo ~100 HP/L, supercharged ~90 HP/L
+    const hpPerLiter = v.tCharger === "T" ? 100 : v.sCharger === "S" ? 90 : 70;
+    trim.horsepower = Math.round(displ * hpPerLiter);
+  }
+
+  if (carType === "EV" || carType === "Hybrid") {
+    trim.evMotor = v.evMotor || undefined;
+    trim.batteryKwh = v.barrelsTailpipe08 || undefined;
+    trim.rangeCombined = v.range ? parseInt(v.range, 10) : undefined;
+    trim.rangeCity = v.rangeCity ? parseFloat(v.rangeCity) : undefined;
+    trim.rangeHighway = v.rangeHwy ? parseFloat(v.rangeHwy) : undefined;
+    trim.chargeTime240v = v.charge240 ? parseFloat(v.charge240) : undefined;
+  }
+
+  // Per-trim MSRP estimation based on engine size
+  trim.estimatedMsrp = estimateMsrp(v.VClass || "", carType, v.make, v.displ);
+
+  return trim;
+}
+
+/**
  * Fetch full details for a specific car from FuelEconomy.gov + NHTSA specs.
- * Merges data from both free APIs for comprehensive coverage.
+ * Now fetches ALL available trims/engine variants (not just the first).
  */
 export async function fetchCarDetails(year: number, make: string, model: string): Promise<ExternalCarResult | null> {
   try {
     const options = await getVehicleOptions(year, make, model);
     if (options.length === 0) return null;
 
-    // Get the first trim/option + NHTSA specs in parallel
-    const vehicleId = options[0].value;
-    const [v, nhtsaSpecs] = await Promise.all([
-      getVehicleById(vehicleId),
+    // Fetch ALL trims in parallel (cap at 15 to avoid rate limits)
+    const trimOptions = options.slice(0, 15);
+    const [allVehicles, nhtsaSpecs] = await Promise.all([
+      Promise.all(
+        trimOptions.map(async (opt) => {
+          try {
+            const v = await getVehicleById(opt.value);
+            return { option: opt, vehicle: v };
+          } catch {
+            return null;
+          }
+        })
+      ),
       fetchNHTSASpecs(year, make, model).catch(() => null),
     ]);
 
+    // Filter out failed fetches
+    const validVehicles = allVehicles.filter(
+      (item): item is { option: FuelEcoMenuItem; vehicle: Record<string, string> } => item !== null
+    );
+    if (validVehicles.length === 0) return null;
+
+    // Parse all trims
+    const trimVariants: TrimVariant[] = validVehicles.map(({ option, vehicle }) =>
+      parseVehicleToTrim(vehicle, option.text)
+    );
+
+    // Use the first vehicle as primary for backward compatibility
+    const v = validVehicles[0].vehicle;
     const carType = classifyFuelType(v.fuelType1 || "", v.fuelType2 || "", v.atvType || "");
 
     const result: ExternalCarResult = {
-      externalId: vehicleId,
+      externalId: trimOptions[0].value,
       make: v.make,
       model: v.model,
       baseModel: v.baseModel || v.model,
@@ -214,25 +378,23 @@ export async function fetchCarDetails(year: number, make: string, model: string)
       ghgScore: v.ghgScore ? parseInt(v.ghgScore, 10) : undefined,
       fuelCostAnnual: v.fuelCost08 ? parseInt(v.fuelCost08, 10) : undefined,
       co2TailpipeGpm: v.co2TailpipeGpm ? parseFloat(v.co2TailpipeGpm) : undefined,
-      // Extended fields
       engineDescription: v.eng_dscr || undefined,
       hasTurbo: v.tCharger === "T",
       hasSupercharger: v.sCharger === "S",
       hasStartStop: v.startStop === "Y",
       youSaveSpend: v.youSaveSpend ? parseInt(v.youSaveSpend, 10) : undefined,
-      // Passenger/Cargo volume (cubic feet)
       passengerVolume: (v.pv4 && parseFloat(v.pv4) > 0) ? parseFloat(v.pv4) :
                        (v.pv2 && parseFloat(v.pv2) > 0) ? parseFloat(v.pv2) :
                        (v.hpv && parseFloat(v.hpv) > 0) ? parseFloat(v.hpv) : undefined,
       cargoVolume: (v.lv4 && parseFloat(v.lv4) > 0) ? parseFloat(v.lv4) :
                    (v.lv2 && parseFloat(v.lv2) > 0) ? parseFloat(v.lv2) :
                    (v.hlv && parseFloat(v.hlv) > 0) ? parseFloat(v.hlv) : undefined,
-      // Cylinders & displacement for ALL types
       cylinders: v.cylinders || undefined,
       displacement: v.displ || undefined,
+      trimVariants,
     };
 
-    // MPG for all types
+    // MPG from primary trim
     result.mpgCity = v.city08 ? parseInt(v.city08, 10) : undefined;
     result.mpgHighway = v.highway08 ? parseInt(v.highway08, 10) : undefined;
     result.mpgCombined = v.comb08 ? parseInt(v.comb08, 10) : undefined;
@@ -243,10 +405,10 @@ export async function fetchCarDetails(year: number, make: string, model: string)
       result.rangeHighway = v.rangeHwy ? parseFloat(v.rangeHwy) : undefined;
       result.chargeTime240v = v.charge240 ? parseFloat(v.charge240) : undefined;
       result.evMotor = v.evMotor || undefined;
-      result.batteryKwh = v.barrelsTailpipe08 || undefined; // Not always available
+      result.batteryKwh = v.barrelsTailpipe08 ? parseFloat(v.barrelsTailpipe08) : undefined;
     }
 
-    // NHTSA physical specs (cm from API → mm for our data model)
+    // NHTSA physical specs
     if (nhtsaSpecs) {
       result.nhtsaLengthMm = nhtsaSpecs.lengthCm ? Math.round(nhtsaSpecs.lengthCm * 10) : undefined;
       result.nhtsaWidthMm = nhtsaSpecs.widthCm ? Math.round(nhtsaSpecs.widthCm * 10) : undefined;
@@ -259,8 +421,15 @@ export async function fetchCarDetails(year: number, make: string, model: string)
       result.nhtsaTrimVariants = nhtsaSpecs.trimVariants;
     }
 
-    // Estimated MSRP
-    result.estimatedMsrp = estimateMsrp(v.VClass || "", carType, v.make);
+    // Estimated MSRP (base trim)
+    result.estimatedMsrp = estimateMsrp(v.VClass || "", carType, v.make, v.displ);
+
+    // Regional pricing based on the range of MSRPs across trims
+    const msrpValues = trimVariants.map(t => t.estimatedMsrp).filter((m): m is number => !!m);
+    const baseMsrp = msrpValues.length > 0 ? Math.min(...msrpValues) : result.estimatedMsrp;
+    if (baseMsrp) {
+      result.regionalPricing = calculateRegionalPricing(baseMsrp, carType === "EV");
+    }
 
     return result;
   } catch (err) {
