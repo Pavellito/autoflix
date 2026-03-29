@@ -17,7 +17,7 @@ export default async function CarsPage() {
             Find Your Car
           </h1>
           <p className="text-[16px] text-[#777] max-w-2xl">
-            Search every car on the market. Select year, make, and model to see full specs, pricing, fuel economy, and EPA ratings — powered by FuelEconomy.gov.
+            Browse every 2026 car on the market. Select make and model to see full technical specs, all trim variants, regional pricing, fuel economy, and EPA ratings.
           </p>
         </div>
 

@@ -20,7 +20,7 @@ export default function CarFinder({ localCars }: CarFinderProps) {
   const router = useRouter();
 
   // Step-based selection
-  const [year, setYear] = useState(2025);
+  const [year, setYear] = useState(2026);
   const [makes, setMakes] = useState<string[]>([]);
   const [selectedMake, setSelectedMake] = useState("");
   const [models, setModels] = useState<string[]>([]);
@@ -147,8 +147,8 @@ export default function CarFinder({ localCars }: CarFinderProps) {
     return car.name.toLowerCase().includes(q) || car.brand.toLowerCase().includes(q);
   });
 
-  const years = [];
-  for (let y = 2026; y >= 2015; y--) years.push(y);
+  // Only show 2026 (newest) — user requested no old cars
+  const years = [2026];
 
   return (
     <div className="space-y-8">
@@ -329,7 +329,7 @@ export default function CarFinder({ localCars }: CarFinderProps) {
           <div className="flex items-center gap-2 mt-3">
             <span className="text-[12px] text-[#666]">Year:</span>
             <div className="flex flex-wrap gap-1">
-              {[2026, 2025, 2024, 2023, 2022, 2021, 2020].map((yr) => (
+              {[2026].map((yr) => (
                 <button
                   key={yr}
                   onClick={() => setYear(yr)}
@@ -441,33 +441,49 @@ export default function CarFinder({ localCars }: CarFinderProps) {
         </div>
       )}
 
-      {/* Local DB section at bottom */}
+      {/* Popular 2026 Models */}
       {viewMode === "browse" && !selectedMake && (
         <div className="border-t border-white/10 pt-8">
           <h3 className="text-[16px] text-white font-bold mb-4">
-            Recently Added to AutoFlix ({localCars.length} vehicles)
+            Popular 2026 Models
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-            {localCars.slice(0, 12).map((car) => (
+            {[
+              { make: "BMW", model: "X5", label: "BMW X5" },
+              { make: "Mercedes-Benz", model: "GLC", label: "Mercedes GLC" },
+              { make: "Audi", model: "Q5", label: "Audi Q5" },
+              { make: "Tesla", model: "ModelY", label: "Tesla Model Y" },
+              { make: "Toyota", model: "Camry", label: "Toyota Camry" },
+              { make: "Porsche", model: "911", label: "Porsche 911" },
+              { make: "Honda", model: "Civic", label: "Honda Civic" },
+              { make: "Hyundai", model: "Tucson", label: "Hyundai Tucson" },
+              { make: "Ford", model: "Mustang", label: "Ford Mustang" },
+              { make: "Lexus", model: "RX", label: "Lexus RX" },
+              { make: "Kia", model: "Sportage", label: "Kia Sportage" },
+              { make: "Chevrolet", model: "Corvette", label: "Chevrolet Corvette" },
+            ].map((car) => (
               <button
-                key={car.id}
-                onClick={() => goToCar(car.id)}
+                key={car.label}
+                onClick={() => enrichAndGo(car.make, car.model, 2026)}
                 className="group bg-[#1a1a1a] rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition-all text-left"
               >
                 <div className="aspect-[16/10] relative overflow-hidden bg-[#0a0a0a]">
-                  <VehicleImage
-                    src={car.image}
-                    alt={car.name}
-                    aspectRatio="h-full"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={getImageUrl(car.make, car.model)}
+                    alt={car.label}
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(car.label)}&background=1a1a1a&color=777&size=320&font-size=0.2`;
+                    }}
                   />
                   <span className="absolute top-2 right-2 text-[10px] bg-[#e50914] text-white px-2 py-0.5 rounded font-bold">
-                    {car.type}
+                    2026
                   </span>
                 </div>
                 <div className="p-3">
-                  <p className="text-[13px] text-white font-medium truncate">{car.name}</p>
-                  <p className="text-[11px] text-[#666] mt-0.5">{car.brand}</p>
+                  <p className="text-[13px] text-white font-medium truncate">{car.label}</p>
+                  <p className="text-[11px] text-[#666] mt-0.5">2026 · Full Specs</p>
                 </div>
               </button>
             ))}
