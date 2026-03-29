@@ -329,7 +329,37 @@ function parseVehicleToTrim(v: any, trimName: string): TrimVariant {
  */
 export async function fetchCarDetails(year: number, make: string, model: string): Promise<ExternalCarResult | null> {
   try {
-    const options = await getVehicleOptions(year, make, model);
+    let options = await getVehicleOptions(year, make, model);
+
+    // Fuzzy matching: if exact model returns nothing, search all models for the make
+    // and find ones that start with or contain the queried model name
+    if (options.length === 0) {
+      try {
+        const allModels = await getModels(year, make);
+        const modelLower = model.toLowerCase();
+        const matching = allModels.filter(
+          (m) => m.toLowerCase().startsWith(modelLower) || m.toLowerCase().includes(modelLower)
+        );
+
+        // Fetch options for ALL matching model variants in parallel
+        if (matching.length > 0) {
+          const allOptions = await Promise.all(
+            matching.slice(0, 10).map(async (m) => {
+              try {
+                const opts = await getVehicleOptions(year, make, m);
+                return opts;
+              } catch {
+                return [];
+              }
+            })
+          );
+          options = allOptions.flat();
+        }
+      } catch {
+        // If fuzzy search fails, fall back gracefully
+      }
+    }
+
     if (options.length === 0) return null;
 
     // Fetch ALL trims in parallel (cap at 15 to avoid rate limits)
