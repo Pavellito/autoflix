@@ -207,11 +207,13 @@ async function fetchJson<T>(url: string): Promise<T> {
     next: { revalidate: 86400 }, // Cache for 24h
   });
   if (!res.ok) throw new Error(`API error: ${res.status} ${url}`);
-  return res.json();
+  const text = await res.text();
+  if (!text || text === "null") return null as T;
+  return JSON.parse(text);
 }
 
-function normalizeMenuItems(data: FuelEcoMenuResponse): FuelEcoMenuItem[] {
-  if (!data.menuItem) return [];
+function normalizeMenuItems(data: FuelEcoMenuResponse | null): FuelEcoMenuItem[] {
+  if (!data || !data.menuItem) return [];
   return Array.isArray(data.menuItem) ? data.menuItem : [data.menuItem];
 }
 
