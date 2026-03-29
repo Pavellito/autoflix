@@ -4,6 +4,7 @@ import Header from "@/app/components/Header";
 import SignInModal from "@/app/components/SignInModal";
 import { FavoritesProvider } from "@/app/lib/favorites-context";
 import { AuthProvider } from "@/app/lib/auth-context";
+import { WatchProgressProvider } from "@/app/lib/watch-progress-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -56,9 +57,11 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[#141414] text-[#e5e5e5]">
         <AuthProvider>
           <FavoritesProvider>
-            <Header />
-            <SignInModal />
-            <main className="flex-1">{children}</main>
+            <WatchProgressProvider>
+              <Header />
+              <SignInModal />
+              <main className="flex-1">{children}</main>
+            </WatchProgressProvider>
           </FavoritesProvider>
         </AuthProvider>
       </body>

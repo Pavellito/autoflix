@@ -5,6 +5,7 @@ import VideoCard from "@/app/components/VideoCard";
 import AiSummary from "@/app/components/AiSummary";
 import FavoriteButton from "@/app/components/FavoriteButton";
 import ReviewSection from "@/app/components/ReviewSection";
+import YouTubePlayer from "@/app/components/YouTubePlayer";
 
 export default async function VideoPage({
   params,
@@ -25,15 +26,9 @@ export default async function VideoPage({
 
   return (
     <div className="bg-[#141414] min-h-screen">
-      {/* Full-width player */}
+      {/* Full-width player with progress tracking */}
       <div className="w-full aspect-video bg-black max-h-[80vh]">
-        <iframe
-          src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=0&rel=0`}
-          title={video.title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="w-full h-full"
-        />
+        <YouTubePlayer videoId={video.id} youtubeId={video.youtubeId} title={video.title} />
       </div>
 
       {/* Content */}

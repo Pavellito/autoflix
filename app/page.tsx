@@ -3,6 +3,7 @@ import CarRow from "./components/CarRow";
 import VideoRow from "./components/VideoRow";
 import { fetchAllCars } from "./lib/supabase-cars";
 import { videos, getVideosByCategory } from "./lib/data";
+import ContinueWatchingRow from "./components/ContinueWatchingRow";
 
 export default async function Home() {
   const cars = await fetchAllCars();
@@ -24,6 +25,7 @@ export default async function Home() {
 
       {/* Rows overlap the billboard bottom - Netflix style */}
       <div className="-mt-[6vw] relative z-10">
+        <ContinueWatchingRow />
         <CarRow title="Popular on AutoFlix" cars={allCars} />
         <VideoRow title="Trending Now" videos={trending} />
         {teslas.length > 0 && <CarRow title="Tesla Fleet" cars={teslas} />}
