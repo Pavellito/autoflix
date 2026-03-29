@@ -28,7 +28,7 @@ export default function VehicleCard({ vehicle }: { vehicle: VehicleCardData }) {
 
   return (
     <Link
-      href={`/cars/db/${v.id}`}
+      href={`/cars/${[v.make_name, v.model_name, v.year].filter(Boolean).join("-").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")}`}
       className="group flex flex-col bg-card-bg rounded-2xl overflow-hidden border border-white/5 hover:border-accent/40 hover:shadow-[0_0_20px_rgba(229,9,20,0.15)] transition-all duration-300 transform hover:-translate-y-1"
     >
       {/* Top section: gradient background with car info */}

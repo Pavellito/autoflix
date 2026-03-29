@@ -308,3 +308,34 @@ export async function getDbStats(): Promise<{
     makes: mk.count ?? 0,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Bridge: find vehicle_specs record by make/model/year (for slug-based lookup)
+// ---------------------------------------------------------------------------
+
+export async function findVehicleByMakeModelYear(
+  make: string,
+  model: string,
+  year?: number
+): Promise<VehicleDetailData | null> {
+  let query = supabase
+    .from("vehicle_specs")
+    .select("id")
+    .ilike("make_name", make);
+
+  // Match first model word (e.g., "Model" from "Model Y Juniper")
+  const modelFirstWord = model.split(/\s+/)[0];
+  if (modelFirstWord) {
+    query = query.ilike("model_name", `%${modelFirstWord}%`);
+  }
+
+  if (year) {
+    query = query.eq("year", year);
+  }
+
+  const { data, error } = await query.order("year", { ascending: false }).limit(1);
+
+  if (error || !data || data.length === 0) return null;
+
+  return getVehicleById(data[0].id);
+}
