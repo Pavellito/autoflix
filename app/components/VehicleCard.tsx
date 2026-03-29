@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { VehicleCardData } from "@/app/lib/vehicle-types";
+import { getCarThumbnailUrl, getCarPlaceholderDataUri } from "@/app/lib/car-images";
 
 function fuelBadgeColor(fuel: string | null): string {
   if (!fuel) return "bg-gray-700 text-gray-300";
@@ -25,44 +26,54 @@ export default function VehicleCard({ vehicle }: { vehicle: VehicleCardData }) {
   const displayYear = v.year ? `${v.year}` : "";
   const title = [displayYear, v.make_name, v.model_name].filter(Boolean).join(" ");
   const subtitle = v.modification_name || v.body_type || "";
+  const imageUrl = v.make_name && v.model_name
+    ? getCarThumbnailUrl(v.make_name, v.model_name)
+    : getCarPlaceholderDataUri(v.make_name || "", v.model_name || "", v.year ?? undefined);
 
   return (
     <Link
       href={`/cars/${[v.make_name, v.model_name, v.year].filter(Boolean).join("-").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")}`}
       className="group flex flex-col bg-card-bg rounded-2xl overflow-hidden border border-white/5 hover:border-accent/40 hover:shadow-[0_0_20px_rgba(229,9,20,0.15)] transition-all duration-300 transform hover:-translate-y-1"
     >
-      {/* Top section: gradient background with car info */}
-      <div className="relative h-36 bg-gradient-to-br from-[#1a1a3e] via-[#141428] to-[#0a0a1a] p-5 flex flex-col justify-between overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-3xl group-hover:bg-accent/10 transition-all duration-500" />
-        <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl" />
+      {/* Car Image */}
+      <div className="relative h-40 bg-gradient-to-br from-[#1a1a3e] via-[#141428] to-[#0a0a1a] overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={imageUrl}
+          alt={title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = getCarPlaceholderDataUri(v.make_name || "", v.model_name || "", v.year ?? undefined);
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
         {/* Tags */}
-        <div className="flex items-center gap-1.5 relative z-10">
+        <div className="absolute top-3 left-3 right-3 flex items-center gap-1.5 z-10">
           {v.fuel_type && (
             <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest ${fuelBadgeColor(v.fuel_type)}`}>
               {v.fuel_type}
             </span>
           )}
           {v.drive_type && (
-            <span className="bg-white/10 text-white/60 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest">
+            <span className="bg-black/50 backdrop-blur text-white/70 text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest">
               {v.drive_type}
             </span>
           )}
           {v.source && (
-            <span className="bg-white/5 text-white/40 text-[9px] font-bold px-1.5 py-0.5 rounded ml-auto">
+            <span className="bg-black/50 backdrop-blur text-white/40 text-[9px] font-bold px-1.5 py-0.5 rounded ml-auto">
               {sourceBadge(v.source)}
             </span>
           )}
         </div>
 
-        {/* Title */}
-        <div className="relative z-10">
-          <h3 className="text-lg font-black text-white tracking-tight leading-tight line-clamp-2 group-hover:text-accent transition-colors duration-300">
+        {/* Title overlay on image */}
+        <div className="absolute bottom-3 left-3 right-3 z-10">
+          <h3 className="text-lg font-black text-white tracking-tight leading-tight line-clamp-2 group-hover:text-accent transition-colors duration-300 drop-shadow-lg">
             {title}
           </h3>
           {subtitle && (
-            <p className="text-xs text-gray-400 mt-0.5 line-clamp-1 font-medium">{subtitle}</p>
+            <p className="text-xs text-gray-300 mt-0.5 line-clamp-1 font-medium drop-shadow">{subtitle}</p>
           )}
         </div>
       </div>

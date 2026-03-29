@@ -6,8 +6,8 @@ import type { Car } from "@/app/lib/data";
 import CarSelector from "./CarSelector";
 import VehicleImage from "./VehicleImage";
 
-export default function CompareBuilder({ cars }: { cars: Car[] }) {
-  const [car1, setCar1] = useState<Car | null>(null);
+export default function CompareBuilder({ cars, preselectedCar1 }: { cars: Car[]; preselectedCar1?: Car | null }) {
+  const [car1, setCar1] = useState<Car | null>(preselectedCar1 || null);
   const [car2, setCar2] = useState<Car | null>(null);
   const router = useRouter();
 

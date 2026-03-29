@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (action === "makes") {
-      const year = parseInt(searchParams.get("year") || "2025", 10);
+      const year = parseInt(searchParams.get("year") || "2026", 10);
       const cacheKey = `makes-${year}`;
       const cached = getCached<string[]>(cacheKey);
       if (cached) return NextResponse.json({ makes: cached });
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (action === "models") {
-      const year = parseInt(searchParams.get("year") || "2025", 10);
+      const year = parseInt(searchParams.get("year") || "2026", 10);
       const make = searchParams.get("make");
       if (!make) {
         return NextResponse.json({ error: "make parameter required" }, { status: 400 });
@@ -72,7 +72,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Search across recent years for matching makes
-      const year = parseInt(searchParams.get("year") || "2025", 10);
+      const year = parseInt(searchParams.get("year") || "2026", 10);
       const cacheKey = `makes-${year}`;
       let makes = getCached<string[]>(cacheKey);
       if (!makes) {

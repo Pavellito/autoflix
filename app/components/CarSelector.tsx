@@ -29,7 +29,7 @@ export default function CarSelector({
 }: CarSelectorProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [year, setYear] = useState(2025);
+  const [year, setYear] = useState(2026);
   const [externalResults, setExternalResults] = useState<ExternalCar[]>([]);
   const [searching, setSearching] = useState(false);
   const [enriching, setEnriching] = useState<string | null>(null);

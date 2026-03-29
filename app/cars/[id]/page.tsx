@@ -11,6 +11,8 @@ import RegionalCarInfo from "@/app/components/RegionalCarInfo";
 import VehicleImage from "@/app/components/VehicleImage";
 import ReviewSection from "@/app/components/ReviewSection";
 import YouTubeSection from "@/app/components/YouTubeSection";
+import CarNewsSection from "@/app/components/CarNewsSection";
+import AIAnalysis from "@/app/components/AIAnalysis";
 
 // ─── Known makes for slug parsing ────────────────────────
 const knownMakes = [
@@ -50,10 +52,10 @@ async function fetchCarFromExternalApi(id: string): Promise<Car | null> {
   const parsed = parseSlug(id);
   if (!parsed) return null;
   const { make: makeName, model: modelName, year } = parsed;
-  if (!year) return null;
+  const resolvedYear = year || 2026;
 
   try {
-    const details = await fetchCarDetails(year, makeName, modelName);
+    const details = await fetchCarDetails(resolvedYear, makeName, modelName);
     if (!details) return null;
 
     const imageUrl = getCarImageUrl(makeName, details.baseModel || modelName);
@@ -211,7 +213,7 @@ export default async function CarDetailPage({
             <p className="text-lg text-gray-400 font-medium mb-4">{spec.modification_name}</p>
           )}
           <div className="flex items-center gap-3">
-            <Link href="/compare" className="flex items-center gap-2 bg-white text-black px-7 py-2.5 rounded text-[16px] font-bold hover:bg-white/80 transition-colors">
+            <Link href={`/compare?car1=${encodeURIComponent(id)}&car1name=${encodeURIComponent(car.name)}&car1brand=${encodeURIComponent(car.brand)}&car1type=${encodeURIComponent(car.type)}&car1image=${encodeURIComponent(car.image)}`} className="flex items-center gap-2 bg-white text-black px-7 py-2.5 rounded text-[16px] font-bold hover:bg-white/80 transition-colors">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
@@ -473,6 +475,15 @@ export default async function CarDetailPage({
               </div>
             )}
 
+            {/* AI Expert Analysis */}
+            <AIAnalysis
+              make={makeName}
+              model={modelName}
+              year={yearNum}
+              carType={car.type}
+              vehicleClass={ext?.vehicleClass as string | undefined}
+            />
+
             {/* Quick Facts */}
             <div className="bg-[#1a1a1a] rounded-lg border border-white/10 p-4">
               <h3 className="text-[14px] font-bold text-white mb-3">Quick Facts</h3>
@@ -514,7 +525,10 @@ export default async function CarDetailPage({
           </div>
         )}
 
-        {/* ─── Related News ─── */}
+        {/* ─── Regional News (RSS Auto-Discovery) ─── */}
+        <CarNewsSection make={makeName} model={modelName} year={yearNum} />
+
+        {/* ─── Related News (from DB) ─── */}
         {news.length > 0 && (
           <div className="border-t border-white/10 pt-8 mb-8">
             <h2 className="text-[20px] font-bold text-white mb-4">{car.brand} in the News</h2>
