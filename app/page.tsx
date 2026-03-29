@@ -1,9 +1,11 @@
+import Link from "next/link";
 import CopilotHero from "./components/CopilotHero";
 import CarRow from "./components/CarRow";
 import VideoRow from "./components/VideoRow";
 import { fetchAllCars } from "./lib/supabase-cars";
 import { videos, getVideosByCategory } from "./lib/data";
 import ContinueWatchingRow from "./components/ContinueWatchingRow";
+import HomeNewsSection from "./components/HomeNewsSection";
 
 export default async function Home() {
   const cars = await fetchAllCars();
@@ -28,12 +30,48 @@ export default async function Home() {
         <ContinueWatchingRow />
         <CarRow title="Popular on AutoFlix" cars={allCars} />
         <VideoRow title="Trending Now" videos={trending} />
+
+        {/* Browse 2026 Cars CTA */}
+        <div className="px-[60px] mb-[3vw]">
+          <div className="bg-gradient-to-r from-[#e50914]/20 via-[#1a1a2e] to-[#0a0a1a] rounded-xl border border-[#e50914]/20 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl md:text-2xl font-black text-white mb-1">Browse Every 2026 Car</h2>
+              <p className="text-[14px] text-gray-400">Full specs, all trims, regional pricing for US, Israel, Russia & UAE</p>
+            </div>
+            <Link
+              href="/cars"
+              className="bg-[#e50914] text-white px-8 py-3 rounded text-[15px] font-bold hover:bg-[#f6121d] transition-colors whitespace-nowrap"
+            >
+              Find Your Car →
+            </Link>
+          </div>
+        </div>
+
         {teslas.length > 0 && <CarRow title="Tesla Fleet" cars={teslas} />}
         <VideoRow title="Expert Reviews" videos={reviews} />
         {byd.length > 0 && <CarRow title="BYD Collection" cars={byd} />}
         <VideoRow title="Head-to-Head Comparisons" videos={comparisons} />
         {premium.length > 0 && <CarRow title="Premium & Luxury" cars={premium} />}
         <VideoRow title="Electric Revolution" videos={evVideos} />
+
+        {/* Latest Automotive News */}
+        <HomeNewsSection />
+
+        {/* Videos Page CTA */}
+        <div className="px-[60px] mb-[3vw]">
+          <div className="bg-gradient-to-r from-[#1a1a1a] to-[#141428] rounded-xl border border-white/10 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl md:text-2xl font-black text-white mb-1">All Car Videos</h2>
+              <p className="text-[14px] text-gray-400">Latest reviews, comparisons & news from YouTube and more</p>
+            </div>
+            <Link
+              href="/videos"
+              className="bg-white text-black px-8 py-3 rounded text-[15px] font-bold hover:bg-white/80 transition-colors whitespace-nowrap"
+            >
+              Watch Now →
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Footer */}

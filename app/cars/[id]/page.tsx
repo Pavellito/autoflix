@@ -152,7 +152,73 @@ export default async function CarDetailPage({
   const parsed = parseSlug(id);
   const makeName = parsed?.make || car.brand;
   const modelName = parsed?.model || car.name.replace(car.brand, "").trim();
-  const yearNum = parsed?.year || (car.externalData?.year as number | undefined);
+  const yearNum = parsed?.year || (car.externalData?.year as number | undefined) || 2026;
+
+  // 2b. ALWAYS enrich with FuelEconomy.gov data if not already present
+  // This ensures local DB cars also get trims, regional pricing, and full specs
+  if (!car.externalData?.trimVariants || !car.externalData?.regionalPricing) {
+    try {
+      const details = await fetchCarDetails(yearNum, makeName, modelName);
+      if (details) {
+        const imageUrl = getCarImageUrl(makeName, details.baseModel || modelName);
+        car = {
+          ...car,
+          image: car.image && !car.image.includes("broken") ? car.image : imageUrl,
+          externalData: {
+            ...car.externalData,
+            source: "fueleconomy.gov + NHTSA",
+            externalId: details.externalId,
+            fetchedAt: new Date().toISOString(),
+            year: details.year,
+            fuelType: details.fuelType,
+            drive: details.drive,
+            transmission: details.transmission,
+            vehicleClass: details.vehicleClass,
+            cylinders: details.cylinders,
+            displacement: details.displacement,
+            mpgCity: details.mpgCity,
+            mpgHighway: details.mpgHighway,
+            mpgCombined: details.mpgCombined,
+            evMotor: details.evMotor,
+            batteryKwh: details.batteryKwh,
+            rangeCombined: details.rangeCombined,
+            rangeCity: details.rangeCity,
+            rangeHighway: details.rangeHighway,
+            chargeTime240v: details.chargeTime240v,
+            co2TailpipeGpm: details.co2TailpipeGpm,
+            fuelCostAnnual: details.fuelCostAnnual,
+            feScore: details.feScore,
+            ghgScore: details.ghgScore,
+            engineDescription: details.engineDescription,
+            hasTurbo: details.hasTurbo,
+            hasSupercharger: details.hasSupercharger,
+            hasStartStop: details.hasStartStop,
+            passengerVolume: details.passengerVolume,
+            cargoVolume: details.cargoVolume,
+            youSaveSpend: details.youSaveSpend,
+            nhtsaLengthMm: details.nhtsaLengthMm,
+            nhtsaWidthMm: details.nhtsaWidthMm,
+            nhtsaHeightMm: details.nhtsaHeightMm,
+            nhtsaWheelbaseMm: details.nhtsaWheelbaseMm,
+            nhtsaCurbWeightKg: details.nhtsaCurbWeightKg,
+            nhtsaTrackFrontMm: details.nhtsaTrackFrontMm,
+            nhtsaTrackRearMm: details.nhtsaTrackRearMm,
+            nhtsaWeightDistribution: details.nhtsaWeightDistribution,
+            nhtsaTrimVariants: details.nhtsaTrimVariants,
+            estimatedMsrp: details.estimatedMsrp,
+            trimVariants: details.trimVariants,
+            regionalPricing: details.regionalPricing,
+          },
+        };
+        // Update price display if not set
+        if (!car.price && details.estimatedMsrp) {
+          car.price = `From ~$${details.estimatedMsrp.toLocaleString()}`;
+        }
+      }
+    } catch {
+      // External enrichment failed, continue with what we have
+    }
+  }
 
   // 3. Fetch ALL data in parallel: deep specs, news, hardcoded videos
   const [vehicleData, relatedNews, hardcodedVideos] = await Promise.allSettled([

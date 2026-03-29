@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Car } from "@/app/lib/data";
-import VehicleImage from "@/app/components/VehicleImage";
 import { useFavorites } from "@/app/lib/favorites-context";
+import { getCarThumbnailUrl } from "@/app/lib/car-images";
 
 export default function CarCard({ car }: { car: Car }) {
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -13,12 +13,16 @@ export default function CarCard({ car }: { car: Car }) {
     <div className="netflix-card flex-shrink-0 w-[calc(100vw/2.3)] sm:w-[calc(100vw/3.3)] md:w-[calc(100vw/4.3)] lg:w-[calc(100vw/6.2)] rounded overflow-hidden relative group cursor-pointer">
       <Link href={`/cars/${car.id}`}>
         {/* Thumbnail */}
-        <div className="relative aspect-[16/9] bg-[#333]">
-          <VehicleImage
+        <div className="relative aspect-[16/9] bg-[#0a0a0a]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={car.image}
             alt={car.name}
-            aspectRatio="aspect-full"
             className="w-full h-full object-cover"
+            onError={(e) => {
+              const model = car.name.replace(car.brand, "").trim();
+              (e.target as HTMLImageElement).src = getCarThumbnailUrl(car.brand, model);
+            }}
           />
           {/* Car name overlay at bottom */}
           <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
