@@ -12,7 +12,7 @@ export default function Header() {
           <Link href="/" className="text-white hover:text-accent transition">
             Home
           </Link>
-          <Link href="/cars" className="text-white hover:text-accent transition">
+          <Link href="/cars" className="text-white hover:text-accent transition font-semibold">
             Cars
           </Link>
           <Link href="/news" className="text-white hover:text-accent transition">

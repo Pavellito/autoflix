@@ -1,6 +1,7 @@
 import CopilotHero from "@/app/components/CopilotHero";
 import VideoRow from "@/app/components/VideoRow";
 import CarCard from "@/app/components/CarCard";
+import ContinueWatchingRow from "@/app/components/ContinueWatchingRow";
 import { categories, getVideosByCategory, cars } from "@/app/lib/data";
 
 export default function Home() {
@@ -39,6 +40,9 @@ export default function Home() {
       </section>
 
       <div className="space-y-4 pb-20 mt-24">
+        {/* Continue Watching — Netflix-style resume row */}
+        <ContinueWatchingRow />
+
         <div className="max-w-7xl mx-auto px-6 mb-8 mt-12">
             <h2 className="text-sm font-black text-gray-600 uppercase tracking-[0.4em] mb-4">Educational Modules</h2>
             <div className="w-20 h-1 bg-accent rounded-full mb-12" />

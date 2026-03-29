@@ -6,7 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "import:all": "npx tsx scripts/import/run-all.ts",
+    "import:vpic": "npx tsx scripts/import/nhtsa-vpic.ts",
+    "import:epa": "npx tsx scripts/import/epa-fuel-economy.ts",
+    "import:safety": "npx tsx scripts/import/nhtsa-safety.ts",
+    "import:auto-specs": "npx tsx scripts/import/github-auto-specs.ts",
+    "import:ev": "npx tsx scripts/import/openev-data.ts",
+    "import:link": "npx tsx scripts/import/post-link.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

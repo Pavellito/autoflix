@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/app/components/Header";
 import { FavoritesProvider } from "@/app/lib/favorites-context";
+import { WatchProgressProvider } from "@/app/lib/watch-progress-context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -53,8 +54,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <FavoritesProvider>
-          <Header />
-          <main className="flex-1 pt-14">{children}</main>
+          <WatchProgressProvider>
+            <Header />
+            <main className="flex-1 pt-14">{children}</main>
+          </WatchProgressProvider>
         </FavoritesProvider>
       </body>
     </html>

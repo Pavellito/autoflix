@@ -4,6 +4,7 @@ import { getVideoById, videos as allVideos } from "@/app/lib/data";
 import VideoCard from "@/app/components/VideoCard";
 import AiSummary from "@/app/components/AiSummary";
 import FavoriteButton from "@/app/components/FavoriteButton";
+import YouTubePlayer from "@/app/components/YouTubePlayer";
 
 export default async function VideoPage({
   params,
@@ -31,22 +32,21 @@ export default async function VideoPage({
         href="/"
         className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
       >
-        ← Back to Home
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Back to Home
       </Link>
 
-      {/* Video player */}
-      <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black mb-6 shadow-2xl border border-white/5">
-        <iframe
-          src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=0&rel=0`}
-          title={video.title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="absolute inset-0 w-full h-full"
-        />
-      </div>
+      {/* Video player — now with progress tracking */}
+      <YouTubePlayer
+        videoId={video.id}
+        youtubeId={video.youtubeId}
+        title={video.title}
+      />
 
       {/* Video info */}
-      <div className="mb-10">
+      <div className="mb-10 mt-6">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-2">
           <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight">
             {video.title}
@@ -59,11 +59,11 @@ export default async function VideoPage({
             </button>
           </div>
         </div>
-        
+
         <div className="flex flex-wrap items-center gap-3 text-sm text-gray-400 mb-6">
           <span className="font-semibold text-white/90">{video.year}</span>
           <span className="w-1 h-1 bg-gray-600 rounded-full" />
-          <Link 
+          <Link
             href={`/search?q=${video.category}`}
             className="bg-accent/20 text-accent px-3 py-1 rounded-full text-xs font-semibold hover:bg-accent/30 transition-colors"
           >
@@ -75,7 +75,7 @@ export default async function VideoPage({
             Youtube integration
           </span>
         </div>
-        
+
         <p className="text-gray-300 text-base max-w-4xl leading-relaxed">
           {video.description}
         </p>
