@@ -1,22 +1,21 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/app/lib/supabase";
 
-interface CarItem {
+interface SearchResult {
+  make: string;
+  model: string;
+  year: number;
   id: string;
-  name: string;
-  brand: string;
-  type: string;
-  image: string;
 }
 
 export default function HeaderCarNav() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [cars, setCars] = useState<CarItem[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [popularMakes, setPopularMakes] = useState<string[]>([]);
   const ref = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -32,42 +31,67 @@ export default function HeaderCarNav() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // Fetch cars on first open
-  const handleOpen = async () => {
-    setOpen(!open);
-    if (!loaded) {
-      const { data } = await supabase
-        .from("cars")
-        .select("id, name, brand, type, image")
-        .order("brand", { ascending: true });
-      if (data) {
-        setCars(data as CarItem[]);
-        setLoaded(true);
-      }
+  // Load popular makes on first open
+  useEffect(() => {
+    if (open && popularMakes.length === 0) {
+      fetch("/api/cars/catalog?action=makes&year=2026")
+        .then((r) => r.json())
+        .then((data) => setPopularMakes((data.makes || []).slice(0, 20)))
+        .catch(() => {});
     }
+  }, [open, popularMakes.length]);
+
+  // Search with debounce
+  const searchCars = useCallback(async (q: string) => {
+    if (q.length < 2) {
+      setResults([]);
+      return;
+    }
+    setSearching(true);
+    try {
+      const res = await fetch(`/api/cars/catalog?action=search&q=${encodeURIComponent(q)}&year=2026`);
+      if (res.ok) {
+        const data = await res.json();
+        setResults(data.results || []);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setSearching(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => searchCars(query), 300);
+    return () => clearTimeout(timer);
+  }, [query, searchCars]);
+
+  const handleOpen = () => {
+    setOpen(!open);
     setTimeout(() => inputRef.current?.focus(), 50);
   };
 
-  const filtered = cars.filter((car) => {
-    const q = query.toLowerCase();
-    return (
-      car.name.toLowerCase().includes(q) ||
-      car.brand.toLowerCase().includes(q) ||
-      car.type.toLowerCase().includes(q)
-    );
-  });
+  const handleSelect = (slug: string) => {
+    setOpen(false);
+    setQuery("");
+    router.push(`/cars/${slug}`);
+  };
 
-  // Group by brand
-  const grouped = filtered.reduce<Record<string, CarItem[]>>((acc, car) => {
-    if (!acc[car.brand]) acc[car.brand] = [];
-    acc[car.brand].push(car);
+  const handleMakeClick = (make: string) => {
+    setOpen(false);
+    router.push(`/cars?make=${encodeURIComponent(make)}`);
+  };
+
+  // Group results by make
+  const grouped = results.reduce<Record<string, SearchResult[]>>((acc, car) => {
+    if (!acc[car.make]) acc[car.make] = [];
+    acc[car.make].push(car);
     return acc;
   }, {});
 
-  const handleSelect = (car: CarItem) => {
-    setOpen(false);
-    setQuery("");
-    router.push(`/cars/${car.id}`);
+  const getImageUrl = (make: string, model: string) => {
+    const modelFamily = model.split(" ")[0].replace(/[^a-zA-Z0-9]/g, "");
+    return `https://cdn.imagin.studio/getimage?customer=hrjavascript-mastery&make=${encodeURIComponent(make)}&modelFamily=${encodeURIComponent(modelFamily)}&paintId=pspc0001&width=100`;
   };
 
   return (
@@ -84,7 +108,7 @@ export default function HeaderCarNav() {
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-3 w-[340px] bg-[#141414] border border-white/15 rounded shadow-2xl z-50 overflow-hidden">
+        <div className="absolute top-full right-0 mt-3 w-[380px] bg-[#141414] border border-white/15 rounded-lg shadow-2xl z-50 overflow-hidden">
           {/* Search */}
           <div className="p-3 border-b border-white/10">
             <input
@@ -92,47 +116,87 @@ export default function HeaderCarNav() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search any car..."
-              className="w-full bg-[#333] text-white text-[14px] px-3 py-2 rounded border border-white/10 outline-none focus:border-white/30 placeholder:text-[#666]"
+              placeholder="Search 2026 cars — type make or model..."
+              className="w-full bg-[#333] text-white text-[14px] px-3 py-2.5 rounded border border-white/10 outline-none focus:border-[#e50914]/50 placeholder:text-[#555]"
             />
           </div>
 
           {/* Results */}
           <div className="max-h-[400px] overflow-y-auto">
-            {!loaded ? (
-              <p className="p-4 text-[13px] text-[#777] text-center">Loading cars...</p>
-            ) : Object.keys(grouped).length === 0 ? (
-              <p className="p-4 text-[13px] text-[#777] text-center">No cars found</p>
-            ) : (
-              Object.entries(grouped).map(([brand, brandCars]) => (
-                <div key={brand}>
-                  <div className="px-4 py-1.5 text-[11px] text-[#777] uppercase tracking-wider font-bold bg-black/50 sticky top-0">
-                    {brand}
+            {/* Search results */}
+            {query.length >= 2 ? (
+              <>
+                {searching && (
+                  <div className="p-4 text-center">
+                    <span className="inline-block w-4 h-4 border-2 border-[#e50914] border-t-transparent rounded-full animate-spin" />
+                    <p className="text-[11px] text-[#777] mt-2">Searching 2026 models...</p>
                   </div>
-                  {brandCars.map((car) => (
+                )}
+                {!searching && Object.keys(grouped).length === 0 && (
+                  <p className="p-4 text-[13px] text-[#777] text-center">No 2026 cars found for &quot;{query}&quot;</p>
+                )}
+                {Object.entries(grouped).map(([make, cars]) => (
+                  <div key={make}>
+                    <div className="px-4 py-1.5 text-[10px] text-[#777] uppercase tracking-wider font-bold bg-black/50 sticky top-0">
+                      {make}
+                    </div>
+                    {cars.slice(0, 5).map((car) => (
+                      <button
+                        key={car.id}
+                        type="button"
+                        onClick={() => handleSelect(car.id)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition-colors text-left"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={getImageUrl(car.make, car.model)}
+                          alt={`${car.make} ${car.model}`}
+                          className="w-10 h-7 rounded object-contain flex-shrink-0 bg-[#222]"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = "none";
+                          }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] text-white truncate">{car.make} {car.model}</p>
+                          <p className="text-[10px] text-[#666]">2026</p>
+                        </div>
+                        <svg className="w-3.5 h-3.5 text-[#555]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </>
+            ) : (
+              /* Popular makes when no search */
+              <>
+                <div className="px-4 py-2 text-[10px] text-[#e50914] uppercase tracking-widest font-bold bg-black/30">
+                  Popular Makes — 2026
+                </div>
+                <div className="grid grid-cols-2 gap-0">
+                  {popularMakes.map((make) => (
                     <button
-                      key={car.id}
-                      type="button"
-                      onClick={() => handleSelect(car)}
-                      className="w-full flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors text-left"
+                      key={make}
+                      onClick={() => {
+                        setQuery(make);
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 hover:bg-white/5 transition-colors text-left border-b border-r border-white/5"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={car.image}
-                        alt={car.name}
-                        className="w-8 h-8 rounded object-cover flex-shrink-0"
+                        src={getImageUrl(make, make)}
+                        alt={make}
+                        className="w-8 h-6 rounded object-contain flex-shrink-0 bg-[#222]"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                        }}
                       />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] text-white truncate">{car.name}</p>
-                        <p className="text-[11px] text-[#666]">{car.type}</p>
-                      </div>
-                      <svg className="w-3.5 h-3.5 text-[#555]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
+                      <span className="text-[13px] text-white/80 truncate">{make}</span>
                     </button>
                   ))}
                 </div>
-              ))
+              </>
             )}
           </div>
 
@@ -142,7 +206,7 @@ export default function HeaderCarNav() {
               onClick={() => { setOpen(false); router.push("/cars"); }}
               className="w-full text-center text-[12px] text-[#999] hover:text-white py-1.5 transition-colors"
             >
-              Browse all cars →
+              Browse all 2026 cars →
             </button>
           </div>
         </div>
