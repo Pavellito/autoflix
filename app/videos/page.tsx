@@ -28,7 +28,7 @@ export default function VideosPage() {
                 {categoryVideos.map((video) => (
                   <Link
                     key={video.id}
-                    href={`/watch/${video.id}`}
+                    href={`/video/${video.id}`}
                     className="group rounded-lg overflow-hidden bg-[#1a1a1a] border border-white/5 hover:border-white/20 transition-all"
                   >
                     <div className="relative aspect-[16/9] bg-[#0a0a0a]">
