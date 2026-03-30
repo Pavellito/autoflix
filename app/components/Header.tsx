@@ -58,9 +58,12 @@ export default function Header() {
       <div className="flex items-center px-[4%] h-[68px]">
         {/* Logo */}
         <Link href="/" className="ltr:mr-6 rtl:ml-6 flex-shrink-0">
-          <span className="text-[#e50914] text-[28px] font-black tracking-tight" style={{ fontFamily: "Arial Black, sans-serif" }}>
-            AUTOFLIX
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
+            src="/logo.png" 
+            alt="AutoFlix" 
+            className="h-8 md:h-[38px] w-auto object-contain"
+          />
         </Link>
 
         {/* Desktop Nav */}
