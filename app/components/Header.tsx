@@ -57,14 +57,16 @@ export default function Header() {
     >
       <div className="flex items-center px-[4%] h-[68px]">
         {/* Logo */}
-        <Link href="/" className="ltr:mr-6 rtl:ml-6 flex-shrink-0 flex items-center gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src="/logo.png" 
-            alt="AF Logo" 
-            className="h-7 md:h-[28px] w-auto object-contain rounded-sm"
-          />
-          <span className="text-[#e50914] text-[28px] font-black tracking-tight" style={{ fontFamily: "Arial Black, sans-serif", letterSpacing: "-1px" }}>
+        <Link href="/" className="ltr:mr-6 rtl:ml-6 flex-shrink-0">
+          <span 
+            className="text-[#E50914] text-[32px] font-black tracking-tighter" 
+            style={{ 
+              fontFamily: 'Impact, "Arial Black", sans-serif',
+              textShadow: '0 2px 4px rgba(0,0,0,0.6)',
+              transform: 'scaleY(1.15)',
+              display: 'inline-block'
+            }}
+          >
             AUTOFLIX
           </span>
         </Link>
