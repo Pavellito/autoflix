@@ -1,19 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import { videos, categories } from "@/app/lib/data";
-
-export const metadata = {
-  title: "Videos — AutoFlix",
-  description: "Latest car reviews, comparisons, and automotive news videos",
-};
+import { useLanguage } from "@/app/lib/i18n/context";
 
 export default function VideosPage() {
+  const { t } = useLanguage();
   return (
     <div className="bg-[#141414] min-h-screen pt-[68px]">
       {/* Hero */}
       <div className="relative bg-gradient-to-b from-[#1a1a2e] to-[#141414] px-[60px] py-12">
-        <h1 className="text-3xl md:text-4xl font-black text-white mb-2">All Car Videos</h1>
+        <h1 className="text-3xl md:text-4xl font-black text-white mb-2">{t("videos_title")}</h1>
         <p className="text-[15px] text-gray-400 max-w-xl">
-          Latest reviews, comparisons, and automotive news from YouTube and more
+          {t("videos_description")}
         </p>
       </div>
 
@@ -68,14 +67,14 @@ export default function VideosPage() {
       <div className="px-[60px] pb-12">
         <div className="bg-gradient-to-r from-[#e50914]/20 via-[#1a1a2e] to-[#0a0a1a] rounded-xl border border-[#e50914]/20 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl md:text-2xl font-black text-white mb-1">Browse Every 2026 Car</h2>
-            <p className="text-[14px] text-gray-400">Full specs, all trims, regional pricing</p>
+            <h2 className="text-xl md:text-2xl font-black text-white mb-1">{t("home_browse_2026")}</h2>
+            <p className="text-[14px] text-gray-400">{t("home_browse_2026_desc")}</p>
           </div>
           <Link
             href="/cars"
             className="bg-[#e50914] text-white px-8 py-3 rounded text-[15px] font-bold hover:bg-[#f6121d] transition-colors whitespace-nowrap"
           >
-            Find Your Car →
+            {t("home_find_your_car")}
           </Link>
         </div>
       </div>

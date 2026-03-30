@@ -1,9 +1,42 @@
 // ─── Car Image Service ───────────────────────────────────
-// Provides multiple image URL sources for any car make/model
+// Real car photographs via Wikipedia API, with imagin.studio as fallback
+
+// Client-side cache for Wikipedia image lookups
+const wikiImageCache = new Map<string, string | null>();
+
+/**
+ * Fetch a real car photograph URL via our Wikipedia-backed API.
+ * Returns null if no real photo found.
+ */
+export async function fetchRealCarImage(
+  make: string,
+  model: string,
+  year: number | string = 2026
+): Promise<string | null> {
+  const cacheKey = `${make}-${model}-${year}`;
+  if (wikiImageCache.has(cacheKey)) return wikiImageCache.get(cacheKey) || null;
+
+  try {
+    const res = await fetch(
+      `/api/cars/image?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&year=${encodeURIComponent(year)}`
+    );
+    if (res.ok) {
+      const data = await res.json();
+      const url = data.url || null;
+      wikiImageCache.set(cacheKey, url);
+      return url;
+    }
+  } catch {
+    // ignore
+  }
+  wikiImageCache.set(cacheKey, null);
+  return null;
+}
 
 /**
  * Get prioritized image URLs for a car.
  * Returns array in priority order: imagin.studio → placeholder SVG
+ * (Real Wikipedia photos are fetched separately via fetchRealCarImage)
  */
 export function getCarImageUrls(make: string, model: string, year?: number): string[] {
   const urls: string[] = [];

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useLanguage } from "@/app/lib/i18n/context";
 
 interface NewsArticle {
   title: string;
@@ -15,6 +16,7 @@ interface NewsArticle {
 }
 
 export default function HomeNewsSection() {
+  const { t } = useLanguage();
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +32,7 @@ export default function HomeNewsSection() {
   if (loading) {
     return (
       <div className="px-[60px] mb-[3vw]">
-        <h2 className="text-[20px] font-bold text-[#e5e5e5] mb-3">Latest Automotive News</h2>
+        <h2 className="text-[20px] font-bold text-[#e5e5e5] mb-3">{t("home_latest_news")}</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="bg-white/5 rounded-lg overflow-hidden animate-pulse">
@@ -51,12 +53,12 @@ export default function HomeNewsSection() {
   return (
     <div className="px-[60px] mb-[3vw]">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-[20px] font-bold text-[#e5e5e5]">Latest Automotive News</h2>
+        <h2 className="text-[20px] font-bold text-[#e5e5e5]">{t("home_latest_news")}</h2>
         <Link
           href="/videos"
           className="text-[13px] text-[#999] hover:text-white transition-colors"
         >
-          See all →
+          {t("home_see_all")}
         </Link>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

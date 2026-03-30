@@ -5,6 +5,7 @@ import SignInModal from "@/app/components/SignInModal";
 import { FavoritesProvider } from "@/app/lib/favorites-context";
 import { AuthProvider } from "@/app/lib/auth-context";
 import { WatchProgressProvider } from "@/app/lib/watch-progress-context";
+import { LanguageProvider } from "@/app/lib/i18n/context";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -55,15 +56,17 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#141414] text-[#e5e5e5]">
-        <AuthProvider>
-          <FavoritesProvider>
-            <WatchProgressProvider>
-              <Header />
-              <SignInModal />
-              <main className="flex-1">{children}</main>
-            </WatchProgressProvider>
-          </FavoritesProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <FavoritesProvider>
+              <WatchProgressProvider>
+                <Header />
+                <SignInModal />
+                <main className="flex-1">{children}</main>
+              </WatchProgressProvider>
+            </FavoritesProvider>
+          </AuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

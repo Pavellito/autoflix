@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { VehicleCardData } from "@/app/lib/vehicle-types";
-import { getCarThumbnailUrl, getCarPlaceholderDataUri } from "@/app/lib/car-images";
+import RealCarImage from "./RealCarImage";
 
 function fuelBadgeColor(fuel: string | null): string {
   if (!fuel) return "bg-gray-700 text-gray-300";
@@ -26,10 +28,6 @@ export default function VehicleCard({ vehicle }: { vehicle: VehicleCardData }) {
   const displayYear = v.year ? `${v.year}` : "";
   const title = [displayYear, v.make_name, v.model_name].filter(Boolean).join(" ");
   const subtitle = v.modification_name || v.body_type || "";
-  const imageUrl = v.make_name && v.model_name
-    ? getCarThumbnailUrl(v.make_name, v.model_name)
-    : getCarPlaceholderDataUri(v.make_name || "", v.model_name || "", v.year ?? undefined);
-
   return (
     <Link
       href={`/cars/${[v.make_name, v.model_name, v.year].filter(Boolean).join("-").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "")}`}
@@ -37,14 +35,12 @@ export default function VehicleCard({ vehicle }: { vehicle: VehicleCardData }) {
     >
       {/* Car Image */}
       <div className="relative h-40 bg-gradient-to-br from-[#1a1a3e] via-[#141428] to-[#0a0a1a] overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imageUrl}
-          alt={title}
+        <RealCarImage
+          make={v.make_name || ""}
+          model={v.model_name || ""}
+          year={v.year ?? undefined}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = getCarPlaceholderDataUri(v.make_name || "", v.model_name || "", v.year ?? undefined);
-          }}
+          alt={title}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 

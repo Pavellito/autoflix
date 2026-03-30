@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import type { Car } from "@/app/lib/data";
 import VehicleImage from "./VehicleImage";
+import RealCarImage from "./RealCarImage";
 
 interface ExternalCar {
   make: string;
@@ -134,11 +135,6 @@ export default function CarFinder({ localCars }: CarFinderProps) {
     router.push(`/cars/${slug}`);
   };
 
-  // Get image URL for external car
-  const getImageUrl = (make: string, model: string) => {
-    const modelFamily = model.split(" ")[0].replace(/[^a-zA-Z0-9]/g, "");
-    return `https://cdn.imagin.studio/getimage?customer=hrjavascript-mastery&make=${encodeURIComponent(make)}&modelFamily=${encodeURIComponent(modelFamily)}&paintId=pspc0001`;
-  };
 
   // Filter local cars by search
   const filteredLocal = localCars.filter((car) => {
@@ -271,14 +267,13 @@ export default function CarFinder({ localCars }: CarFinderProps) {
                         className="group relative bg-[#1a1a1a] rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition-all text-left disabled:opacity-50"
                       >
                         <div className="aspect-[16/10] relative overflow-hidden bg-[#0a0a0a]">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={localMatch?.image || getImageUrl(selectedMake, model)}
-                            alt={`${selectedMake} ${model}`}
+                          <RealCarImage
+                            make={selectedMake}
+                            model={model}
+                            year={year}
+                            existingUrl={localMatch?.image}
                             className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedMake + " " + model)}&background=1a1a1a&color=777&size=320&font-size=0.2`;
-                            }}
+                            alt={`${selectedMake} ${model}`}
                           />
                           {localMatch && (
                             <span className="absolute top-2 right-2 text-[10px] bg-[#e50914] text-white px-2 py-0.5 rounded font-bold">
@@ -402,14 +397,12 @@ export default function CarFinder({ localCars }: CarFinderProps) {
                           className="group bg-[#1a1a1a] rounded-lg overflow-hidden border border-white/5 hover:border-green-400/30 transition-all text-left disabled:opacity-50"
                         >
                           <div className="aspect-[16/10] relative overflow-hidden bg-[#0a0a0a]">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={getImageUrl(car.make, car.model)}
-                              alt={`${car.make} ${car.model}`}
+                            <RealCarImage
+                              make={car.make}
+                              model={car.model}
+                              year={car.year}
                               className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(car.make)}&background=1a1a1a&color=777&size=320&font-size=0.3`;
-                              }}
+                              alt={`${car.make} ${car.model}`}
                             />
                             {isEnriching && (
                               <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -468,14 +461,12 @@ export default function CarFinder({ localCars }: CarFinderProps) {
                 className="group bg-[#1a1a1a] rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition-all text-left"
               >
                 <div className="aspect-[16/10] relative overflow-hidden bg-[#0a0a0a]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={getImageUrl(car.make, car.model)}
-                    alt={car.label}
+                  <RealCarImage
+                    make={car.make}
+                    model={car.model}
+                    year={2026}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(car.label)}&background=1a1a1a&color=777&size=320&font-size=0.2`;
-                    }}
+                    alt={car.label}
                   />
                   <span className="absolute top-2 right-2 text-[10px] bg-[#e50914] text-white px-2 py-0.5 rounded font-bold">
                     2026

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Car } from "@/app/lib/data";
 import { useFavorites } from "@/app/lib/favorites-context";
-import { getCarThumbnailUrl } from "@/app/lib/car-images";
+import RealCarImage from "./RealCarImage";
 
 export default function CarCard({ car }: { car: Car }) {
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -14,15 +14,12 @@ export default function CarCard({ car }: { car: Car }) {
       <Link href={`/cars/${car.id}`}>
         {/* Thumbnail */}
         <div className="relative aspect-[16/9] bg-[#0a0a0a]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={car.image}
-            alt={car.name}
+          <RealCarImage
+            make={car.brand}
+            model={car.name.replace(car.brand, "").trim()}
+            existingUrl={car.image}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              const model = car.name.replace(car.brand, "").trim();
-              (e.target as HTMLImageElement).src = getCarThumbnailUrl(car.brand, model);
-            }}
+            alt={car.name}
           />
           {/* Car name overlay at bottom */}
           <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
