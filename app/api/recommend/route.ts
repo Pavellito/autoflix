@@ -1,18 +1,8 @@
 import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import Groq from "groq-sdk";
+import { generateWithFallback, getPrimaryModelName } from "@/app/lib/ai";
 import { fetchAllCars } from "@/app/lib/supabase-cars";
 
 export async function POST(request: Request) {
-  const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
-  const GROQ_KEY = process.env.GROQ_API_KEY || "";
-
-  if (!GEMINI_KEY && !GROQ_KEY) {
-    return NextResponse.json({ error: "AI Providers not configured. Please add GEMINI_API_KEY/GROQ_API_KEY to environment." }, { status: 500 });
-  }
-
-  const genAI = new GoogleGenerativeAI(GEMINI_KEY);
-  const groq = new Groq({ apiKey: GROQ_KEY || "dummy_key" }); // Use dummy to prevent constructor crash if missing
   try {
     const cars = await fetchAllCars();
 
@@ -58,25 +48,8 @@ Structure:
 }
 Do not include markdown backticks.`;
 
-    let textResult = "";
-
-    try {
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash",
-        generationConfig: { responseMimeType: "application/json" },
-      });
-      const result = await model.generateContent(prompt);
-      textResult = result.response.text();
-    } catch (e) {
-      console.warn("[AI Recommend] Gemini failed, falling back to Groq");
-      const chatCompletion = await groq.chat.completions.create({
-        messages: [{ role: "user", content: prompt }],
-        model: "llama-3.1-8b-instant",
-        temperature: 0.3,
-        response_format: { type: "json_object" },
-      });
-      textResult = chatCompletion.choices[0]?.message?.content || "";
-    }
+    console.log(`[Recommend] Using model: ${getPrimaryModelName()}`);
+    const textResult = await generateWithFallback(prompt, { jsonMode: true, temperature: 0.3 });
 
     const responseData = JSON.parse(textResult.trim());
     

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import type { YouTubeVideo } from "@/app/lib/youtube-api";
 
 interface Props {
@@ -98,11 +99,9 @@ export default function YouTubeSection({ make, model, year, carSlug, fallbackVid
 
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 -mx-2 px-2">
         {videos.map((video) => (
-          <a
+          <Link
             key={video.videoId}
-            href={`https://www.youtube.com/watch?v=${video.videoId}`}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={`/video/yt-${video.videoId}`}
             className="flex-shrink-0 w-[300px] rounded-lg overflow-hidden bg-[#1a1a1a] border border-white/5 hover:border-white/20 group transition-all hover:scale-[1.02]"
           >
             <div className="relative aspect-video bg-[#333]">
@@ -144,7 +143,7 @@ export default function YouTubeSection({ make, model, year, carSlug, fallbackVid
                 </p>
               )}
             </div>
-          </a>
+          </Link>
         ))}
       </div>
     </div>

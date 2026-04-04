@@ -1,8 +1,6 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { generateWithFallback, getPrimaryModelName } from "@/app/lib/ai";
 import { videos } from "@/app/lib/data";
 import type { Video } from "@/app/lib/data";
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? "");
 
 function searchVideos(query: string): Video[] {
   const q = query.toLowerCase();
@@ -30,8 +28,6 @@ export async function GET(request: Request) {
 
   if (process.env.GEMINI_API_KEY) {
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
       const videoContext = results
         .slice(0, 5)
         .map((v) => `- ${v.title}: ${v.description}`)
@@ -45,8 +41,8 @@ ${results.length > 0 ? `Matching videos:\n${videoContext}` : "No matching videos
 
 Give a helpful, concise answer (2-3 sentences) about their query from a car enthusiast perspective. If there are matching videos, mention the most relevant ones. If no matches, suggest what they might search for instead. No markdown.`;
 
-      const result = await model.generateContent(prompt);
-      aiAnswer = result.response.text();
+      console.log(`[Search] Using model: ${getPrimaryModelName()}`);
+      aiAnswer = await generateWithFallback(prompt, { temperature: 0.3 });
     } catch (error) {
       console.error("AI search error:", error);
     }

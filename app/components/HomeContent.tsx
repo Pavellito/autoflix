@@ -1,13 +1,16 @@
 "use client";
 
+import { Suspense, lazy } from "react";
 import Link from "next/link";
 import CopilotHero from "./CopilotHero";
 import CarRow from "./CarRow";
 import VideoRow from "./VideoRow";
 import ContinueWatchingRow from "./ContinueWatchingRow";
-import HomeNewsSection from "./HomeNewsSection";
 import { useLanguage } from "@/app/lib/i18n/context";
 import type { Car, Video } from "@/app/lib/data";
+
+// Lazy-load below-the-fold news section
+const HomeNewsSection = lazy(() => import("./HomeNewsSection"));
 
 interface HomeContentProps {
   cars: Car[];
@@ -59,8 +62,19 @@ export default function HomeContent({ cars, trending, reviews, comparisons, evVi
         {premium.length > 0 && <CarRow title={t("home_premium")} cars={premium} />}
         <VideoRow title={t("home_electric_revolution")} videos={evVideos} />
 
-        {/* Latest Automotive News */}
-        <HomeNewsSection />
+        {/* Latest Automotive News (lazy-loaded) */}
+        <Suspense fallback={
+          <div className="px-[60px] mb-8">
+            <div className="h-6 bg-white/5 rounded w-48 mb-4 animate-pulse" />
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white/5 rounded-lg animate-pulse aspect-[4/3]" />
+              ))}
+            </div>
+          </div>
+        }>
+          <HomeNewsSection />
+        </Suspense>
 
         {/* Videos Page CTA */}
         <div className="px-[60px] mb-[3vw]">

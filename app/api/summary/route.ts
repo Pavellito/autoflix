@@ -1,5 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import Groq from "groq-sdk";
+import { generateWithFallback, getPrimaryModelName } from "@/app/lib/ai";
 import { supabase } from "@/app/lib/supabase";
 
 const languageMap: Record<string, string> = {
@@ -10,12 +9,6 @@ const languageMap: Record<string, string> = {
 };
 
 export async function POST(request: Request) {
-  const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
-  const GROQ_KEY = process.env.GROQ_API_KEY || "";
-
-  const genAI = new GoogleGenerativeAI(GEMINI_KEY);
-  const groq = new Groq({ apiKey: GROQ_KEY || "dummy_key" });
-
   try {
     const { videoId, title, description, language = "en" } = await request.json();
 
@@ -52,28 +45,8 @@ Return ONLY a valid JSON object with the following fields:
 "summary", "key_points", "pros", "cons", "verdict", "tags", "category".
 Do not include markdown backticks.`;
 
-    let textResult = "";
-
-    // 2. Fallback Cascade Logic
-    try {
-      if (!GEMINI_KEY) throw new Error("GEMINI_API_KEY missing");
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash",
-        generationConfig: { responseMimeType: "application/json" },
-      });
-      const result = await model.generateContent(prompt);
-      textResult = result.response.text();
-    } catch (geminiError: any) {
-      console.warn(`[AI Pipeline] Gemini failed:`, geminiError.message);
-      if (!GROQ_KEY) throw new Error("Fallback provider missing");
-      const chatCompletion = await groq.chat.completions.create({
-        messages: [{ role: "user", content: prompt }],
-        model: "llama-3.1-8b-instant",
-        temperature: 0.3,
-        response_format: { type: "json_object" },
-      });
-      textResult = chatCompletion.choices[0]?.message?.content || "";
-    }
+    console.log(`[Summary] Using model: ${getPrimaryModelName()}`);
+    const textResult = await generateWithFallback(prompt, { jsonMode: true, temperature: 0.3 });
 
     // 3. Parse and Validate
     const structuredData = JSON.parse(textResult.trim());

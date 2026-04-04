@@ -2,11 +2,15 @@
 
 import Link from "next/link";
 import type { Video } from "@/app/lib/data";
+import { useWatchProgress } from "@/app/lib/watch-progress-context";
 import FavoriteButton from "./FavoriteButton";
 
 export default function VideoCard({ video }: { video: Video }) {
+  const { getProgressPct } = useWatchProgress();
+  const progressPct = getProgressPct(video.id);
+
   return (
-    <div className="netflix-card flex-shrink-0 w-[calc(100vw/2.3)] sm:w-[calc(100vw/3.3)] md:w-[calc(100vw/4.3)] lg:w-[calc(100vw/6.2)] rounded overflow-hidden relative group cursor-pointer">
+    <div className="netflix-card flex-shrink-0 w-[calc(100vw/2.3)] sm:w-[calc(100vw/3.3)] md:w-[calc(100vw/4.3)] lg:w-[calc(100vw/6.2)] rounded overflow-hidden relative group cursor-pointer snap-start">
       <Link href={`/video/${video.id}`}>
         {/* Thumbnail */}
         <div className="relative aspect-video bg-[#333]">
@@ -16,6 +20,15 @@ export default function VideoCard({ video }: { video: Video }) {
             alt={video.title}
             className="w-full h-full object-cover"
           />
+          {/* Netflix-style red progress bar */}
+          {progressPct > 0 && progressPct < 100 && (
+            <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/20">
+              <div
+                className="h-full bg-[#e50914]"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
+          )}
         </div>
 
         {/* Hover Popup */}

@@ -3,6 +3,10 @@
     {
       "path": "/api/news/ingest",
       "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/videos/discover",
+      "schedule": "0 1 * * *"
     }
   ]
 }

@@ -29,6 +29,9 @@ export default function CarFinder({ localCars }: CarFinderProps) {
   const [loadingMakes, setLoadingMakes] = useState(false);
   const [loadingModels, setLoadingModels] = useState(false);
 
+  // Type filter
+  const [typeFilter, setTypeFilter] = useState<"All" | "EV" | "Hybrid" | "ICE">("All");
+
   // Search mode
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<ExternalCar[]>([]);
@@ -136,11 +139,13 @@ export default function CarFinder({ localCars }: CarFinderProps) {
   };
 
 
-  // Filter local cars by search
+  // Filter local cars by search and type
   const filteredLocal = localCars.filter((car) => {
     if (!searchQuery) return false;
     const q = searchQuery.toLowerCase();
-    return car.name.toLowerCase().includes(q) || car.brand.toLowerCase().includes(q);
+    const matchesQuery = car.name.toLowerCase().includes(q) || car.brand.toLowerCase().includes(q);
+    const matchesType = typeFilter === "All" || car.type === typeFilter;
+    return matchesQuery && matchesType;
   });
 
   // Only show 2026 (newest) — user requested no old cars
@@ -149,7 +154,7 @@ export default function CarFinder({ localCars }: CarFinderProps) {
   return (
     <div className="space-y-8">
       {/* Mode Toggle */}
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setViewMode("browse")}
           className={`px-6 py-2.5 rounded text-[14px] font-bold transition-colors ${
@@ -170,6 +175,26 @@ export default function CarFinder({ localCars }: CarFinderProps) {
         >
           Quick Search
         </button>
+
+        {/* Type filter */}
+        <div className="flex gap-1 ml-auto">
+          {(["All", "EV", "Hybrid", "ICE"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTypeFilter(t)}
+              className={`px-3 py-2 rounded text-[12px] font-bold transition-colors ${
+                typeFilter === t
+                  ? t === "EV" ? "bg-green-600 text-white"
+                    : t === "Hybrid" ? "bg-blue-600 text-white"
+                    : t === "ICE" ? "bg-orange-600 text-white"
+                    : "bg-white/20 text-white"
+                  : "bg-[#222] text-[#888] hover:text-white border border-white/5"
+              }`}
+            >
+              {t === "ICE" ? "Gasoline" : t}
+            </button>
+          ))}
+        </div>
       </div>
 
       {viewMode === "browse" ? (
@@ -370,7 +395,7 @@ export default function CarFinder({ localCars }: CarFinderProps) {
                         <div className="p-3">
                           <p className="text-[14px] text-white font-medium truncate">{car.name}</p>
                           <p className="text-[12px] text-[#666] mt-0.5">
-                            {car.brand} {car.range ? `· ${car.range}` : ""} {car.price ? `· ${car.price}` : ""}
+                            {car.brand} {car.range ? `· ${car.range}` : car.mpg?.combined ? `· ${car.mpg.combined}` : ""} {car.price ? `· ${car.price}` : ""}
                           </p>
                         </div>
                       </button>

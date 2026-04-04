@@ -14,6 +14,9 @@ import YouTubeSection from "@/app/components/YouTubeSection";
 import CarNewsSection from "@/app/components/CarNewsSection";
 import AIAnalysis from "@/app/components/AIAnalysis";
 
+// ISR: Rebuild car pages every hour
+export const revalidate = 3600;
+
 // ─── Known makes for slug parsing ────────────────────────
 const knownMakes = [
   "acura", "alfa-romeo", "aston-martin", "audi", "bentley", "bmw", "buick",
@@ -295,20 +298,27 @@ export default async function CarDetailPage({
       {/* ─── Quick Stats Bar ─── */}
       <div className="bg-[#0a0a0a] border-y border-white/10">
         <div className="max-w-6xl mx-auto px-[4%] py-4 flex flex-wrap gap-6 md:gap-10">
-          <QuickStat label="Horsepower" value={engine?.horsepower ? `${Math.round(engine.horsepower)} HP` : null} />
-          <QuickStat label="Torque" value={engine?.torque_nm ? `${Math.round(engine.torque_nm)} Nm` : null} />
+          <QuickStat label="Horsepower" value={engine?.horsepower ? `${Math.round(engine.horsepower)} HP` : car.horsepower || null} />
+          <QuickStat label="Torque" value={engine?.torque_nm ? `${Math.round(engine.torque_nm)} Nm` : car.torque || null} />
           <QuickStat label="0-100 km/h" value={spec?.acceleration_0_100 ? `${spec.acceleration_0_100}s` : null} />
           <QuickStat label="Top Speed" value={spec?.max_speed_km ? `${Math.round(spec.max_speed_km)} km/h` : null} />
           <QuickStat label="Weight" value={
             dimensions?.curb_weight_kg ? `${Math.round(dimensions.curb_weight_kg)} kg` :
             (ext?.nhtsaCurbWeightKg as number) ? `${ext!.nhtsaCurbWeightKg} kg` : null
           } />
-          <QuickStat label="Range" value={
-            car.range ? car.range :
-            evSpecs[0]?.range_wltp_km ? `${Math.round(evSpecs[0].range_wltp_km)} km WLTP` :
-            ext?.rangeCombined ? `${ext.rangeCombined} mi` : null
+          {(isEV || isHybrid) && (
+            <QuickStat label="Range" value={
+              car.range ? car.range :
+              evSpecs[0]?.range_wltp_km ? `${Math.round(evSpecs[0].range_wltp_km)} km WLTP` :
+              ext?.rangeCombined ? `${ext.rangeCombined} mi` : null
+            } />
+          )}
+          <QuickStat label="MPG Combined" value={
+            car.mpg?.combined ? car.mpg.combined :
+            ext?.mpgCombined && !isEV ? `${ext.mpgCombined}` : null
           } />
-          <QuickStat label="MPG Combined" value={ext?.mpgCombined && !isEV ? `${ext.mpgCombined}` : null} />
+          {car.engine && <QuickStat label="Engine" value={car.engine} />}
+          {car.drivetrain && <QuickStat label="Drivetrain" value={car.drivetrain} />}
           <QuickStat label="Est. MSRP" value={
             (ext?.estimatedMsrp as number) ? `~$${(ext!.estimatedMsrp as number).toLocaleString()}` :
             car.price || null
@@ -354,9 +364,34 @@ export default async function CarDetailPage({
             {/* Engine / Powertrain */}
             {engine && <EnginePanel engine={engine} />}
 
+            {/* ICE / Hybrid specs from car data (when no deep engine data and no external data) */}
+            {!engine && !ext && car.engine && (
+              <PanelWrapper title="Engine / Powertrain" icon="&#9881;" color="red">
+                <SpecRow label="Engine" value={car.engine} />
+                <SpecRow label="Horsepower" value={car.horsepower} />
+                <SpecRow label="Torque" value={car.torque} />
+                <SpecRow label="Transmission" value={car.transmission} />
+                <SpecRow label="Drivetrain" value={car.drivetrain} />
+                {car.fuelTankSize && <SpecRow label="Fuel Tank" value={car.fuelTankSize} />}
+                {car.mpg && (
+                  <>
+                    <div className="mt-3 pt-3 border-t border-white/5">
+                      <p className="text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-bold">Fuel Economy</p>
+                    </div>
+                    <SpecRow label="City" value={car.mpg.city} />
+                    <SpecRow label="Highway" value={car.mpg.highway} />
+                    <SpecRow label="Combined" value={car.mpg.combined} />
+                  </>
+                )}
+                {(isEV || isHybrid) && car.battery && <SpecRow label="Battery" value={car.battery} />}
+                {(isEV || isHybrid) && car.range && <SpecRow label="Combined Range" value={car.range} />}
+              </PanelWrapper>
+            )}
+
             {/* Basic specs from FuelEconomy.gov + NHTSA (when no deep engine data) */}
             {!engine && ext && (
               <PanelWrapper title="Engine / Powertrain" icon="&#9881;" color="red">
+                <SpecRow label="Engine" value={car.engine} />
                 <SpecRow label="Drivetrain" value={ext.drive as string} />
                 <SpecRow label="Transmission" value={ext.transmission as string} />
                 <SpecRow label="Fuel Type" value={ext.fuelType as string} />
@@ -372,6 +407,16 @@ export default async function CarDetailPage({
                   <>
                     <SpecRow label="Max Charging" value={car.chargingCurve.maxSpeed} />
                     <SpecRow label="10-80% Time" value={car.chargingCurve.tenToEighty} />
+                  </>
+                )}
+                {car.mpg && !ext.mpgCombined && (
+                  <>
+                    <div className="mt-3 pt-3 border-t border-white/5">
+                      <p className="text-[10px] text-gray-500 mb-2 uppercase tracking-widest font-bold">Fuel Economy</p>
+                    </div>
+                    <SpecRow label="City" value={car.mpg.city} />
+                    <SpecRow label="Highway" value={car.mpg.highway} />
+                    <SpecRow label="Combined" value={car.mpg.combined} />
                   </>
                 )}
               </PanelWrapper>

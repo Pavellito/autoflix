@@ -38,10 +38,10 @@ export default function VideoRow({ title, videos }: { title: string; videos: Vid
           </svg>
         </button>
 
-        {/* Scrollable Row */}
+        {/* Scrollable Row with scroll snap */}
         <div
           ref={rowRef}
-          className="flex gap-[4px] overflow-x-auto scrollbar-hide px-[60px] py-4"
+          className="flex gap-[4px] overflow-x-auto scrollbar-hide px-[60px] py-4 scroll-smooth snap-x snap-mandatory"
         >
           {videos.map((video) => (
             <VideoCard key={video.id} video={video} />

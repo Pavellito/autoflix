@@ -1,15 +1,11 @@
 import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import Groq from "groq-sdk";
+import { generateWithFallback, getPrimaryModelName } from "@/app/lib/ai";
 
 /**
  * POST /api/ai/analyze
  * AI analysis for a single car — pros, cons, verdict, regional tips, competitors
  */
 export async function POST(request: Request) {
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-  const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || "dummy" });
-
   try {
     const { make, model, year, carType, vehicleClass } = await request.json();
 
@@ -42,26 +38,8 @@ Structure:
 }
 Do not include markdown backticks. Return pure JSON only.`;
 
-    let textResult = "";
-
-    try {
-      const aiModel = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash",
-        generationConfig: { responseMimeType: "application/json" },
-      });
-      const result = await aiModel.generateContent(prompt);
-      textResult = result.response.text();
-    } catch {
-      console.warn("[AI Analyze] Gemini failed, falling back to Groq");
-      const chatCompletion = await groq.chat.completions.create({
-        messages: [{ role: "user", content: prompt }],
-        model: "llama-3.1-8b-instant",
-        temperature: 0.3,
-        response_format: { type: "json_object" },
-      });
-      textResult = chatCompletion.choices[0]?.message?.content || "";
-    }
-
+    console.log(`[AI Analyze] Using model: ${getPrimaryModelName()}`);
+    const textResult = await generateWithFallback(prompt, { jsonMode: true, temperature: 0.3 });
     const parsed = JSON.parse(textResult.trim());
     return NextResponse.json(parsed);
   } catch (error: unknown) {
