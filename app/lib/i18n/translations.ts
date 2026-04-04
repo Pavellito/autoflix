@@ -93,6 +93,23 @@ type TranslationKeys = {
   car_latest_news: string;
   car_match: string;
   car_price_tbd: string;
+  car_engine_powertrain: string;
+  car_all_trims: string;
+  car_dimensions_weight: string;
+  car_range_efficiency: string;
+  car_quick_facts: string;
+  car_mpg_combined: string;
+  car_est_msrp: string;
+  car_engine: string;
+  car_transmission: string;
+  car_fuel_type: string;
+  car_cylinders: string;
+  car_displacement: string;
+  car_regional_pricing: string;
+  car_back_to_cars: string;
+  car_city: string;
+  car_highway: string;
+  car_combined: string;
 
   // Regions
   region_global: string;
@@ -231,6 +248,23 @@ const en: TranslationKeys = {
   car_latest_news: "Latest News",
   car_match: "Match",
   car_price_tbd: "Price TBD",
+  car_engine_powertrain: "Engine / Powertrain",
+  car_all_trims: "All Available Trims",
+  car_dimensions_weight: "Dimensions & Weight",
+  car_range_efficiency: "Range & Efficiency",
+  car_quick_facts: "Quick Facts",
+  car_mpg_combined: "MPG Combined",
+  car_est_msrp: "Est. MSRP",
+  car_engine: "Engine",
+  car_transmission: "Transmission",
+  car_fuel_type: "Fuel Type",
+  car_cylinders: "Cylinders",
+  car_displacement: "Displacement",
+  car_regional_pricing: "Regional Pricing",
+  car_back_to_cars: "Back to Cars",
+  car_city: "City",
+  car_highway: "Highway",
+  car_combined: "Combined",
 
   region_global: "Global / US",
   region_israel: "Israel",
@@ -362,6 +396,23 @@ const he: TranslationKeys = {
   car_latest_news: "\u05d7\u05d3\u05e9\u05d5\u05ea \u05d0\u05d7\u05e8\u05d5\u05e0\u05d5\u05ea",
   car_match: "\u05d4\u05ea\u05d0\u05de\u05d4",
   car_price_tbd: "\u05de\u05d7\u05d9\u05e8 \u05d9\u05e4\u05d5\u05e8\u05e1\u05dd",
+  car_engine_powertrain: "\u05de\u05e0\u05d5\u05e2 / \u05de\u05e2\u05e8\u05db\u05ea \u05d4\u05e0\u05e2\u05d4",
+  car_all_trims: "\u05db\u05dc \u05d2\u05e8\u05e1\u05d0\u05d5\u05ea \u05d4\u05d3\u05d2\u05dd",
+  car_dimensions_weight: "\u05de\u05d9\u05de\u05d3\u05d9\u05dd \u05d5\u05de\u05e9\u05e7\u05dc",
+  car_range_efficiency: "\u05d8\u05d5\u05d5\u05d7 \u05d5\u05d9\u05e2\u05d9\u05dc\u05d5\u05ea",
+  car_quick_facts: "\u05e2\u05d5\u05d1\u05d3\u05d5\u05ea \u05de\u05d4\u05d9\u05e8\u05d5\u05ea",
+  car_mpg_combined: "MPG \u05de\u05e9\u05d5\u05dc\u05d1",
+  car_est_msrp: "\u05de\u05d7\u05d9\u05e8 \u05de\u05e9\u05d5\u05e2\u05e8",
+  car_engine: "\u05de\u05e0\u05d5\u05e2",
+  car_transmission: "\u05ea\u05d9\u05d1\u05ea \u05d4\u05d9\u05dc\u05d5\u05db\u05d9\u05dd",
+  car_fuel_type: "\u05e1\u05d5\u05d2 \u05d3\u05dc\u05e7",
+  car_cylinders: "\u05e6\u05d9\u05dc\u05d9\u05e0\u05d3\u05e8\u05d9\u05dd",
+  car_displacement: "\u05e0\u05e4\u05d7 \u05de\u05e0\u05d5\u05e2",
+  car_regional_pricing: "\u05de\u05d7\u05d9\u05e8\u05d9\u05dd \u05d0\u05d6\u05d5\u05e8\u05d9\u05d9\u05dd",
+  car_back_to_cars: "\u05d7\u05d6\u05e8\u05d4 \u05dc\u05e8\u05db\u05d1\u05d9\u05dd",
+  car_city: "\u05e2\u05d9\u05e8",
+  car_highway: "\u05db\u05d1\u05d9\u05e9",
+  car_combined: "\u05de\u05e9\u05d5\u05dc\u05d1",
 
   region_global: "\u05e2\u05d5\u05dc\u05de\u05d9 / \u05d0\u05e8\u05d4\"\u05d1",
   region_israel: "\u05d9\u05e9\u05e8\u05d0\u05dc",
@@ -493,6 +544,23 @@ const ru: TranslationKeys = {
   car_latest_news: "\u041f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 \u043d\u043e\u0432\u043e\u0441\u0442\u0438",
   car_match: "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435",
   car_price_tbd: "\u0426\u0435\u043d\u0430 \u0443\u0442\u043e\u0447\u043d\u044f\u0435\u0442\u0441\u044f",
+  car_engine_powertrain: "\u0414\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c / \u0422\u0440\u0430\u043d\u0441\u043c\u0438\u0441\u0441\u0438\u044f",
+  car_all_trims: "\u0412\u0441\u0435 \u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442\u0430\u0446\u0438\u0438",
+  car_dimensions_weight: "\u0420\u0430\u0437\u043c\u0435\u0440\u044b \u0438 \u0432\u0435\u0441",
+  car_range_efficiency: "\u0417\u0430\u043f\u0430\u0441 \u0445\u043e\u0434\u0430 \u0438 \u044d\u0444\u0444\u0435\u043a\u0442\u0438\u0432\u043d\u043e\u0441\u0442\u044c",
+  car_quick_facts: "\u041a\u0440\u0430\u0442\u043a\u0438\u0435 \u0444\u0430\u043a\u0442\u044b",
+  car_mpg_combined: "\u0420\u0430\u0441\u0445\u043e\u0434 \u0441\u043c\u0435\u0448.",
+  car_est_msrp: "\u041f\u0440\u0438\u043c. \u0446\u0435\u043d\u0430",
+  car_engine: "\u0414\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c",
+  car_transmission: "\u041a\u043e\u0440\u043e\u0431\u043a\u0430 \u043f\u0435\u0440\u0435\u0434\u0430\u0447",
+  car_fuel_type: "\u0422\u0438\u043f \u0442\u043e\u043f\u043b\u0438\u0432\u0430",
+  car_cylinders: "\u0426\u0438\u043b\u0438\u043d\u0434\u0440\u044b",
+  car_displacement: "\u041e\u0431\u044a\u0451\u043c \u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044f",
+  car_regional_pricing: "\u0420\u0435\u0433\u0438\u043e\u043d\u0430\u043b\u044c\u043d\u044b\u0435 \u0446\u0435\u043d\u044b",
+  car_back_to_cars: "\u041d\u0430\u0437\u0430\u0434 \u043a \u0430\u0432\u0442\u043e",
+  car_city: "\u0413\u043e\u0440\u043e\u0434",
+  car_highway: "\u0422\u0440\u0430\u0441\u0441\u0430",
+  car_combined: "\u0421\u043c\u0435\u0448\u0430\u043d\u043d\u044b\u0439",
 
   region_global: "\u0413\u043b\u043e\u0431\u0430\u043b\u044c\u043d\u044b\u0439 / \u0421\u0428\u0410",
   region_israel: "\u0418\u0437\u0440\u0430\u0438\u043b\u044c",
@@ -624,6 +692,23 @@ const ar: TranslationKeys = {
   car_latest_news: "\u0622\u062e\u0631 \u0627\u0644\u0623\u062e\u0628\u0627\u0631",
   car_match: "\u062a\u0637\u0627\u0628\u0642",
   car_price_tbd: "\u0627\u0644\u0633\u0639\u0631 \u0644\u0627\u062d\u0642\u0627\u064b",
+  car_engine_powertrain: "\u0627\u0644\u0645\u062d\u0631\u0643 / \u0646\u0638\u0627\u0645 \u0627\u0644\u062f\u0641\u0639",
+  car_all_trims: "\u062c\u0645\u064a\u0639 \u0627\u0644\u0641\u0626\u0627\u062a",
+  car_dimensions_weight: "\u0627\u0644\u0623\u0628\u0639\u0627\u062f \u0648\u0627\u0644\u0648\u0632\u0646",
+  car_range_efficiency: "\u0627\u0644\u0645\u062f\u0649 \u0648\u0627\u0644\u0643\u0641\u0627\u0621\u0629",
+  car_quick_facts: "\u062d\u0642\u0627\u0626\u0642 \u0633\u0631\u064a\u0639\u0629",
+  car_mpg_combined: "MPG \u0645\u062c\u0645\u0639",
+  car_est_msrp: "\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u062a\u0642\u0631\u064a\u0628\u064a",
+  car_engine: "\u0627\u0644\u0645\u062d\u0631\u0643",
+  car_transmission: "\u0646\u0627\u0642\u0644 \u0627\u0644\u062d\u0631\u0643\u0629",
+  car_fuel_type: "\u0646\u0648\u0639 \u0627\u0644\u0648\u0642\u0648\u062f",
+  car_cylinders: "\u0627\u0644\u0623\u0633\u0637\u0648\u0627\u0646\u0627\u062a",
+  car_displacement: "\u0633\u0639\u0629 \u0627\u0644\u0645\u062d\u0631\u0643",
+  car_regional_pricing: "\u0623\u0633\u0639\u0627\u0631 \u0625\u0642\u0644\u064a\u0645\u064a\u0629",
+  car_back_to_cars: "\u0627\u0644\u0639\u0648\u062f\u0629 \u0644\u0644\u0633\u064a\u0627\u0631\u0627\u062a",
+  car_city: "\u0645\u062f\u064a\u0646\u0629",
+  car_highway: "\u0637\u0631\u064a\u0642 \u0633\u0631\u064a\u0639",
+  car_combined: "\u0645\u062c\u0645\u0639",
 
   region_global: "\u0639\u0627\u0644\u0645\u064a / \u0623\u0645\u0631\u064a\u0643\u0627",
   region_israel: "\u0625\u0633\u0631\u0627\u0626\u064a\u0644",

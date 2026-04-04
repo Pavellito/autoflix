@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Car } from "@/app/lib/data";
-import { getRelatedVideosForCar } from "@/app/lib/data";
+import { getRelatedVideosForCar, getCarById as getLocalCarById } from "@/app/lib/data";
 import { fetchCarById, fetchNewsForCar, type NewsItem } from "@/app/lib/supabase-cars";
 import { fetchCarDetails, getCarImageUrl, type TrimVariant, type RegionalPricing } from "@/app/lib/car-api";
 import { findVehicleByMakeModelYear } from "@/app/lib/vehicle-queries";
@@ -13,6 +13,7 @@ import ReviewSection from "@/app/components/ReviewSection";
 import YouTubeSection from "@/app/components/YouTubeSection";
 import CarNewsSection from "@/app/components/CarNewsSection";
 import AIAnalysis from "@/app/components/AIAnalysis";
+import T from "@/app/components/TranslatedLabel";
 
 // ISR: Rebuild car pages every hour
 export const revalidate = 3600;
@@ -146,8 +147,12 @@ export default async function CarDetailPage({
 }) {
   const { id } = await params;
 
-  // 1. Resolve identity: try local DB first, then external API
+  // 1. Resolve identity: try Supabase DB, then local data.ts, then external API
   let car = await fetchCarById(id);
+  if (!car) {
+    const localCar = getLocalCarById(id);
+    if (localCar) car = localCar;
+  }
   if (!car) car = await fetchCarFromExternalApi(id);
   if (!car) notFound();
 
@@ -289,7 +294,7 @@ export default async function CarDetailPage({
               Compare
             </Link>
             <Link href="/cars" className="flex items-center gap-2 bg-[#6d6d6e]/70 text-white px-7 py-2.5 rounded text-[16px] font-bold hover:bg-[#6d6d6e]/50 transition-colors">
-              Back to Cars
+              <T k="car_back_to_cars" fallback="Back to Cars" />
             </Link>
           </div>
         </div>
@@ -366,7 +371,7 @@ export default async function CarDetailPage({
 
             {/* ICE / Hybrid specs from car data (when no deep engine data and no external data) */}
             {!engine && !ext && car.engine && (
-              <PanelWrapper title="Engine / Powertrain" icon="&#9881;" color="red">
+              <PanelWrapper title={<T k="car_engine_powertrain" fallback="Engine / Powertrain" />} icon="&#9881;" color="red">
                 <SpecRow label="Engine" value={car.engine} />
                 <SpecRow label="Horsepower" value={car.horsepower} />
                 <SpecRow label="Torque" value={car.torque} />
@@ -390,7 +395,7 @@ export default async function CarDetailPage({
 
             {/* Basic specs from FuelEconomy.gov + NHTSA (when no deep engine data) */}
             {!engine && ext && (
-              <PanelWrapper title="Engine / Powertrain" icon="&#9881;" color="red">
+              <PanelWrapper title={<T k="car_engine_powertrain" fallback="Engine / Powertrain" />} icon="&#9881;" color="red">
                 <SpecRow label="Engine" value={car.engine} />
                 <SpecRow label="Drivetrain" value={ext.drive as string} />
                 <SpecRow label="Transmission" value={ext.transmission as string} />
@@ -597,7 +602,7 @@ export default async function CarDetailPage({
 
             {/* Quick Facts */}
             <div className="bg-[#1a1a1a] rounded-lg border border-white/10 p-4">
-              <h3 className="text-[14px] font-bold text-white mb-3">Quick Facts</h3>
+              <h3 className="text-[14px] font-bold text-white mb-3"><T k="car_quick_facts" fallback="Quick Facts" /></h3>
               <div className="space-y-2 text-[13px]">
                 <FactRow label="Year" value={yearNum || spec?.year} />
                 <FactRow label="Make" value={makeName} />
@@ -728,7 +733,7 @@ function ScoreBar({ score, max = 10, label }: { score: number; max?: number; lab
   );
 }
 
-function PanelWrapper({ title, icon, color, children }: { title: string; icon: string; color: string; children: React.ReactNode }) {
+function PanelWrapper({ title, icon, color, children }: { title: React.ReactNode; icon: string; color: string; children: React.ReactNode }) {
   const colorMap: Record<string, string> = {
     red: "text-red-400 bg-red-500/10 border-red-500/20",
     blue: "text-blue-400 bg-blue-500/10 border-blue-500/20",

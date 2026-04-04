@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Car } from "@/app/lib/data";
+import { useLanguage } from "@/app/lib/i18n/context";
 
 const REGIONS = [
   { id: "us", label: "Global / US", flag: "🌍", currency: "USD", symbol: "$" },
@@ -41,6 +42,7 @@ const REGIONAL_ADVICE: Record<string, Record<string, string>> = {
 };
 
 export default function RegionalCarInfo({ car }: { car: Car }) {
+  const { t } = useLanguage();
   const [region, setRegion] = useState("us");
 
   const ext = car.externalData;
@@ -67,7 +69,7 @@ export default function RegionalCarInfo({ car }: { car: Car }) {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">Select Your Region</h3>
+      <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest">{t("car_select_region")}</h3>
       <div className="flex flex-wrap gap-2">
         {REGIONS.map((r) => (
           <button
@@ -88,7 +90,7 @@ export default function RegionalCarInfo({ car }: { car: Car }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {/* Price Card */}
         <div className="bg-black/40 p-4 rounded-xl border border-white/10 relative overflow-hidden">
-          <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Local Price</h4>
+          <h4 className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">{t("car_local_price")}</h4>
           <p className="text-2xl font-black text-green-400 tracking-tight leading-tight">
             {displayPrice.startsWith("From") || displayPrice.startsWith("$") || displayPrice.startsWith("₪") || displayPrice.startsWith("₽")
               ? displayPrice
@@ -102,7 +104,7 @@ export default function RegionalCarInfo({ car }: { car: Car }) {
         {/* Advice Card */}
         <div className="bg-accent/5 p-4 rounded-xl border border-accent/20 relative overflow-hidden">
           <h4 className="text-[10px] font-bold text-accent/80 uppercase tracking-widest mb-1.5">
-            Should you buy in {REGIONS.find(r => r.id === region)?.label}?
+            {t("car_should_buy")} {REGIONS.find(r => r.id === region)?.label}?
           </h4>
           <p className="text-[12px] text-gray-300 leading-relaxed">
             {advice}
