@@ -397,11 +397,19 @@ export async function fetchCarDetails(year: number, make: string, model: string)
       fetchNHTSASpecs(year, make, model).catch(() => null),
     ]);
 
-    // Filter out failed fetches AND vehicles from wrong makes
+    // Filter out failed fetches AND vehicles from wrong makes/models
     const makeLower = make.toLowerCase();
+    const modelFirstWord = model.toLowerCase().split(/\s+/)[0];
     const validVehicles = allVehicles.filter(
-      (item): item is { option: FuelEcoMenuItem; vehicle: Record<string, string> } =>
-        item !== null && (item.vehicle.make?.toLowerCase() || "").includes(makeLower)
+      (item): item is { option: FuelEcoMenuItem; vehicle: Record<string, string> } => {
+        if (!item) return false;
+        // Strict make check
+        if ((item.vehicle.make?.toLowerCase() || "") !== makeLower) return false;
+        // Model sanity check: returned model must contain the first word of our query
+        const returnedModel = (item.vehicle.model || item.vehicle.baseModel || "").toLowerCase();
+        if (modelFirstWord && !returnedModel.includes(modelFirstWord)) return false;
+        return true;
+      }
     );
     if (validVehicles.length === 0) return null;
 

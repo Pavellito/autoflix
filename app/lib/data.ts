@@ -2070,7 +2070,20 @@ export const cars: Car[] = [
 ];
 
 export function getCarById(id: string): Car | undefined {
-  return cars.find((c) => c.id === id);
+  // Direct ID match (e.g., "car-5")
+  const direct = cars.find((c) => c.id === id);
+  if (direct) return direct;
+
+  // Slug-based match: "tesla-model-y-2026" → match brand "Tesla" + name contains "Model Y"
+  const slugLower = id.toLowerCase().replace(/-\d{4}$/, ""); // strip year
+  return cars.find((c) => {
+    const carSlug = `${c.brand}-${c.name}`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+    return carSlug === slugLower || carSlug.startsWith(slugLower);
+  });
 }
 
 export function getRelatedVideosForCar(car: Car): Video[] {
