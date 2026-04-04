@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getMakes, getModels } from "@/app/lib/car-api";
 
+function withCache(data: object, maxAge = 3600) {
+  return NextResponse.json(data, {
+    headers: {
+      "Cache-Control": `public, s-maxage=${maxAge}, stale-while-revalidate=${maxAge * 2}`,
+    },
+  });
+}
+
 // In-memory cache for catalog data (persists across requests within same serverless invocation)
 const cache = new Map<string, { data: unknown; ts: number }>();
 const CACHE_TTL = 3600_000; // 1 hour
@@ -42,11 +50,11 @@ export async function GET(request: NextRequest) {
       const year = parseInt(searchParams.get("year") || "2026", 10);
       const cacheKey = `makes-${year}`;
       const cached = getCached<string[]>(cacheKey);
-      if (cached) return NextResponse.json({ makes: cached });
+      if (cached) return withCache({ makes: cached });
 
       const makes = await getMakes(year);
       setCache(cacheKey, makes);
-      return NextResponse.json({ makes });
+      return withCache({ makes });
     }
 
     if (action === "models") {

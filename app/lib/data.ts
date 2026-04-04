@@ -41,6 +41,18 @@ export interface Car {
     us: string;
     ar: string;
   };
+  // ICE / Hybrid specific fields
+  engine?: string;           // e.g., "2.5L 4-Cylinder"
+  horsepower?: string;       // e.g., "203 hp"
+  torque?: string;           // e.g., "184 lb-ft"
+  transmission?: string;     // e.g., "8-Speed Automatic"
+  mpg?: {
+    city: string;
+    highway: string;
+    combined: string;
+  };
+  fuelTankSize?: string;     // e.g., "15.8 gal"
+  drivetrain?: string;       // e.g., "AWD", "FWD", "RWD"
   image: string;
   relatedVideoIds: string[];
   // Extended data from FuelEconomy.gov / NHTSA (on-demand enrichment)
@@ -1443,6 +1455,616 @@ export const cars: Car[] = [
       ar: "Commanding road presence and exceptional cooling performance." 
     },
     image: "https://upload.wikimedia.org/wikipedia/commons/b/b2/BMW_iX_IAA_2021_1X7A0204.jpg",
+    relatedVideoIds: []
+  },
+
+  // ─── ICE (Gasoline) Cars ───────────────────────────────
+  {
+    id: "car-41",
+    name: "Toyota Camry 2026",
+    brand: "Toyota",
+    type: "ICE",
+    engine: "2.5L 4-Cylinder",
+    horsepower: "203 hp",
+    torque: "184 lb-ft",
+    transmission: "8-Speed Automatic",
+    mpg: { city: "28 mpg", highway: "39 mpg", combined: "32 mpg" },
+    fuelTankSize: "15.8 gal",
+    drivetrain: "FWD",
+    price: "From $28,855",
+    prices: { il: "₪175,000", ru: "3,200,000 ₽", us: "$28,855", ar: "105,000 SAR" },
+    depreciation: { yr3: "-30%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "Best-selling sedan in its class. Excellent resale value and reliability.",
+      ru: "Legendary reliability. Parts are easy to find across Russia.",
+      us: "America's best-selling sedan. Exceptional fuel economy and low maintenance.",
+      ar: "Perfect for daily commuting. AC handles Gulf heat well."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-42",
+    name: "Honda Civic 2026",
+    brand: "Honda",
+    type: "ICE",
+    engine: "2.0L 4-Cylinder",
+    horsepower: "158 hp",
+    torque: "138 lb-ft",
+    transmission: "CVT",
+    mpg: { city: "31 mpg", highway: "40 mpg", combined: "35 mpg" },
+    fuelTankSize: "12.4 gal",
+    drivetrain: "FWD",
+    price: "From $24,950",
+    prices: { il: "₪155,000", ru: "2,800,000 ₽", us: "$24,950", ar: "88,000 SAR" },
+    depreciation: { yr3: "-28%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "Compact but spacious. One of the most fuel-efficient sedans available.",
+      ru: "Reliable and well-built. Low ownership costs over time.",
+      us: "Benchmark compact sedan. Fun to drive with great fuel economy.",
+      ar: "Economical and well-equipped. Solid AC performance."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-43",
+    name: "Ford F-150 2026",
+    brand: "Ford",
+    type: "ICE",
+    engine: "3.5L V6 EcoBoost Twin-Turbo",
+    horsepower: "400 hp",
+    torque: "500 lb-ft",
+    transmission: "10-Speed Automatic",
+    mpg: { city: "18 mpg", highway: "24 mpg", combined: "20 mpg" },
+    fuelTankSize: "26 gal",
+    drivetrain: "4WD",
+    price: "From $36,965",
+    prices: { il: "₪380,000", ru: "6,500,000 ₽", us: "$36,965", ar: "160,000 SAR" },
+    depreciation: { yr3: "-25%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "The iconic American pickup. Popular for off-road and utility use.",
+      ru: "Powerful towing capability. Great for rugged terrain and long distances.",
+      us: "America's best-selling vehicle for 40+ years. Unmatched capability.",
+      ar: "Desert-ready with strong towing. Popular across the GCC."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-44",
+    name: "BMW 3 Series 2026",
+    brand: "BMW",
+    type: "ICE",
+    engine: "2.0L 4-Cylinder Turbo",
+    horsepower: "255 hp",
+    torque: "295 lb-ft",
+    transmission: "8-Speed Automatic",
+    mpg: { city: "26 mpg", highway: "36 mpg", combined: "30 mpg" },
+    fuelTankSize: "15.6 gal",
+    drivetrain: "RWD",
+    price: "From $44,900",
+    prices: { il: "₪310,000", ru: "5,800,000 ₽", us: "$44,900", ar: "195,000 SAR" },
+    depreciation: { yr3: "-38%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "The sports sedan benchmark. Premium feel with engaging driving dynamics.",
+      ru: "Great winter handling with xDrive AWD option. Premium brand recognition.",
+      us: "The driver's sedan. Perfect balance of luxury and performance.",
+      ar: "Strong brand presence. M Sport package recommended for Gulf roads."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-45",
+    name: "Mercedes-Benz C-Class 2026",
+    brand: "Mercedes",
+    type: "ICE",
+    engine: "2.0L 4-Cylinder Turbo + Mild Hybrid",
+    horsepower: "255 hp",
+    torque: "295 lb-ft",
+    transmission: "9-Speed Automatic",
+    mpg: { city: "25 mpg", highway: "35 mpg", combined: "29 mpg" },
+    fuelTankSize: "17.4 gal",
+    drivetrain: "RWD",
+    price: "From $46,050",
+    prices: { il: "₪330,000", ru: "6,200,000 ₽", us: "$46,050", ar: "210,000 SAR" },
+    depreciation: { yr3: "-40%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "Luxury sedan with the best interior in its class. MBUX system is excellent.",
+      ru: "48V mild hybrid helps fuel economy. 4MATIC AWD handles winter well.",
+      us: "Mini S-Class experience. Best tech in the compact luxury segment.",
+      ar: "The luxury commuter. Rear-seat comfort is class-leading."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-46",
+    name: "Toyota RAV4 2026",
+    brand: "Toyota",
+    type: "ICE",
+    engine: "2.5L 4-Cylinder",
+    horsepower: "203 hp",
+    torque: "184 lb-ft",
+    transmission: "8-Speed Automatic",
+    mpg: { city: "27 mpg", highway: "35 mpg", combined: "30 mpg" },
+    fuelTankSize: "14.5 gal",
+    drivetrain: "AWD",
+    price: "From $31,380",
+    prices: { il: "₪195,000", ru: "3,600,000 ₽", us: "$31,380", ar: "120,000 SAR" },
+    depreciation: { yr3: "-25%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "Best-selling SUV worldwide. Practical, reliable, and holds value extremely well.",
+      ru: "AWD standard. Handles Russian winters with confidence.",
+      us: "The compact SUV king. Excellent value and Toyota reliability.",
+      ar: "Versatile family SUV. Adventure trim handles desert sand well."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-47",
+    name: "Honda CR-V 2026",
+    brand: "Honda",
+    type: "ICE",
+    engine: "1.5L 4-Cylinder Turbo",
+    horsepower: "190 hp",
+    torque: "179 lb-ft",
+    transmission: "CVT",
+    mpg: { city: "28 mpg", highway: "34 mpg", combined: "30 mpg" },
+    fuelTankSize: "14.0 gal",
+    drivetrain: "AWD",
+    price: "From $32,450",
+    prices: { il: "₪200,000", ru: "3,700,000 ₽", us: "$32,450", ar: "125,000 SAR" },
+    depreciation: { yr3: "-27%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "Spacious interior and excellent fuel economy. Honda reliability.",
+      ru: "AWD and turbo engine handle all conditions. Very practical.",
+      us: "Benchmark compact SUV. Best-in-class cargo space.",
+      ar: "Family-friendly and fuel-efficient. Reliable in hot climates."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-48",
+    name: "Mazda CX-5 2026",
+    brand: "Mazda",
+    type: "ICE",
+    engine: "2.5L 4-Cylinder",
+    horsepower: "187 hp",
+    torque: "186 lb-ft",
+    transmission: "6-Speed Automatic",
+    mpg: { city: "25 mpg", highway: "31 mpg", combined: "28 mpg" },
+    fuelTankSize: "15.3 gal",
+    drivetrain: "AWD",
+    price: "From $30,090",
+    prices: { il: "₪185,000", ru: "3,400,000 ₽", us: "$30,090", ar: "115,000 SAR" },
+    depreciation: { yr3: "-30%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "Premium feel at mainstream prices. Best driving dynamics in its class.",
+      ru: "Skyactiv engine is efficient and reliable. i-Activ AWD is excellent.",
+      us: "Drives like a luxury SUV at a mainstream price. Beautiful interior.",
+      ar: "Upscale feel and strong value. Turbo model available."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-49",
+    name: "Audi A4 2026",
+    brand: "Audi",
+    type: "ICE",
+    engine: "2.0L 4-Cylinder Turbo",
+    horsepower: "261 hp",
+    torque: "273 lb-ft",
+    transmission: "7-Speed S tronic",
+    mpg: { city: "25 mpg", highway: "34 mpg", combined: "29 mpg" },
+    fuelTankSize: "15.3 gal",
+    drivetrain: "AWD",
+    price: "From $42,700",
+    prices: { il: "₪290,000", ru: "5,500,000 ₽", us: "$42,700", ar: "185,000 SAR" },
+    depreciation: { yr3: "-38%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "Quattro AWD is legendary. Premium build quality and tech.",
+      ru: "Quattro AWD is a must in Russian winters. Interior quality is superb.",
+      us: "Virtual cockpit and Quattro are class-leading. Great daily driver.",
+      ar: "Refined and tech-forward. S-line styling is popular in the region."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-50",
+    name: "Volkswagen Golf 2026",
+    brand: "Volkswagen",
+    type: "ICE",
+    engine: "2.0L 4-Cylinder Turbo",
+    horsepower: "228 hp",
+    torque: "258 lb-ft",
+    transmission: "7-Speed DSG",
+    mpg: { city: "25 mpg", highway: "34 mpg", combined: "29 mpg" },
+    fuelTankSize: "13.2 gal",
+    drivetrain: "FWD",
+    price: "From $32,490",
+    prices: { il: "₪190,000", ru: "3,500,000 ₽", us: "$32,490", ar: "118,000 SAR" },
+    depreciation: { yr3: "-35%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "GTI is a hot hatch icon. Great fun-to-drive factor with daily practicality.",
+      ru: "Well-built for European roads. DSG gearbox is fast and smooth.",
+      us: "The benchmark hot hatch. GTI delivers sports car thrills in a practical package.",
+      ar: "Sporty European hatchback. Popular with enthusiasts."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-51",
+    name: "Chevrolet Silverado 1500 2026",
+    brand: "Chevrolet",
+    type: "ICE",
+    engine: "5.3L V8",
+    horsepower: "355 hp",
+    torque: "383 lb-ft",
+    transmission: "10-Speed Automatic",
+    mpg: { city: "16 mpg", highway: "22 mpg", combined: "19 mpg" },
+    fuelTankSize: "24 gal",
+    drivetrain: "4WD",
+    price: "From $40,500",
+    prices: { il: "₪400,000", ru: "7,000,000 ₽", us: "$40,500", ar: "175,000 SAR" },
+    depreciation: { yr3: "-28%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "Full-size American muscle. V8 power with modern tech.",
+      ru: "Massive capability for towing and heavy loads. V8 is unstoppable.",
+      us: "Chevy's best-seller. Duramax diesel option for max towing.",
+      ar: "V8 power and commanding presence. Trail Boss for off-road."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-52",
+    name: "Porsche 911 Carrera 2026",
+    brand: "Porsche",
+    type: "ICE",
+    engine: "3.0L Flat-6 Twin-Turbo",
+    horsepower: "394 hp",
+    torque: "331 lb-ft",
+    transmission: "8-Speed PDK",
+    mpg: { city: "18 mpg", highway: "25 mpg", combined: "21 mpg" },
+    fuelTankSize: "16.9 gal",
+    drivetrain: "RWD",
+    price: "From $116,950",
+    prices: { il: "₪780,000", ru: "16,000,000 ₽", us: "$116,950", ar: "500,000 SAR" },
+    depreciation: { yr3: "-20%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "The ultimate sports car. Holds value better than almost any car on the market.",
+      ru: "Iconic engineering. S and 4S variants add AWD for winter.",
+      us: "The sports car benchmark. PDK gearbox is the fastest in the world.",
+      ar: "Dream car for enthusiasts. GT3 variant is incredibly sought-after."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-53",
+    name: "Toyota Corolla 2026",
+    brand: "Toyota",
+    type: "ICE",
+    engine: "2.0L 4-Cylinder",
+    horsepower: "169 hp",
+    torque: "151 lb-ft",
+    transmission: "CVT",
+    mpg: { city: "32 mpg", highway: "41 mpg", combined: "35 mpg" },
+    fuelTankSize: "13.2 gal",
+    drivetrain: "FWD",
+    price: "From $23,500",
+    prices: { il: "₪135,000", ru: "2,500,000 ₽", us: "$23,500", ar: "78,000 SAR" },
+    depreciation: { yr3: "-25%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "The world's best-selling car. Unbeatable reliability and value.",
+      ru: "Parts available everywhere. Extremely low running costs.",
+      us: "Reliable, efficient, and affordable. Perfect first car or daily commuter.",
+      ar: "The default sedan choice. Proven reliability in extreme heat."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-54",
+    name: "Hyundai Tucson 2026",
+    brand: "Hyundai",
+    type: "ICE",
+    engine: "2.5L 4-Cylinder",
+    horsepower: "187 hp",
+    torque: "178 lb-ft",
+    transmission: "8-Speed Automatic",
+    mpg: { city: "26 mpg", highway: "33 mpg", combined: "29 mpg" },
+    fuelTankSize: "14.3 gal",
+    drivetrain: "AWD",
+    price: "From $31,550",
+    prices: { il: "₪190,000", ru: "3,500,000 ₽", us: "$31,550", ar: "115,000 SAR" },
+    depreciation: { yr3: "-32%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "Bold design and packed with tech. Best warranty in the business.",
+      ru: "HTRAC AWD handles all conditions. Excellent value for features offered.",
+      us: "Best-looking compact SUV. 10-year powertrain warranty.",
+      ar: "Striking design and generous equipment. N-Line for sportier driving."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-55",
+    name: "Kia Sportage 2026",
+    brand: "Kia",
+    type: "ICE",
+    engine: "2.5L 4-Cylinder",
+    horsepower: "187 hp",
+    torque: "178 lb-ft",
+    transmission: "8-Speed Automatic",
+    mpg: { city: "25 mpg", highway: "32 mpg", combined: "28 mpg" },
+    fuelTankSize: "14.3 gal",
+    drivetrain: "AWD",
+    price: "From $32,090",
+    prices: { il: "₪195,000", ru: "3,600,000 ₽", us: "$32,090", ar: "120,000 SAR" },
+    depreciation: { yr3: "-32%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "Excellent value with premium features. Curved dual-screen dashboard is stunning.",
+      ru: "All-wheel drive and rugged styling. Great for varied terrain.",
+      us: "Loaded with tech and space. Best infotainment in the segment.",
+      ar: "Feature-packed and well-priced. X-Pro for off-road adventures."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+
+  // ─── Hybrid Cars ───────────────────────────────
+  {
+    id: "car-56",
+    name: "Toyota RAV4 Hybrid 2026",
+    brand: "Toyota",
+    type: "Hybrid",
+    engine: "2.5L 4-Cylinder + Electric Motor",
+    horsepower: "219 hp (combined)",
+    torque: "163 lb-ft",
+    transmission: "eCVT",
+    mpg: { city: "41 mpg", highway: "38 mpg", combined: "40 mpg" },
+    fuelTankSize: "14.5 gal",
+    drivetrain: "AWD",
+    range: "600+ miles combined",
+    price: "From $34,895",
+    prices: { il: "₪215,000", ru: "4,000,000 ₽", us: "$34,895", ar: "135,000 SAR" },
+    depreciation: { yr3: "-22%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "Best fuel economy in a practical SUV. No charging needed - self-charging hybrid.",
+      ru: "Hybrid system reduces fuel costs significantly. AWD handles all conditions.",
+      us: "40 MPG in an SUV. Best-selling hybrid SUV in America.",
+      ar: "Excellent fuel savings. Hybrid system works seamlessly."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-57",
+    name: "Honda CR-V Hybrid 2026",
+    brand: "Honda",
+    type: "Hybrid",
+    engine: "2.0L 4-Cylinder + Dual Electric Motors",
+    horsepower: "204 hp (combined)",
+    torque: "247 lb-ft",
+    transmission: "e:HEV Direct Drive",
+    mpg: { city: "43 mpg", highway: "36 mpg", combined: "40 mpg" },
+    fuelTankSize: "14.0 gal",
+    drivetrain: "AWD",
+    range: "560+ miles combined",
+    price: "From $35,850",
+    prices: { il: "₪220,000", ru: "4,100,000 ₽", us: "$35,850", ar: "140,000 SAR" },
+    depreciation: { yr3: "-25%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "Class-leading hybrid efficiency. Huge cargo space for families.",
+      ru: "Dual-motor hybrid provides confident AWD. Great winter capability.",
+      us: "Honda reliability meets hybrid efficiency. Best cargo space in class.",
+      ar: "Smooth hybrid powertrain. Excellent value for features."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-58",
+    name: "Toyota Camry Hybrid 2026",
+    brand: "Toyota",
+    type: "Hybrid",
+    engine: "2.5L 4-Cylinder + Electric Motor",
+    horsepower: "225 hp (combined)",
+    torque: "163 lb-ft",
+    transmission: "eCVT",
+    mpg: { city: "51 mpg", highway: "53 mpg", combined: "52 mpg" },
+    fuelTankSize: "13.1 gal",
+    drivetrain: "AWD",
+    range: "680+ miles combined",
+    price: "From $30,450",
+    prices: { il: "₪195,000", ru: "3,500,000 ₽", us: "$30,450", ar: "118,000 SAR" },
+    depreciation: { yr3: "-25%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "52 MPG combined! Best fuel economy in the sedan segment.",
+      ru: "Hybrid powertrain saves significantly on fuel. AWD standard.",
+      us: "The hybrid sedan king. AWD standard for 2026. Over 50 MPG.",
+      ar: "Incredible fuel savings. Self-charging hybrid means no plugging in."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-59",
+    name: "Lexus RX 350h 2026",
+    brand: "Lexus",
+    type: "Hybrid",
+    engine: "2.5L 4-Cylinder + Electric Motor",
+    horsepower: "246 hp (combined)",
+    torque: "233 lb-ft",
+    transmission: "eCVT",
+    mpg: { city: "37 mpg", highway: "34 mpg", combined: "36 mpg" },
+    fuelTankSize: "17.7 gal",
+    drivetrain: "AWD",
+    range: "630+ miles combined",
+    price: "From $52,050",
+    prices: { il: "₪380,000", ru: "6,800,000 ₽", us: "$52,050", ar: "230,000 SAR" },
+    depreciation: { yr3: "-30%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "Lexus reliability meets hybrid efficiency. Premium luxury experience.",
+      ru: "Whisper-quiet and ultra-comfortable. AWD for all-season confidence.",
+      us: "The luxury hybrid SUV benchmark. Lexus reliability is legendary.",
+      ar: "Supreme comfort and refinement. Mark Levinson audio is exceptional."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-60",
+    name: "Hyundai Tucson Hybrid 2026",
+    brand: "Hyundai",
+    type: "Hybrid",
+    engine: "1.6L Turbo + Electric Motor",
+    horsepower: "226 hp (combined)",
+    torque: "258 lb-ft",
+    transmission: "6-Speed Automatic",
+    mpg: { city: "38 mpg", highway: "38 mpg", combined: "38 mpg" },
+    fuelTankSize: "13.7 gal",
+    drivetrain: "AWD",
+    range: "520+ miles combined",
+    price: "From $35,450",
+    prices: { il: "₪210,000", ru: "3,900,000 ₽", us: "$35,450", ar: "130,000 SAR" },
+    depreciation: { yr3: "-30%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "Turbocharged hybrid means power AND efficiency. Best-in-class warranty.",
+      ru: "HTRAC AWD with hybrid powertrain. Great balance of performance and economy.",
+      us: "226 hp combined with 38 MPG. Bold styling and packed with tech.",
+      ar: "Strong performance with excellent fuel savings. Blue Link connected services."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-61",
+    name: "Ford Mustang 2026",
+    brand: "Ford",
+    type: "ICE",
+    engine: "5.0L V8",
+    horsepower: "480 hp",
+    torque: "418 lb-ft",
+    transmission: "10-Speed Automatic",
+    mpg: { city: "15 mpg", highway: "24 mpg", combined: "18 mpg" },
+    fuelTankSize: "16.0 gal",
+    drivetrain: "RWD",
+    price: "From $42,515",
+    prices: { il: "₪350,000", ru: "6,000,000 ₽", us: "$42,515", ar: "190,000 SAR" },
+    depreciation: { yr3: "-30%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "The ultimate American muscle car. V8 sound is intoxicating.",
+      ru: "Iconic American muscle. RWD requires caution in winter conditions.",
+      us: "The last V8 Mustang before electrification. A modern classic.",
+      ar: "V8 muscle with modern tech. Dark Horse variant for track enthusiasts."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-62",
+    name: "Nissan Rogue 2026",
+    brand: "Nissan",
+    type: "ICE",
+    engine: "1.5L 3-Cylinder Turbo",
+    horsepower: "201 hp",
+    torque: "225 lb-ft",
+    transmission: "CVT",
+    mpg: { city: "30 mpg", highway: "37 mpg", combined: "33 mpg" },
+    fuelTankSize: "14.5 gal",
+    drivetrain: "AWD",
+    price: "From $31,640",
+    prices: { il: "₪185,000", ru: "3,400,000 ₽", us: "$31,640", ar: "118,000 SAR" },
+    depreciation: { yr3: "-33%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "Practical family SUV. ProPILOT Assist makes highway driving easier.",
+      ru: "Turbo engine is efficient and responsive. Good value for the segment.",
+      us: "Nissan's best-seller. Class-leading fuel economy for a non-hybrid.",
+      ar: "Comfortable and efficient. ProPILOT driver assist is excellent."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-63",
+    name: "Subaru Outback 2026",
+    brand: "Subaru",
+    type: "ICE",
+    engine: "2.5L Flat-4 (Boxer)",
+    horsepower: "182 hp",
+    torque: "176 lb-ft",
+    transmission: "CVT",
+    mpg: { city: "26 mpg", highway: "32 mpg", combined: "29 mpg" },
+    fuelTankSize: "18.5 gal",
+    drivetrain: "AWD",
+    price: "From $33,495",
+    prices: { il: "₪210,000", ru: "3,800,000 ₽", us: "$33,495", ar: "130,000 SAR" },
+    depreciation: { yr3: "-28%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "Symmetrical AWD is legendary. Perfect for outdoor lifestyles.",
+      ru: "AWD standard and 8.7\" ground clearance. Born for Russian conditions.",
+      us: "The adventure wagon. EyeSight safety is best-in-class.",
+      ar: "Rugged capability with car-like comfort. Wilderness trim for serious off-road."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-64",
+    name: "Jeep Grand Cherokee 2026",
+    brand: "Jeep",
+    type: "ICE",
+    engine: "3.6L V6",
+    horsepower: "293 hp",
+    torque: "260 lb-ft",
+    transmission: "8-Speed Automatic",
+    mpg: { city: "19 mpg", highway: "26 mpg", combined: "22 mpg" },
+    fuelTankSize: "24.6 gal",
+    drivetrain: "4WD",
+    price: "From $42,475",
+    prices: { il: "₪360,000", ru: "6,200,000 ₽", us: "$42,475", ar: "180,000 SAR" },
+    depreciation: { yr3: "-35%", resaleValue: "Good" },
+    regionalAdvice: {
+      il: "Legendary off-road capability with luxury interior. Trail-rated badge means real capability.",
+      ru: "Quadra-Trac 4WD is excellent in winter. Spacious and capable.",
+      us: "America's premium SUV. Trailhawk for serious off-road adventures.",
+      ar: "Desert-proven capability. Excellent cooling for hot climates."
+    },
+    image: "",
+    relatedVideoIds: []
+  },
+  {
+    id: "car-65",
+    name: "Toyota Highlander Hybrid 2026",
+    brand: "Toyota",
+    type: "Hybrid",
+    engine: "2.5L 4-Cylinder + Electric Motors",
+    horsepower: "243 hp (combined)",
+    torque: "175 lb-ft",
+    transmission: "eCVT",
+    mpg: { city: "36 mpg", highway: "35 mpg", combined: "36 mpg" },
+    fuelTankSize: "17.1 gal",
+    drivetrain: "AWD",
+    range: "616 miles combined",
+    price: "From $42,400",
+    prices: { il: "₪295,000", ru: "5,200,000 ₽", us: "$42,400", ar: "175,000 SAR" },
+    depreciation: { yr3: "-24%", resaleValue: "Excellent" },
+    regionalAdvice: {
+      il: "3-row hybrid SUV with incredible efficiency. Family road-trip champion.",
+      ru: "36 MPG in a 3-row SUV is remarkable. AWD for all-season driving.",
+      us: "The 3-row hybrid king. Seats 8 with Toyota reliability.",
+      ar: "Spacious family hauler with hybrid savings. Captain's chairs available."
+    },
+    image: "",
     relatedVideoIds: []
   }
 ];

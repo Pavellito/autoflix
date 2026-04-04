@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getVideoById, videos as allVideos } from "@/app/lib/data";
+import { getVideoById, videos as allVideos, type Video } from "@/app/lib/data";
+import { getYouTubeVideoInfo } from "@/app/lib/youtube-api";
 import VideoCard from "@/app/components/VideoCard";
 import AiSummary from "@/app/components/AiSummary";
 import FavoriteButton from "@/app/components/FavoriteButton";
@@ -13,7 +14,22 @@ export default async function VideoPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const video = getVideoById(id);
+  let video: Video | undefined = getVideoById(id);
+
+  // Support YouTube-discovered videos with yt-{youtubeId} convention
+  if (!video && id.startsWith("yt-")) {
+    const youtubeId = id.slice(3);
+    const info = await getYouTubeVideoInfo(youtubeId);
+    video = {
+      id,
+      title: info?.title || "Video",
+      thumbnail: `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`,
+      category: "Reviews",
+      year: new Date().getFullYear(),
+      description: info ? `By ${info.author}` : "",
+      youtubeId,
+    };
+  }
 
   if (!video) {
     notFound();

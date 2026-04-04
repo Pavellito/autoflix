@@ -333,20 +333,37 @@ export async function fetchCarDetails(year: number, make: string, model: string)
   try {
     let options = await getVehicleOptions(year, make, model);
 
-    // Fuzzy matching: if exact model returns nothing, search all models for the make
-    // and find ones that start with or contain the queried model name
+    // Fuzzy matching: if exact model returns nothing, search all models for the make.
+    // Uses tiered relevance: exact > startsWith > word-boundary match.
+    // Never mixes results from different makes.
     if (options.length === 0) {
       try {
         const allModels = await getModels(year, make);
         const modelLower = model.toLowerCase();
-        const matching = allModels.filter(
-          (m) => m.toLowerCase().startsWith(modelLower) || m.toLowerCase().includes(modelLower)
+
+        // Tier 1: exact match (case-insensitive)
+        let matching = allModels.filter(
+          (m) => m.toLowerCase() === modelLower
         );
 
-        // Fetch options for ALL matching model variants in parallel
+        // Tier 2: starts with the queried model name (e.g., "X5" matches "X5 xDrive40i")
+        if (matching.length === 0) {
+          matching = allModels.filter(
+            (m) => m.toLowerCase().startsWith(modelLower)
+          );
+        }
+
+        // Tier 3: model name appears as a whole word (word-boundary match)
+        // Avoids "S8" matching "IS800" or "X5" matching "MX5"
+        if (matching.length === 0) {
+          const wordBoundaryRegex = new RegExp(`\\b${modelLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+          matching = allModels.filter((m) => wordBoundaryRegex.test(m));
+        }
+
+        // Fetch options for matching model variants in parallel (cap at 5)
         if (matching.length > 0) {
           const allOptions = await Promise.all(
-            matching.slice(0, 10).map(async (m) => {
+            matching.slice(0, 5).map(async (m) => {
               try {
                 const opts = await getVehicleOptions(year, make, m);
                 return opts;
@@ -380,9 +397,11 @@ export async function fetchCarDetails(year: number, make: string, model: string)
       fetchNHTSASpecs(year, make, model).catch(() => null),
     ]);
 
-    // Filter out failed fetches
+    // Filter out failed fetches AND vehicles from wrong makes
+    const makeLower = make.toLowerCase();
     const validVehicles = allVehicles.filter(
-      (item): item is { option: FuelEcoMenuItem; vehicle: Record<string, string> } => item !== null
+      (item): item is { option: FuelEcoMenuItem; vehicle: Record<string, string> } =>
+        item !== null && (item.vehicle.make?.toLowerCase() || "").includes(makeLower)
     );
     if (validVehicles.length === 0) return null;
 

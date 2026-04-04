@@ -140,6 +140,73 @@ async function searchYouTubeAPI(query: string, maxResults: number = 8): Promise<
  * @param model - Car model name
  * @param year - Model year (optional)
  */
+// ---------------------------------------------------------------------------
+// oEmbed: free metadata lookup (no API key / no quota)
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetch YouTube video metadata using the free oEmbed endpoint.
+ * Returns title, author, and thumbnail without consuming API quota.
+ */
+export async function getYouTubeVideoInfo(
+  youtubeId: string
+): Promise<{ title: string; author: string; thumbnail: string } | null> {
+  try {
+    const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${youtubeId}&format=json`;
+    const res = await fetch(url, { next: { revalidate: 86400 } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return {
+      title: data.title || "",
+      author: data.author_name || "",
+      thumbnail: `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`,
+    };
+  } catch {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Discovered videos (from daily cron, stored in Supabase)
+// ---------------------------------------------------------------------------
+
+/**
+ * Fetch auto-discovered videos from Supabase by category.
+ * Returns the most recently featured, active videos.
+ */
+export async function getDiscoveredVideos(
+  category?: string,
+  limit: number = 15
+): Promise<YouTubeVideo[]> {
+  try {
+    let query = supabase
+      .from("discovered_videos")
+      .select("youtube_id, title, thumbnail, channel_title, published_at, description")
+      .eq("is_active", true)
+      .order("featured_date", { ascending: false })
+      .order("published_at", { ascending: false })
+      .limit(limit);
+
+    if (category) {
+      query = query.eq("category", category);
+    }
+
+    const { data, error } = await query;
+    if (error || !data) return [];
+
+    return data.map((row) => ({
+      videoId: row.youtube_id,
+      title: row.title,
+      thumbnail: row.thumbnail || `https://i.ytimg.com/vi/${row.youtube_id}/hqdefault.jpg`,
+      channelTitle: row.channel_title,
+      publishedAt: row.published_at,
+      description: row.description || "",
+    }));
+  } catch {
+    return [];
+  }
+}
+
 export async function fetchYouTubeVideos(
   carSlug: string,
   make: string,

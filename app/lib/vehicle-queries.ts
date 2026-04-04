@@ -318,24 +318,41 @@ export async function findVehicleByMakeModelYear(
   model: string,
   year?: number
 ): Promise<VehicleDetailData | null> {
-  let query = supabase
-    .from("vehicle_specs")
-    .select("id")
-    .ilike("make_name", make);
+  // Try exact model name first, then progressively looser matching
+  const attempts: string[] = [
+    model,                           // exact: "X5"
+    `${model}%`,                     // prefix: "X5*"
+  ];
 
-  // Match first model word (e.g., "Model" from "Model Y Juniper")
+  // Add first-word prefix only if model has multiple words (e.g., "Model Y" -> "Model%")
   const modelFirstWord = model.split(/\s+/)[0];
-  if (modelFirstWord) {
-    query = query.ilike("model_name", `%${modelFirstWord}%`);
+  if (modelFirstWord && modelFirstWord !== model) {
+    attempts.push(`${modelFirstWord}%`);
   }
 
-  if (year) {
-    query = query.eq("year", year);
+  for (const pattern of attempts) {
+    let query = supabase
+      .from("vehicle_specs")
+      .select("id")
+      .ilike("make_name", make);
+
+    // Use exact match for the first attempt, ilike prefix for the rest
+    if (pattern === model) {
+      query = query.ilike("model_name", model);
+    } else {
+      query = query.ilike("model_name", pattern);
+    }
+
+    if (year) {
+      query = query.eq("year", year);
+    }
+
+    const { data, error } = await query.order("year", { ascending: false }).limit(1);
+
+    if (!error && data && data.length > 0) {
+      return getVehicleById(data[0].id);
+    }
   }
 
-  const { data, error } = await query.order("year", { ascending: false }).limit(1);
-
-  if (error || !data || data.length === 0) return null;
-
-  return getVehicleById(data[0].id);
+  return null;
 }
