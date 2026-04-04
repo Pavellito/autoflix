@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLanguage } from "@/app/lib/i18n/context";
+import { supabase } from "@/app/lib/supabase";
 
 interface NewsArticle {
+  id: string;
   title: string;
   link: string;
   source: string;
@@ -12,7 +14,14 @@ interface NewsArticle {
   regionLabel: string;
   pubDate?: string;
   imageUrl?: string;
-  snippet?: string;
+}
+
+function getDeterministicImage(text: string) {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = text.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return `https://picsum.photos/seed/${Math.abs(hash)}/800/400`;
 }
 
 export default function HomeNewsSection() {
@@ -21,12 +30,36 @@ export default function HomeNewsSection() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch general automotive news (no specific car filter)
-    fetch("/api/news/car?make=electric+car&model=2026")
-      .then((r) => r.json())
-      .then((data) => setArticles(data.articles || []))
-      .catch(() => setArticles([]))
-      .finally(() => setLoading(false));
+    async function loadNews() {
+      try {
+        const { data, error } = await supabase
+          .from("news")
+          .select("*")
+          .order("published_at", { ascending: false })
+          .limit(8);
+
+        if (error) throw error;
+        
+        if (data) {
+          const mapped = data.map((item: any) => ({
+            id: item.id,
+            title: item.title,
+            link: item.link,
+            source: item.source_id || "web",
+            region: item.region || "global",
+            regionLabel: item.region === "il" ? "Israel" : item.region === "ru" ? "Russia" : item.region === "ar" ? "Arabic" : "Global",
+            pubDate: item.published_at,
+            imageUrl: item.image_url
+          }));
+          setArticles(mapped);
+        }
+      } catch (err) {
+        console.error("Error fetching news:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadNews();
   }, []);
 
   if (loading) {
@@ -55,46 +88,42 @@ export default function HomeNewsSection() {
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-[20px] font-bold text-[#e5e5e5]">{t("home_latest_news")}</h2>
         <Link
-          href="/videos"
+          href="/news"
           className="text-[13px] text-[#999] hover:text-white transition-colors"
         >
           {t("home_see_all")}
         </Link>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {articles.slice(0, 8).map((article, i) => (
+        {articles.map((article, i) => {
+          const defaultImg = getDeterministicImage(article.id || String(i));
+          const imgSrc = article.imageUrl ? encodeURI(article.imageUrl) : defaultImg;
+          
+          return (
           <a
             key={i}
             href={article.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="group bg-[#1a1a1a] rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition-all"
+            className="group bg-[#1a1a1a] rounded-lg overflow-hidden border border-white/5 hover:border-white/20 transition-all flex flex-col"
           >
-            {article.imageUrl ? (
-              <div className="aspect-[16/9] overflow-hidden bg-[#222]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={article.imageUrl}
-                  alt={article.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              </div>
-            ) : (
-              <div className="aspect-[16/9] bg-gradient-to-br from-[#1a1a2e] to-[#0a0a1a] flex items-center justify-center">
-                <svg className="w-8 h-8 text-[#333]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                </svg>
-              </div>
-            )}
-            <div className="p-2.5">
+            <div className="aspect-[16/9] overflow-hidden bg-[#222]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imgSrc}
+                alt={article.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = defaultImg;
+                }}
+              />
+            </div>
+            <div className="p-2.5 flex-grow flex flex-col justify-between">
               <p className="text-[12px] text-white font-medium line-clamp-2 group-hover:text-white/80 mb-1.5">
                 {article.title}
               </p>
               <div className="flex items-center gap-1.5">
-                <span className="text-[9px] text-[#e50914] font-bold uppercase">{article.source}</span>
+                <span className="text-[9px] text-[#e50914] font-bold uppercase">{article.source.replace('-',' ')}</span>
                 <span className={`text-[8px] px-1 py-0.5 rounded font-bold ${
                   article.region === "il" ? "bg-blue-500/20 text-blue-300" :
                   article.region === "ru" ? "bg-red-500/20 text-red-300" :
@@ -106,7 +135,8 @@ export default function HomeNewsSection() {
               </div>
             </div>
           </a>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

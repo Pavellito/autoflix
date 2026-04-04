@@ -18,35 +18,13 @@ interface NewsItem {
   content?: string;
 }
 
-// A massively expanded pool of premium automotive/tech abstract photos to prevent any perceived duplication
-const NEWS_IMAGE_POOL = [
-  "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?q=80&w=2070&auto=format&fit=crop", // sports car blur
-  "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop", // neon car
-  "https://images.unsplash.com/photo-1469285994282-454ceb49e63c?q=80&w=2070&auto=format&fit=crop", // driving sunset
-  "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop", // luxury interior
-  "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?q=80&w=2070&auto=format&fit=crop", // wheel rim
-  "https://images.unsplash.com/photo-1485291571150-772bcfc10da5?q=80&w=2128&auto=format&fit=crop", // dark highway
-  "https://images.unsplash.com/photo-1536700503339-1e4b06520771?q=80&w=2070&auto=format&fit=crop", // tesla steering
-  "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=2070&auto=format&fit=crop", // electric charger
-  "https://images.unsplash.com/photo-1590362891991-f776e747a588?q=80&w=2069&auto=format&fit=crop", // abstract speed
-  "https://images.unsplash.com/photo-1556817411-31ae72fa3ea0?q=80&w=2070&auto=format&fit=crop", // sleek front grille
-  "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?q=80&w=2070&auto=format&fit=crop", // futuristic tunnel
-  "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop", // classic steering
-  "https://images.unsplash.com/photo-1471440671318-55bdbb772f93?q=80&w=2070&auto=format&fit=crop", // aerial road
-  "https://images.unsplash.com/photo-1502161254066-6c74afbf07aa?q=80&w=2071&auto=format&fit=crop", // city driving
-  "https://images.unsplash.com/photo-1560958089-b8a1929cea89?q=80&w=2070&auto=format&fit=crop", // MG4 wait list
-  "https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=2128&auto=format&fit=crop"
-];
-
-// Deterministically pick an image from our premium pool based on the news ID
+// Deterministically pick an image using picsum to avoid hotlink blocks
 function getDeterministicImage(text: string) {
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
     hash = text.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const index = Math.abs(hash) % NEWS_IMAGE_POOL.length;
-  return NEWS_IMAGE_POOL[index];
+  return `https://picsum.photos/seed/${Math.abs(hash)}/800/400`;
 }
 
 export default function NewsPage() {
@@ -189,7 +167,8 @@ export default function NewsPage() {
 }
 
 function HeroNews({ featured, onSync, isSyncing }: { featured: NewsItem, onSync: () => void, isSyncing: boolean }) {
-  const [heroImgSrc, setHeroImgSrc] = useState(featured.image_url || getDeterministicImage(featured.id));
+  const initImg = featured.image_url ? encodeURI(featured.image_url) : getDeterministicImage(featured.id);
+  const [heroImgSrc, setHeroImgSrc] = useState(initImg);
 
   return (
     <div className="relative h-[70vh] mb-12 bg-black overflow-hidden group">
@@ -197,7 +176,7 @@ function HeroNews({ featured, onSync, isSyncing }: { featured: NewsItem, onSync:
         <img
           src={heroImgSrc}
           alt={featured.title}
-          onError={() => setHeroImgSrc("https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1600&auto=format&fit=crop")}
+          onError={() => setHeroImgSrc(getDeterministicImage(featured.id))}
           className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[20s] ease-out"
         />
       </div>
@@ -262,7 +241,8 @@ function NewsRow({ title, items }: { title: string; items: NewsItem[] }) {
 
 function NewsCard({ item }: { item: NewsItem }) {
   const [showSummary, setShowSummary] = useState(false);
-  const [imgSrc, setImgSrc] = useState(item.image_url || getDeterministicImage(item.id));
+  const initImg = item.image_url ? encodeURI(item.image_url) : getDeterministicImage(item.id);
+  const [imgSrc, setImgSrc] = useState(initImg);
 
   return (
     <div className="snap-start flex-shrink-0 w-[300px] md:w-[400px] group relative flex flex-col">
@@ -270,7 +250,7 @@ function NewsCard({ item }: { item: NewsItem }) {
         <img
           src={imgSrc}
           alt={item.title}
-          onError={() => setImgSrc("https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=500&auto=format&fit=crop")}
+          onError={() => setImgSrc(getDeterministicImage(item.id))}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
         />
 

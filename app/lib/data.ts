@@ -125,12 +125,12 @@ export const videos: Video[] = [
   {
     id: "7",
     title: "Mercedes G580 Electric – Is It Still a True G-Class?",
-    thumbnail: "https://i.ytimg.com/vi/S6oToAnS404/mqdefault.jpg",
+    thumbnail: "https://i.ytimg.com/vi/Ge-tuSn2NiA/mqdefault.jpg",
     category: "Trending",
     year: 2025,
     description:
       "The iconic G-Wagon goes electric. Can it maintain its off-road legend status?",
-    youtubeId: "S6oToAnS404",
+    youtubeId: "Ge-tuSn2NiA",
   },
   {
     id: "8",

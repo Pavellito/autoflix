@@ -4,7 +4,7 @@ import { getDiscoveredVideos } from "./lib/youtube-api";
 import { dateSeededShuffle } from "./lib/rotation";
 import HomeContent from "./components/HomeContent";
 
-export const revalidate = 3600; // ISR: rebuild homepage every hour
+export const dynamic = "force-dynamic";
 
 function mergeAndShuffle(hardcoded: Video[], discovered: { videoId: string; title: string; thumbnail: string; channelTitle: string; publishedAt: string; description: string }[]): Video[] {
   // Convert discovered videos to Video format
